@@ -40,7 +40,7 @@ Once it finds the optimal packs, they will be listed in a third pane across the 
 ## FAQ
 **My browser hung!**
 
-It probably didn't.  Some configurations (e.g. 1 of each pack) are just harder to solve and could take several minutes.  However, most configurations are very fast (<1s)
+It probably didn't.  Some configurations (e.g. 1 of each item) are just harder to solve and could take several minutes.  However, most configurations are very fast (< 1s)
 
 **Do the prices include shipping?**
 
