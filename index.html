@@ -20,7 +20,7 @@
         var packPrices = [];
         var matrixHeader;
         var matrixData;
-        var maxMode;
+        var maxMode = false;
 
         function loadCsv(file, dl) {
             Papa.parse(file, {
@@ -100,10 +100,63 @@
 
                     console.log("Read items as " + items);
                     console.log("Read packs as " + matrixHeader);
-                    populateDesired();
+                    populateDesiredCollapsed();
                     populatePacks();
                 }
             });
+        }
+
+        function populateDesiredCollapsed(){        
+            var desiredForm = document.getElementById("desired");
+            desiredForm.innerHTML = "Set desired items:<BR>";
+            desiredForm.innerHTML += '<input type=button value="1 of each painted" onClick="javascript:oneOfEachPainted()">';
+            desiredForm.innerHTML += '<input type=button value="1 of each unpainted" onClick="javascript:oneOfEachUnpainted()">';            
+            desiredForm.innerHTML += '<input type=button value="clear" onClick="javascript:clearDesired()">';
+            desiredForm.innerHTML += '<BR>';
+            desiredForm.innerHTML += '<input type=button value="optimize" onClick="javascript:optimize()">';
+            var prefixMap = {};
+            for(var i = 0; i < items.length; ++i){
+                if(items[i].endsWith(" - Painted")){
+                    var n = items[i].indexOf(' - Painted');
+                    var prefix = items[i].substring(0, n);                                    
+                    if(prefix in prefixMap){
+                        prefixMap[prefix]['painted']=i;                
+                    }else{
+                        prefixMap[prefix] = {"painted":i};
+                    }
+                }else if(items[i].endsWith(" - Unpainted")){
+                    var n = items[i].indexOf(' - Unpainted');
+                    var prefix = items[i].substring(0, n);                                    
+                    if(prefix in prefixMap){
+                        prefixMap[prefix]['unpainted']=i;   
+                    }else{
+                        prefixMap[prefix] = {"unpainted":i};
+                    }
+                }else{
+                    if(items[i] in prefixMap){
+                        alert("ERROR: Unexpected duplicate item"+items[i]+" in spreadsheet: behavior undefined.");
+                    }
+                    prefixMap[items[i]] = {"unpainted":i};
+                }
+            }
+            desiredForm.innerHTML += "<tr><th style='text-align: left; width: 40px;'>Unpainted<BR>Qty</th><th style='text-align: left; width: 40px'>Painted Qty</th><th style='text-align: left;'>Item</th></tr>"
+            for(var item in prefixMap){                
+                if("unpainted" in prefixMap[item]){
+                    if("painted" in prefixMap[item]){
+                        desiredForm.innerHTML += '<tr><td><input size=4 value=0 type="text" id="item_'+prefixMap[item]['unpainted']+'"></td>'
+                                            + '<td><input size=4 value=0 type="text" id="item_'+prefixMap[item]['painted']+'"></td>'
+                                            + '<td>'+item+'</td>'
+                                            + '</tr>'
+                    }else{
+                        desiredForm.innerHTML += '<tr><td colspan=2><input value=0 type="text" size=4 id="item_'+prefixMap[item]['unpainted']+'"></td>'
+                                            + '<td>'+item+'</td></tr>';
+                    }
+                }else{
+                    desiredForm.innerHTML += '<tr><td>&nbsp;</td><td><input value=0 type="text" size=4 id="item_'+prefixMap[item]['painted']+'"></td>'
+                                            + '<td>'+item+' - Painted</td></tr>';
+                }                
+            }
+            
         }
 
         function handleFileSelect(evt) {
@@ -154,7 +207,7 @@
 
         function populatePacks() {
             var packForm = document.getElementById("packs");
-            packForm.innerHTML += '(Optional) Add packs of items to the desired items list<BR>';
+            packForm.innerHTML = '(Optional) Add packs of items to the desired items list<BR>';
             packForm.innerHTML += '<input type="radio" name="mode" value="sum" checked="checked" onClick="javascript:setSumMode()">Sum&nbsp;<input type="radio" name="mode" value="max" onClick="javascript:setMaxMode()">Max<BR>';
             for (var j = 0; j < matrixHeader.length; ++j) {
                 packForm.innerHTML += '<tr><td><input type="button" value="Add" onClick="javascript:addPack(' + j + ')"></td><td>' + matrixHeader[j] + '</td><td>$' + packPrices[j] + '</td></tr>';
