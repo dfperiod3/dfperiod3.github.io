@@ -22,12 +22,15 @@ combination of packs?
 - The guy who wrote the linear program solver library I use
 
 ## How do I use this thing?
+You can either upload an export of Randy's latest spreadsheet, or just click the link at the top to use the most recent version.  If you choose to upload the export yourself, here are the steps:
 
 1.  Navigate to Randy's spreadsheet (see FAQ for link)
 2.  Select the 'Details' tab.
 3.  Click File->Download->Comma separated values
 4.  Navigate to the app at https://dfperiod3.github.io/
 5.  Click 'Browse' and select the .csv file you just downloaded
+
+Otherwise, just click the link.  (The link may not be updated as frequently as Randy's spreadsheet).
 
 The display has three panes: the left pane is where you make your desired item selections.  The right pane is a convenience, and offers all the packs offered in the Wildlands KS.  You can click 'Add' beside any of these packs to update the desired item list (left pane) with the items comprising the pack.  If the 'Sum' button is selected, the pack's contents are ADDED to the existing quantities of items in the desired item list.  If 'Max' is selected, then the desired quantity of each item in the left pane is set to Max(a,b) where a is the current desired quantity of the item, and b is the number of that item in the selected pack.  
 
