@@ -331,6 +331,11 @@
 
                 if (qty > 0) {
                     qty = parseInt(qty);
+                    if(items[i].endsWith('(1 PER BACKER)') && qty >1){
+                        console.log("Forcing quantity of "+items[i]+" to 1");
+                        document.getElementById("item_"+i).value = 1;
+                        qty = 1;
+                    }
                     model['constraints'][items[i]] = { "min": qty };
                 }
             }
@@ -367,7 +372,7 @@
                         }
                     }
                 }
-                
+
                 for (key in solution) { //key is pack
                     if (key != 'feasible' && key != 'result' && key != 'bounded' && key != 'isIntegral') {
                         // What are the total number of items introduced by this pack.
