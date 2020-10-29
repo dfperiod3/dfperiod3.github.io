@@ -21,6 +21,16 @@
         var matrixHeader;
         var matrixData;
         var maxMode = false;
+        var itemsMap;
+        var matrixHeaderMap;
+
+        function swap(json){
+            var ret = {};
+            for(var key in json){
+                ret[json[key]] = key;
+            }
+            return ret;
+        }
 
         function loadCsv(file, dl) {
             Papa.parse(file, {
@@ -102,18 +112,67 @@
                     console.log("Read packs as " + matrixHeader);
                     populateDesiredCollapsed();
                     populatePacks();
-                }
+                    itemsMap=swap(items);
+                    matrixHeaderMap=swap(matrixHeader);
+                }                
             });
         }
+       
+        function save() {
+            var date = new Date();
+            var filename='mydfpledge_'+date.getFullYear()+"-"+date.getMonth()+"-"+date.getDay()+"_"+date.getHours()+"."+date.getMinutes()+"."+date.getSeconds()+'.csv';
+            var array = [];
+            for (var i = 0; i < items.length; ++i) {
+                var qty = document.getElementById('item_' + i).value;
+                var item = items[i];
+                array[i] = { "qty": qty, "item": items[i] };
+            }
+            var csv = Papa.unparse(array);
+            var csvData = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            var csvURL = null;
+            if (navigator.msSaveBlob) {
+                csvURL = navigator.msSaveBlob(csvData, filename);
+            }
+            else {
+                csvURL = window.URL.createObjectURL(csvData);
+            }
 
+            var tempLink = document.createElement('a');
+            tempLink.href = csvURL;
+            tempLink.setAttribute('download', filename);
+            tempLink.click();
+        }
+        function handleLoadMyPledge(evt){
+            var file = evt.target.files[0];
+            Papa.parse(file, {
+                header: true,
+                download: false,
+                skipEmptyLines: true,
+                dynamicTyping: true,            
+
+                complete: function (results) {
+                    clearDesired(false);
+                    for(var i = 0; i < results.data.length; ++i){
+                        var qty = results.data[i]["qty"];
+                        var item = results.data[i]["item"];
+                        
+                        document.getElementById('item_'+itemsMap[item]).value = qty;
+                    }                    
+                }        
+            });
+        }
         function populateDesiredCollapsed(){        
-            var desiredForm = document.getElementById("desired");
-            desiredForm.innerHTML = "Set desired items:<BR>";
-            desiredForm.innerHTML += '<input type=button value="1 of each painted" onClick="javascript:oneOfEachPainted()">';
-            desiredForm.innerHTML += '<input type=button value="1 of each unpainted" onClick="javascript:oneOfEachUnpainted()">';            
-            desiredForm.innerHTML += '<input type=button value="clear" onClick="javascript:clearDesired()">';
-            desiredForm.innerHTML += '<BR>';
-            desiredForm.innerHTML += '<input type=button value="optimize" onClick="javascript:optimize()">';
+            var outerDiv = document.getElementById("desired");
+            var desiredForm = document.createElement('table');            
+            outerDiv.innerHTML = "Set desired items:<BR>";
+                outerDiv.innerHTML += '<input type=button value="add 1 of each painted" onClick="javascript:oneOfEachPainted()">'
+                    + '<input type=button value="add 1 of each unpainted" onClick="javascript:oneOfEachUnpainted()">';            
+            outerDiv.innerHTML += '<input type=button value="clear" onClick="javascript:clearDesired(true)">';
+            outerDiv.innerHTML += '<input type=button value="save" onClick="javascript:save()">';
+            outerDiv.innerHTML += 'Load-><input type=file id="load-mypledge" name="load" value="load">';            
+            outerDiv.innerHTML += '<BR>';
+            outerDiv.innerHTML += '<input type=button value="optimize" onClick="javascript:optimize()">';
+            $("#load-mypledge").change(handleLoadMyPledge);
             var prefixMap = {};
             for(var i = 0; i < items.length; ++i){
                 if(items[i].endsWith(" - Painted")){
@@ -139,29 +198,49 @@
                     prefixMap[items[i]] = {"unpainted":i};
                 }
             }
-            desiredForm.innerHTML += "<tr><th style='text-align: left; width: 40px;'>Unpainted<BR>Qty</th><th style='text-align: left; width: 40px'>Painted Qty</th><th style='text-align: left;'>Item</th></tr>"
+            var tbody = document.createElement('tbody');
+            tbody.innerHTML = "<tr><th style='text-align: left; width: 40px;'>Unpainted<BR>Qty</th><th style='text-align: left; width: 40px'>Painted Qty</th><th style='text-align: left;'>Item</th></tr>"
+            desiredForm.append(tbody);            
             for(var item in prefixMap){                
+                var tbody = document.createElement('tbody');
                 if("unpainted" in prefixMap[item]){
                     if("painted" in prefixMap[item]){
-                        desiredForm.innerHTML += '<tr><td><input size=4 value=0 type="text" id="item_'+prefixMap[item]['unpainted']+'"></td>'
+                        tbody.innerHTML = '<tr><td><input size=4 value=0 type="text" id="item_'+prefixMap[item]['unpainted']+'"></td>'
                                             + '<td><input size=4 value=0 type="text" id="item_'+prefixMap[item]['painted']+'"></td>'
                                             + '<td>'+item+'</td>'
                                             + '</tr>'
                     }else{
-                        desiredForm.innerHTML += '<tr><td colspan=2><input value=0 type="text" size=4 id="item_'+prefixMap[item]['unpainted']+'"></td>'
+                        tbody.innerHTML = '<tr><td colspan=2><input value=0 type="text" size=4 id="item_'+prefixMap[item]['unpainted']+'"></td>'
                                             + '<td>'+item+'</td></tr>';
                     }
                 }else{
-                    desiredForm.innerHTML += '<tr><td>&nbsp;</td><td><input value=0 type="text" size=4 id="item_'+prefixMap[item]['painted']+'"></td>'
+                    tbody.innerHTML = '<tr><td>&nbsp;</td><td><input value=0 type="text" size=4 id="item_'+prefixMap[item]['painted']+'"></td>'
                                             + '<td>'+item+' - Painted</td></tr>';
-                }                
+                }  
+                desiredForm.appendChild(tbody);              
             }
+
+            outerDiv.appendChild(desiredForm);
             
         }
+
+      
 
         function handleFileSelect(evt) {
             var file = evt.target.files[0];
             loadCsv(file, false);
+        }
+
+        function getPackContents(packIndex){
+            var indices={};
+            var n = 0;
+            for(var i = 0; i < matrixData.length; ++i){
+                var qty = matrixData[i][packIndex];
+                if(qty > 0){
+                    indices[items[i]] = qty;
+                }
+            }
+            return indices;
         }
 
         function addPack(packIndex) {
@@ -184,18 +263,22 @@
 
         }
 
-        function populateDesired() {
-            var desiredForm = document.getElementById("desired");
-            desiredForm.innerHTML = "Set desired items:<BR>";
-            desiredForm.innerHTML += '<input type=button value="1 of each painted" onClick="javascript:oneOfEachPainted()">';
-            desiredForm.innerHTML += '<input type=button value="1 of each unpainted" onClick="javascript:oneOfEachUnpainted()">';
-            desiredForm.innerHTML += '<input type=button value="clear" onClick="javascript:clearDesired()">';
-            desiredForm.innerHTML += '<BR>';
-            desiredForm.innerHTML += '<input type=button value="optimize" onClick="javascript:optimize()">';
-            for (var i = 0; i < items.length; ++i) {
-                desiredForm.innerHTML += '<tr><td><input value=0 type="text" id="item_' + i + '"></td><td>' + items[i] + '</td></tr>';
-            }
-        }
+        // function populateDesired() {
+        //     var outerDiv = document.getElementById("desired");
+        //     var desiredForm = document.createElement('table');    
+            
+        //     desiredForm.innerHTML = "Set desired items:<BR>";
+        //     desiredForm.innerHTML += '<input type=button value="add 1 of each painted" onClick="javascript:oneOfEachPainted()">';
+        //     desiredForm.innerHTML += '<input type=button value="add 1 of each unpainted" onClick="javascript:oneOfEachUnpainted()">';
+        //     desiredForm.innerHTML += '<input type=button value="clear" onClick="javascript:clearDesired()">';
+        //     desiredForm.innerHTML += '<BR>';
+        //     desiredForm.innerHTML += '<input type=button value="optimize" onClick="javascript:optimize()">';
+        //     for (var i = 0; i < items.length; ++i) {
+        //         desiredForm.innerHTML += '<tr><td><input value=0 type="text" id="item_' + i + '"></td><td>' + items[i] + '</td></tr>';
+        //     }
+
+        //     outerDiv.appendChild(desiredForm);
+        // }
 
         function setMaxMode() {
             maxMode = true;
@@ -217,26 +300,25 @@
         function oneOfEachPainted() {
             for (var i = 0; i < items.length; ++i) {
                 if (items[i].endsWith("Painted")) {
-                    document.getElementById("item_" + i).value = 1;
-                } else if (items[i].endsWith("Unpainted")) {
-                    document.getElementById("item_" + i).value = 0;
-                }
+                    document.getElementById("item_" + i).value = Math.max(document.getElementById("item_" + i).value, 1)
+                } 
             }
         }
 
         function oneOfEachUnpainted() {
             for (var i = 0; i < items.length; ++i) {
                 if (items[i].endsWith("Unpainted")) {
-                    document.getElementById("item_" + i).value = 1;
-                } else if (items[i].endsWith("Painted")) {
-                    document.getElementById("item_" + i).value = 0;
-                }
+                    document.getElementById("item_" + i).value = Math.max(document.getElementById("item_" + i).value, 1)
+                } 
             }
         }
 
-        function clearDesired() {
+        function clearDesired(clearLoadMyPledge) {
             for (var i = 0; i < items.length; ++i) {
                 document.getElementById("item_" + i).value = 0;
+            }
+            if(clearLoadMyPledge){
+                document.getElementById("load-mypledge").value='';
             }
         }
 
@@ -272,17 +354,50 @@
             } else {
                 var bottom = document.getElementById("optimalpledge");
                 bottom.innerHTML = "<center><B>$" + solution.result + "</B></center><BR>"
-                for (key in solution) {
+                var table = document.createElement("table");
+                table.innerHTML = "<tr><th style='text-align: left; width: 40px'>Qty</th><th style='text-align: left; '>Item</th><th style='text-align: left; width: 40px'>Cost</th><th style='text-align: left;'>% Lost if Omitted</th><th style='text-align: left;'>Desired items lost if omitted</th></tr>";
+                for (key in solution) { //key is pack
                     if (key != 'feasible' && key != 'result' && key != 'bounded' && key != 'isIntegral') {
-                        bottom.innerHTML += solution[key] + " " + key + "<BR>"
+                        // What are the total number of items introduced by this pack.
+                        var packContents = getPackContents(matrixHeaderMap[key]);
+                        var totalPackQty = 0;
+                        var amountBelowDesiredIfDropped = 0;
+                        var omissionDescription={};
+                        for (item in packContents) {
+                            var packQuantity = packContents[item];
+                            var desiredItemQty = parseInt(document.getElementById("item_" + itemsMap[item]).value);
+                            var finalPledgeQty = solution[key] * packQuantity; //this is NUMBer of packs.
+
+                            var leftAfterDropping = finalPledgeQty - packQuantity;
+                            if (leftAfterDropping < desiredItemQty) {
+                                amountBelowDesiredIfDropped += (desiredItemQty - leftAfterDropping);
+                                omissionDescription[item]=desiredItemQty-leftAfterDropping;
+                            }
+                            totalPackQty += packQuantity;
+                        }
+
+                        var fractionLost = Math.round(100 * amountBelowDesiredIfDropped / totalPackQty);
+
+                        var itemsLost = 0;
+
+                        var omissionString="";
+                        if(Object.keys(omissionDescription).length > 0){
+                            var n = 0;
+                            for(item in omissionDescription){
+                                omissionString += "-"+omissionDescription[item]+" "+item+",";                               
+                            }                           
+                                omissionString = omissionString.substring(0, omissionString.length-1);                           
+                        }
+                        itemsLost = omissionString;
+                        table.innerHTML += "<tr><td>" + solution[key] + "</td><td>" + key + "</td><td>$" + (solution[key] * packPrices[matrixHeaderMap[key]]) + "</td><td>" + fractionLost + "</td><td>" + itemsLost + "</td></tr>"
                     }
                 }
+                bottom.appendChild(table);
             }
 
             console.log("done");
 
         }
-
 
 
         $(document).ready(function () {
@@ -292,10 +407,7 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-        body {
-
-            color: black;
-        }
+     
 
         .split {
             height: 60%;
@@ -336,6 +448,7 @@
               overflow-x: hidden;  
           } 
 
+
         .centered {
             position: absolute;
             top: 50%;
@@ -356,10 +469,8 @@
         <B>Enter CSV export of Randy's Spreadsheet: <input type="file" id="csv-file" name="files" /> OR <a href="javascript:loadCsv('https://dfperiod3.github.io/WildlandsPledgePlannerDetailsExport.csv', true);">Use Version 2020/10/24 2:36PM CDT</a></B>            
     </p1>
 
-    <div class="split left">
-        <form id="f">
-            <table id="desired"></table>
-        </form>
+    <div class="split left" id="desired">
+            <!--<table id="desired" class="altcolor"></table>-->
     </div>
 
     <div class="split right">
