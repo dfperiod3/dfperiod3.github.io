@@ -58,10 +58,10 @@ In the output below, you will see:
 
 
 
-%Lost if omitted is the number of DESIRED items lost if ONE of the single pack was dropped, relative to the total number of items in 
+%Lost if omitted is the number of DESIRED items lost if ONE of the corresponding packs was dropped, relative to the total number of items in 
 the pack.   In the above example, if we drop one of the majestic waterfalls, we lose a whole bunch of stuff, but everything is still at
-or equal to our desired quantities except the cascading waterfall, which is under by 1.  Therefore the fraction is computed as:
-1/size of waterfall pack.
+or equal to our desired quantities except the cascading waterfall, which is under the desired amount by 1.  Therefore the fraction is computed as
+(2-1)/(# items in waterfall pack).
 
 A low % Lost if Omitted suggests that a pack isn't contributing much to your desired set list, and is giving lots of extra pieces that are
 either not in your list, or are over and above the quantity you want.
@@ -69,7 +69,7 @@ either not in your list, or are over and above the quantity you want.
 The 'Desired items lost if omitted' shows you which items from your desired list would be lost if ONE of the corresponding pack was
 dropped.  Once again, this only counts if the item count would drop below your desired quantity.  In the above, dropping the waterfall 
 means we lose a bunch of stuff, but only the cascading waterfall is reduced below our desired quantity.   This column roughly shows 
-what this pack is contributing to your pledge.
+what this pack is contributing to your pledge.  Few items in this column means that at least one of the corresponding pack isn't contributing much to your desired items, and/or giving you a lot of extras.
 
 ## FAQ
 **My browser hung!**
