@@ -363,6 +363,7 @@
                         var totalPackQty = 0;
                         var amountBelowDesiredIfDropped = 0;
                         var omissionDescription={};
+                        var amountBelowDesiredIfDropped = 0;
                         for (item in packContents) {
                             var packQuantity = packContents[item];
                             var desiredItemQty = parseInt(document.getElementById("item_" + itemsMap[item]).value);
