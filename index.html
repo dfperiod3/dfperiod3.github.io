@@ -356,6 +356,18 @@
                 bottom.innerHTML = "<center><B>$" + solution.result + "</B></center><BR>"
                 var table = document.createElement("table");
                 table.innerHTML = "<tr><th style='text-align: left; width: 40px'>Qty</th><th style='text-align: left; '>Item</th><th style='text-align: left; width: 40px'>Cost</th><th style='text-align: left;'>% Lost if Omitted</th><th style='text-align: left;'>Desired items lost if omitted</th></tr>";
+                var itemCounts={};
+                for (key in solution){ //key is pack
+                    var packContents = getPackContents(matrixHeaderMap[key]);
+                    for(item in packContents){
+                        if(item in itemCounts){
+                            itemCounts[item] += solution[key]*packContents[item];
+                        }else{
+                            itemCounts[item] = solution[key]*packContents[item];
+                        }
+                    }
+                }
+                
                 for (key in solution) { //key is pack
                     if (key != 'feasible' && key != 'result' && key != 'bounded' && key != 'isIntegral') {
                         // What are the total number of items introduced by this pack.
@@ -363,11 +375,12 @@
                         var totalPackQty = 0;
                         var amountBelowDesiredIfDropped = 0;
                         var omissionDescription={};
-                        var amountBelowDesiredIfDropped = 0;
                         for (item in packContents) {
                             var packQuantity = packContents[item];
                             var desiredItemQty = parseInt(document.getElementById("item_" + itemsMap[item]).value);
-                            var finalPledgeQty = solution[key] * packQuantity; //this is NUMBer of packs.
+                            
+                            //var finalPledgeQty = solution[key] * packQuantity; //this is NUMBer of packs.
+                            var finalPledgeQty = itemCounts[item];
 
                             var leftAfterDropping = finalPledgeQty - packQuantity;
                             if (leftAfterDropping < desiredItemQty) {
