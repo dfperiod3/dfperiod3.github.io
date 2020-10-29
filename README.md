@@ -41,7 +41,7 @@ When you're ready, click 'Optimize'.  Most of the time this will take less than 
 Once it finds the optimal packs, they will be listed in a third pane across the bottom.
 
 ### Interpreting "% Lost if Omitted" and "Desired items lost if omitted"
-Consider a pledge consisting of the full contents of a majestic waterfalls pack, plus 1 extra cascading waterfall (for a total of 2),
+Consider a desired item list consisting of the full contents of a majestic waterfalls pack, plus 1 extra cascading waterfall (for a total of 2),
 plus one balefire lantern.
 
 The optimal pledge will choose a majestic waterfalls pack, and then it will select *another* majestic waterfalls pack because it's the 
