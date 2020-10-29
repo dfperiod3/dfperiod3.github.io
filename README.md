@@ -40,6 +40,37 @@ When you're ready, click 'Optimize'.  Most of the time this will take less than 
 
 Once it finds the optimal packs, they will be listed in a third pane across the bottom.
 
+### Interpreting "% Lost if Omitted" and "Desired items lost if omitted"
+Consider a pledge consisting of the full contents of a majestic waterfalls pack, plus 1 extra cascading waterfall (for a total of 2),
+plus one balefire lantern.
+
+The optimal pledge will choose a majestic waterfalls pack, and then it will select *another* majestic waterfalls pack because it's the 
+only way to get another cascading waterfall.  Then it will select an entire spooky swamp pack because it's the cheapest way to get a 
+balefire lantern.
+
+
+In the output below, you will see:
+
+| Qty |	Item |	Cost |	% Lost if Omitted	| Desired items lost if omitted |
+|:----|:----:|:-----:|:------------------:|------------------------------:| 
+| 2 |	Majestic Waterfalls - Unpainted |	$110 |	14 |	-1 Cascading Waterfall - Unpainted |
+| 1 |	Spooky Swamp - Painted |	$38 |	6 |	-1 Balefire Lantern (LED) - Painted |
+
+
+
+%Lost if omitted is the number of DESIRED items lost if ONE of the single pack was dropped, relative to the total number of items in 
+the pack.   In the above example, if we drop one of the majestic waterfalls, we lose a whole bunch of stuff, but everything is still at
+or equal to our desired quantities except the cascading waterfall, which is under by 1.  Therefore the fraction is computed as:
+1/size of waterfall pack.
+
+A low % Lost if Omitted suggests that a pack isn't contributing much to your desired set list, and is giving lots of extra pieces that are
+either not in your list, or are over and above the quantity you want.
+
+The 'Desired items lost if omitted' shows you which items from your desired list would be lost if ONE of the corresponding pack was
+dropped.  Once again, this only counts if the item count would drop below your desired quantity.  In the above, dropping the waterfall 
+means we lose a bunch of stuff, but only the cascading waterfall is reduced below our desired quantity.   This column roughly shows 
+what this pack is contributing to your pledge.
+
 ## FAQ
 **My browser hung!**
 
@@ -52,5 +83,4 @@ No.
 **What version of Randy's spreadsheet do I use?**
 
 I used this one https://docs.google.com/spreadsheets/d/1RwR0uuu4ei2bNVJ__59HXnwZbXncjYEX/edit#gid=2070237370 dated 2020-10-24
-
 
