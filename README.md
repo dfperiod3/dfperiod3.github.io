@@ -38,7 +38,7 @@ The left pane additionally has some short cut buttons that set the desired quant
 
 When you're ready, click 'Optimize'.  Most of the time this will take less than a few seconds.  However, in some cases it can take several minutes and your browser may complain about the script being unresponsive.  Give it some time.
 
-Once it finds the optimal packs, they will be listed in a third pane across the bottom.
+Once it finds the optimal packs, they will be listed in a third pane across the bottom.  There will be a link to the item manifest, where you can see all the items that make up the optimal pledge.  Within the item manifest, there is also a toggle link that allows you to only show those items which were NOT requested.  These are all the "spillover" items / extras / leftovers that were part of the optimal packs, but not actually required to fulfill your desired items.  
 
 ### Interpreting "% Lost if Omitted" and "Desired items lost if omitted"
 Consider a desired item list consisting of the full contents of a majestic waterfalls pack, plus 1 extra cascading waterfall (for a total of 2),
