@@ -373,7 +373,7 @@
             bottom.innerHTML += "<B><U>MANIFEST</U></B><BR>"                
             var table = document.createElement("table");
 
-            table.innerHTML = "<tr><th style='text-align: left; width: 40px'>Qty</th><th style='text-align: left; '>Item</th><th style='text-align: left; width: 40px;'># Desired&nbsp;&nbsp;</th><th style='text-align: left; width: 60px;'># Over Desired Qty&nbsp;&nbsp;</th><th style='text-align: left; width: 40px;'>% Over</th></tr>";
+            table.innerHTML = "<tr><th style='text-align: left; '>Item</th><th style='text-align: left; width: 40px'>Qty</th><th style='text-align: left; width: 40px;'># Desired&nbsp;&nbsp;</th><th style='text-align: left; width: 60px;'># Over Desired Qty&nbsp;&nbsp;</th><th style='text-align: left; width: 40px;'>% Over</th></tr>";
             var itemCounts = getItemCounts();
             const sortObject = obj => Object.keys(obj).sort().reduce((res, key) => (res[key] = obj[key], res), {});
             itemCounts = sortObject(itemCounts);    
@@ -388,7 +388,7 @@
                         }else{
                             percentIncrease = Math.round(100*(itemCounts[item]/desiredItemQty - 1)) + "%";
                         }
-                        table.innerHTML += "<tr><td>"+itemCounts[item]+"</td><td>"+item+"</td><td>"+desiredItemQty+"</td><td>"+overDesired+"</td><td>"+percentIncrease+"</td></tr>";
+                        table.innerHTML += "<tr><td>"+item+"</td><td>"+itemCounts[item]+"</td><td>"+desiredItemQty+"</td><td>"+overDesired+"</td><td>"+percentIncrease+"</td></tr>";
                     }
                 }
             }
@@ -403,7 +403,7 @@
                 bottom.innerHTML = getLowerPaneLinks('solutionLink')+"<B><U>PLEDGE SUMMARY</U></B><BR>"                
                 
                 var table = document.createElement("table");
-                table.innerHTML = "<tr><th style='text-align: left; width: 40px'>Qty</th><th style='text-align: left; '>Pack</th><th style='text-align: left; width: 40px'>Cost</th><th style='text-align: left;'>% Lost if Omitted</th><th style='text-align: left;'>Desired items lost if omitted</th></tr>";
+                table.innerHTML = "<tr><th style='text-align: left; '>Pack</th><th style='text-align: left; width: 40px'>Qty</th><th style='text-align: left; width: 40px'>Cost</th><th style='text-align: left;'>% Lost if Omitted</th><th style='text-align: left;'>Desired items lost if omitted</th></tr>";
                 var itemCounts = getItemCounts();
 
                 for (key in solution) { //key is pack
@@ -441,7 +441,7 @@
                             omissionString = omissionString.substring(0, omissionString.length - 1);
                         }
                         itemsLost = omissionString;
-                        table.innerHTML += "<tr><td>" + solution[key] + "</td><td>" + key + "</td><td>$" + (solution[key] * packPrices[matrixHeaderMap[key]]) + "</td><td>" + fractionLost + "</td><td>" + itemsLost + "</td></tr>"
+                        table.innerHTML += "<tr><td>" + key + "</td><td>" + solution[key] + "</td><td>$" + (solution[key] * packPrices[matrixHeaderMap[key]]) + "</td><td>" + fractionLost + "</td><td>" + itemsLost + "</td></tr>"
                     }
                 }
                 bottom.appendChild(table);
