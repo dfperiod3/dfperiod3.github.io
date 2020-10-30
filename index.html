@@ -331,7 +331,7 @@
 
                 if (qty > 0) {
                     qty = parseInt(qty);
-                    if(items[i].endsWith('(1 PER BACKER)') && qty >1){
+                    if((items[i].endsWith('(1 PER BACKER)') || items[i]=='Wildlands Backer Tote Bag') && qty >1){
                         console.log("Forcing quantity of "+items[i]+" to 1");
                         document.getElementById("item_"+i).value = 1;
                         qty = 1;
