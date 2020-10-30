@@ -2,9 +2,9 @@
 <html lang="en">
 
 <head>
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
-    <meta http-equiv="Pragma" content="no-cache"/>
-    <meta http-equiv="Expires" content="0"/>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <script src="https://unpkg.com/papaparse@latest/papaparse.min.js"></script>
     <script src="https://code.jquery.com/jquery-2.2.4.min.js"
@@ -23,10 +23,12 @@
         var maxMode = false;
         var itemsMap;
         var matrixHeaderMap;
+        var solution;
+        var model;
 
-        function swap(json){
+        function swap(json) {
             var ret = {};
-            for(var key in json){
+            for (var key in json) {
                 ret[json[key]] = key;
             }
             return ret;
@@ -112,15 +114,15 @@
                     console.log("Read packs as " + matrixHeader);
                     populateDesiredCollapsed();
                     populatePacks();
-                    itemsMap=swap(items);
-                    matrixHeaderMap=swap(matrixHeader);
-                }                
+                    itemsMap = swap(items);
+                    matrixHeaderMap = swap(matrixHeader);
+                }
             });
         }
-       
+
         function save() {
             var date = new Date();
-            var filename='mydfpledge_'+date.getFullYear()+"-"+date.getMonth()+"-"+date.getDay()+"_"+date.getHours()+"."+date.getMinutes()+"."+date.getSeconds()+'.csv';
+            var filename = 'mydfpledge_' + date.getFullYear() + "-" + date.getMonth() + "-" + date.getDay() + "_" + date.getHours() + "." + date.getMinutes() + "." + date.getSeconds() + '.csv';
             var array = [];
             for (var i = 0; i < items.length; ++i) {
                 var qty = document.getElementById('item_' + i).value;
@@ -142,101 +144,101 @@
             tempLink.setAttribute('download', filename);
             tempLink.click();
         }
-        function handleLoadMyPledge(evt){
+        function handleLoadMyPledge(evt) {
             var file = evt.target.files[0];
             Papa.parse(file, {
                 header: true,
                 download: false,
                 skipEmptyLines: true,
-                dynamicTyping: true,            
+                dynamicTyping: true,
 
                 complete: function (results) {
                     clearDesired(false);
-                    for(var i = 0; i < results.data.length; ++i){
+                    for (var i = 0; i < results.data.length; ++i) {
                         var qty = results.data[i]["qty"];
                         var item = results.data[i]["item"];
-                        
-                        document.getElementById('item_'+itemsMap[item]).value = qty;
-                    }                    
-                }        
+
+                        document.getElementById('item_' + itemsMap[item]).value = qty;
+                    }
+                }
             });
         }
-        function populateDesiredCollapsed(){        
+        function populateDesiredCollapsed() {
             var outerDiv = document.getElementById("desired");
-            var desiredForm = document.createElement('table');            
+            var desiredForm = document.createElement('table');
             outerDiv.innerHTML = "Set desired items:<BR>";
-                outerDiv.innerHTML += '<input type=button value="add 1 of each painted" onClick="javascript:oneOfEachPainted()">'
-                    + '<input type=button value="add 1 of each unpainted" onClick="javascript:oneOfEachUnpainted()">';            
+            outerDiv.innerHTML += '<input type=button value="add 1 of each painted" onClick="javascript:oneOfEachPainted()">'
+                + '<input type=button value="add 1 of each unpainted" onClick="javascript:oneOfEachUnpainted()">';
             outerDiv.innerHTML += '<input type=button value="clear" onClick="javascript:clearDesired(true)">';
             outerDiv.innerHTML += '<input type=button value="save" onClick="javascript:save()">';
-            outerDiv.innerHTML += 'Load-><input type=file id="load-mypledge" name="load" value="load">';            
+            outerDiv.innerHTML += 'Load-><input type=file id="load-mypledge" name="load" value="load">';
             outerDiv.innerHTML += '<BR>';
             outerDiv.innerHTML += '<input type=button value="optimize" onClick="javascript:optimize()">';
             $("#load-mypledge").change(handleLoadMyPledge);
             var prefixMap = {};
-            for(var i = 0; i < items.length; ++i){
-                if(items[i].endsWith(" - Painted")){
+            for (var i = 0; i < items.length; ++i) {
+                if (items[i].endsWith(" - Painted")) {
                     var n = items[i].indexOf(' - Painted');
-                    var prefix = items[i].substring(0, n);                                    
-                    if(prefix in prefixMap){
-                        prefixMap[prefix]['painted']=i;                
-                    }else{
-                        prefixMap[prefix] = {"painted":i};
+                    var prefix = items[i].substring(0, n);
+                    if (prefix in prefixMap) {
+                        prefixMap[prefix]['painted'] = i;
+                    } else {
+                        prefixMap[prefix] = { "painted": i };
                     }
-                }else if(items[i].endsWith(" - Unpainted")){
+                } else if (items[i].endsWith(" - Unpainted")) {
                     var n = items[i].indexOf(' - Unpainted');
-                    var prefix = items[i].substring(0, n);                                    
-                    if(prefix in prefixMap){
-                        prefixMap[prefix]['unpainted']=i;   
-                    }else{
-                        prefixMap[prefix] = {"unpainted":i};
+                    var prefix = items[i].substring(0, n);
+                    if (prefix in prefixMap) {
+                        prefixMap[prefix]['unpainted'] = i;
+                    } else {
+                        prefixMap[prefix] = { "unpainted": i };
                     }
-                }else{
-                    if(items[i] in prefixMap){
-                        alert("ERROR: Unexpected duplicate item"+items[i]+" in spreadsheet: behavior undefined.");
+                } else {
+                    if (items[i] in prefixMap) {
+                        alert("ERROR: Unexpected duplicate item" + items[i] + " in spreadsheet: behavior undefined.");
                     }
-                    prefixMap[items[i]] = {"unpainted":i};
+                    prefixMap[items[i]] = { "unpainted": i };
                 }
             }
             var tbody = document.createElement('tbody');
             tbody.innerHTML = "<tr><th style='text-align: left; width: 40px;'>Unpainted<BR>Qty</th><th style='text-align: left; width: 40px'>Painted Qty</th><th style='text-align: left;'>Item</th></tr>"
-            desiredForm.append(tbody);            
-            for(var item in prefixMap){                
+            desiredForm.append(tbody);
+            for (var item in prefixMap) {
                 var tbody = document.createElement('tbody');
-                if("unpainted" in prefixMap[item]){
-                    if("painted" in prefixMap[item]){
-                        tbody.innerHTML = '<tr><td><input size=4 value=0 type="text" id="item_'+prefixMap[item]['unpainted']+'"></td>'
-                                            + '<td><input size=4 value=0 type="text" id="item_'+prefixMap[item]['painted']+'"></td>'
-                                            + '<td>'+item+'</td>'
-                                            + '</tr>'
-                    }else{
-                        tbody.innerHTML = '<tr><td colspan=2><input value=0 type="text" size=4 id="item_'+prefixMap[item]['unpainted']+'"></td>'
-                                            + '<td>'+item+'</td></tr>';
+                if ("unpainted" in prefixMap[item]) {
+                    if ("painted" in prefixMap[item]) {
+                        tbody.innerHTML = '<tr><td><input size=4 value=0 type="text" id="item_' + prefixMap[item]['unpainted'] + '"></td>'
+                            + '<td><input size=4 value=0 type="text" id="item_' + prefixMap[item]['painted'] + '"></td>'
+                            + '<td>' + item + '</td>'
+                            + '</tr>'
+                    } else {
+                        tbody.innerHTML = '<tr><td colspan=2><input value=0 type="text" size=4 id="item_' + prefixMap[item]['unpainted'] + '"></td>'
+                            + '<td>' + item + '</td></tr>';
                     }
-                }else{
-                    tbody.innerHTML = '<tr><td>&nbsp;</td><td><input value=0 type="text" size=4 id="item_'+prefixMap[item]['painted']+'"></td>'
-                                            + '<td>'+item+' - Painted</td></tr>';
-                }  
-                desiredForm.appendChild(tbody);              
+                } else {
+                    tbody.innerHTML = '<tr><td>&nbsp;</td><td><input value=0 type="text" size=4 id="item_' + prefixMap[item]['painted'] + '"></td>'
+                        + '<td>' + item + ' - Painted</td></tr>';
+                }
+                desiredForm.appendChild(tbody);
             }
 
             outerDiv.appendChild(desiredForm);
-            
+
         }
 
-      
+
 
         function handleFileSelect(evt) {
             var file = evt.target.files[0];
             loadCsv(file, false);
         }
 
-        function getPackContents(packIndex){
-            var indices={};
+        function getPackContents(packIndex) {
+            var indices = {};
             var n = 0;
-            for(var i = 0; i < matrixData.length; ++i){
+            for (var i = 0; i < matrixData.length; ++i) {
                 var qty = matrixData[i][packIndex];
-                if(qty > 0){
+                if (qty > 0) {
                     indices[items[i]] = qty;
                 }
             }
@@ -266,7 +268,7 @@
         // function populateDesired() {
         //     var outerDiv = document.getElementById("desired");
         //     var desiredForm = document.createElement('table');    
-            
+
         //     desiredForm.innerHTML = "Set desired items:<BR>";
         //     desiredForm.innerHTML += '<input type=button value="add 1 of each painted" onClick="javascript:oneOfEachPainted()">';
         //     desiredForm.innerHTML += '<input type=button value="add 1 of each unpainted" onClick="javascript:oneOfEachUnpainted()">';
@@ -301,7 +303,7 @@
             for (var i = 0; i < items.length; ++i) {
                 if (items[i].endsWith("Painted")) {
                     document.getElementById("item_" + i).value = Math.max(document.getElementById("item_" + i).value, 1)
-                } 
+                }
             }
         }
 
@@ -309,7 +311,7 @@
             for (var i = 0; i < items.length; ++i) {
                 if (items[i].endsWith("Unpainted")) {
                     document.getElementById("item_" + i).value = Math.max(document.getElementById("item_" + i).value, 1)
-                } 
+                }
             }
         }
 
@@ -317,13 +319,139 @@
             for (var i = 0; i < items.length; ++i) {
                 document.getElementById("item_" + i).value = 0;
             }
-            if(clearLoadMyPledge){
-                document.getElementById("load-mypledge").value='';
+            if (clearLoadMyPledge) {
+                document.getElementById("load-mypledge").value = '';
             }
         }
 
+        function getLowerPaneLinks(deactivatedLink){   
+            var s;        
+            if(deactivatedLink == 'solutionLink'){
+                s = '<center><b>Pledge Summary</b>&nbsp;&nbsp;<a id="manifestLink" href="javascript:showManifest()">Item Manifest</a></center>';
+            }else if(deactivatedLink == 'manifestLink'){
+                s = '<center><a id="solutionLink" href="javascript:showSolution()">Pledge Summary</a>&nbsp;&nbsp;<b>Item Manifest</b></center>';
+            }            
+            return s + "<center><B>TOTAL COST: $" + solution.result + "</B></center><BR>";
+        }
+
+        function deactivateLink(linkId){
+            var linkToDeactivate = document.getElementById(linkid);
+            linkToDeactive.href("");
+        }        
+
+        function getItemCounts(){
+            var itemCounts = {};
+            for (key in solution) { //key is pack
+                var packContents = getPackContents(matrixHeaderMap[key]);
+                for (item in packContents) {
+                    if(item.endsWith('(1 PER BACKER)')){
+                        itemCounts[item] = 1;
+                    }else if (item in itemCounts) {
+                        itemCounts[item] += solution[key] * packContents[item];
+                    } else {
+                        itemCounts[item] = solution[key] * packContents[item];
+                    }                    
+                }
+            }            
+            return itemCounts;
+        }
+
+        var onlyShowExtras = false;
+        function toggleOnlyShowExtras(){
+            onlyShowExtras = !onlyShowExtras;
+            showManifest();            
+        }
+
+        function showManifest(){
+            var bottom = document.getElementById("optimalpledge");
+            bottom.innerHTML = getLowerPaneLinks('manifestLink');
+            if(onlyShowExtras){
+                bottom.innerHTML += "<a href='javascript:toggleOnlyShowExtras()'>Show everything</a><BR><BR>";
+            }else{
+                bottom.innerHTML += "<a href='javascript:toggleOnlyShowExtras()'>Only show Extras</a><BR><BR>";
+            }
+            bottom.innerHTML += "<B><U>MANIFEST</U></B><BR>"                
+            var table = document.createElement("table");
+
+            table.innerHTML = "<tr><th style='text-align: left; width: 40px'>Qty</th><th style='text-align: left; '>Item</th><th style='text-align: left; width: 40px;'># Desired&nbsp;&nbsp;</th><th style='text-align: left; width: 60px;'># Over Desired Qty&nbsp;&nbsp;</th><th style='text-align: left; width: 40px;'>% Over</th></tr>";
+            var itemCounts = getItemCounts();
+            const sortObject = obj => Object.keys(obj).sort().reduce((res, key) => (res[key] = obj[key], res), {});
+            itemCounts = sortObject(itemCounts);    
+            for(item in itemCounts){
+                if(itemCounts[item] > 0){
+                    var desiredItemQty = parseInt(document.getElementById("item_" + itemsMap[item]).value);
+                    var overDesired =  itemCounts[item] - desiredItemQty;
+                    if(!onlyShowExtras || overDesired > 0){
+                        var percentIncrease;
+                        if(desiredItemQty < 1){
+                            percentIncrease="None desired";
+                        }else{
+                            percentIncrease = Math.round(100*(itemCounts[item]/desiredItemQty - 1)) + "%";
+                        }
+                        table.innerHTML += "<tr><td>"+itemCounts[item]+"</td><td>"+item+"</td><td>"+desiredItemQty+"</td><td>"+overDesired+"</td><td>"+percentIncrease+"</td></tr>";
+                    }
+                }
+            }
+            bottom.appendChild(table);
+        }
+
+        function showSolution() {
+            if (solution.feasible !== true) {
+                alert("ERROR: solution was not feasible");
+            } else {
+                var bottom = document.getElementById("optimalpledge");
+                bottom.innerHTML = getLowerPaneLinks('solutionLink')+"<B><U>PLEDGE SUMMARY</U></B><BR>"                
+                
+                var table = document.createElement("table");
+                table.innerHTML = "<tr><th style='text-align: left; width: 40px'>Qty</th><th style='text-align: left; '>Pack</th><th style='text-align: left; width: 40px'>Cost</th><th style='text-align: left;'>% Lost if Omitted</th><th style='text-align: left;'>Desired items lost if omitted</th></tr>";
+                var itemCounts = getItemCounts();
+
+                for (key in solution) { //key is pack
+                    if (key != 'feasible' && key != 'result' && key != 'bounded' && key != 'isIntegral') {
+                        // What are the total number of items introduced by this pack.
+                        var packContents = getPackContents(matrixHeaderMap[key]);
+                        var totalPackQty = 0;
+                        var amountBelowDesiredIfDropped = 0;
+                        var omissionDescription = {};
+                        for (item in packContents) {
+                            var packQuantity = packContents[item];
+                            var desiredItemQty = parseInt(document.getElementById("item_" + itemsMap[item]).value);
+
+                            //var finalPledgeQty = solution[key] * packQuantity; //this is NUMBer of packs.
+                            var finalPledgeQty = itemCounts[item];
+
+                            var leftAfterDropping = finalPledgeQty - packQuantity;
+                            if (leftAfterDropping < desiredItemQty) {
+                                amountBelowDesiredIfDropped += (desiredItemQty - leftAfterDropping);
+                                omissionDescription[item] = desiredItemQty - leftAfterDropping;
+                            }
+                            totalPackQty += packQuantity;
+                        }
+
+                        var fractionLost = Math.round(100 * amountBelowDesiredIfDropped / totalPackQty);
+
+                        var itemsLost = 0;
+
+                        var omissionString = "";
+                        if (Object.keys(omissionDescription).length > 0) {
+                            var n = 0;
+                            for (item in omissionDescription) {
+                                omissionString += "-" + omissionDescription[item] + " " + item + ",";
+                            }
+                            omissionString = omissionString.substring(0, omissionString.length - 1);
+                        }
+                        itemsLost = omissionString;
+                        table.innerHTML += "<tr><td>" + solution[key] + "</td><td>" + key + "</td><td>$" + (solution[key] * packPrices[matrixHeaderMap[key]]) + "</td><td>" + fractionLost + "</td><td>" + itemsLost + "</td></tr>"
+                    }
+                }
+                bottom.appendChild(table);
+            }
+
+            console.log("done");
+        }
+
         function optimize() {
-            var model = { "optimize": "cost", "osType": "min", "constraints": {}, "variables": {}, "ints": {} };
+            model = { "optimize": "cost", "osType": "min", "constraints": {}, "variables": {}, "ints": {} };
 
             // Desired quantities are constraints of integer linear program.
             for (var i = 0; i < items.length; ++i) {
@@ -331,9 +459,9 @@
 
                 if (qty > 0) {
                     qty = parseInt(qty);
-                    if((items[i].endsWith('(1 PER BACKER)') || items[i]=='Wildlands Backer Tote Bag') && qty >1){
-                        console.log("Forcing quantity of "+items[i]+" to 1");
-                        document.getElementById("item_"+i).value = 1;
+                    if ((items[i].endsWith('(1 PER BACKER)') || items[i] == 'Wildlands Backer Tote Bag') && qty > 1) {
+                        console.log("Forcing quantity of " + items[i] + " to 1");
+                        document.getElementById("item_" + i).value = 1;
                         qty = 1;
                     }
                     model['constraints'][items[i]] = { "min": qty };
@@ -352,70 +480,9 @@
             }
             console.log("%j", model);
 
-            var solution = solver.Solve(model);
+            solution = solver.Solve(model);
             console.log(solution);
-            if (solution.feasible !== true) {
-                alert("ERROR: solution was not feasible");
-            } else {
-                var bottom = document.getElementById("optimalpledge");
-                bottom.innerHTML = "<center><B>$" + solution.result + "</B></center><BR>"
-                var table = document.createElement("table");
-                table.innerHTML = "<tr><th style='text-align: left; width: 40px'>Qty</th><th style='text-align: left; '>Item</th><th style='text-align: left; width: 40px'>Cost</th><th style='text-align: left;'>% Lost if Omitted</th><th style='text-align: left;'>Desired items lost if omitted</th></tr>";
-                var itemCounts={};
-                for (key in solution){ //key is pack
-                    var packContents = getPackContents(matrixHeaderMap[key]);
-                    for(item in packContents){
-                        if(item in itemCounts){
-                            itemCounts[item] += solution[key]*packContents[item];
-                        }else{
-                            itemCounts[item] = solution[key]*packContents[item];
-                        }
-                    }
-                }
-
-                for (key in solution) { //key is pack
-                    if (key != 'feasible' && key != 'result' && key != 'bounded' && key != 'isIntegral') {
-                        // What are the total number of items introduced by this pack.
-                        var packContents = getPackContents(matrixHeaderMap[key]);
-                        var totalPackQty = 0;
-                        var amountBelowDesiredIfDropped = 0;
-                        var omissionDescription={};
-                        for (item in packContents) {
-                            var packQuantity = packContents[item];
-                            var desiredItemQty = parseInt(document.getElementById("item_" + itemsMap[item]).value);
-                            
-                            //var finalPledgeQty = solution[key] * packQuantity; //this is NUMBer of packs.
-                            var finalPledgeQty = itemCounts[item];
-
-                            var leftAfterDropping = finalPledgeQty - packQuantity;
-                            if (leftAfterDropping < desiredItemQty) {
-                                amountBelowDesiredIfDropped += (desiredItemQty - leftAfterDropping);
-                                omissionDescription[item]=desiredItemQty-leftAfterDropping;
-                            }
-                            totalPackQty += packQuantity;
-                        }
-
-                        var fractionLost = Math.round(100 * amountBelowDesiredIfDropped / totalPackQty);
-
-                        var itemsLost = 0;
-
-                        var omissionString="";
-                        if(Object.keys(omissionDescription).length > 0){
-                            var n = 0;
-                            for(item in omissionDescription){
-                                omissionString += "-"+omissionDescription[item]+" "+item+",";                               
-                            }                           
-                                omissionString = omissionString.substring(0, omissionString.length-1);                           
-                        }
-                        itemsLost = omissionString;
-                        table.innerHTML += "<tr><td>" + solution[key] + "</td><td>" + key + "</td><td>$" + (solution[key] * packPrices[matrixHeaderMap[key]]) + "</td><td>" + fractionLost + "</td><td>" + itemsLost + "</td></tr>"
-                    }
-                }
-                bottom.appendChild(table);
-            }
-
-            console.log("done");
-
+            showSolution();
         }
 
 
@@ -426,8 +493,6 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-     
-
         .split {
             height: 60%;
             width: 50%;
@@ -448,24 +513,24 @@
         }
 
         .bottom {
-            height: 30%;   
-            width: 99%;        
+            height: 30%;
+            width: 99%;
             z-index: 1;
             overflow-y: scroll;
-            
+
             left: 10px;
             right: 20px;
             bottom: 10px;
             position: fixed;
-        }   
+        }
 
-        table.scrolldown tbody {                                             
-              /* Set vertical scroll */ 
-              overflow-y: scroll; 
-                
-              /* Hide the horizontal scroll */ 
-              overflow-x: hidden;  
-          } 
+        table.scrolldown tbody {
+            /* Set vertical scroll */
+            overflow-y: scroll;
+
+            /* Hide the horizontal scroll */
+            overflow-x: hidden;
+        }
 
 
         .centered {
@@ -485,11 +550,13 @@
 
 <body>
     <p1>
-        <B>Enter CSV export of Randy's Spreadsheet: <input type="file" id="csv-file" name="files" /> OR <a href="javascript:loadCsv('https://dfperiod3.github.io/WildlandsPledgePlannerDetailsExport.csv', true);">Use Version 2020/10/24 2:36PM CDT</a></B>            
+        <B>Enter CSV export of Randy's Spreadsheet: <input type="file" id="csv-file" name="files" /> OR <a
+                href="javascript:loadCsv('https://dfperiod3.github.io/WildlandsPledgePlannerDetailsExport.csv', true);">Use
+                Version 2020/10/24 2:36PM CDT</a></B>
     </p1>
 
     <div class="split left" id="desired">
-            <!--<table id="desired" class="altcolor"></table>-->
+        <!--<table id="desired" class="altcolor"></table>-->
     </div>
 
     <div class="split right">
