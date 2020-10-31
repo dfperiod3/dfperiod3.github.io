@@ -292,10 +292,10 @@
 
         function populatePacks() {
             var packForm = document.getElementById("packs");
-            packForm.innerHTML = '(Optional) Add packs of items to the desired items list<BR>';
-            packForm.innerHTML += '<input type="radio" name="mode" value="sum" checked="checked" onClick="javascript:setSumMode()">Sum&nbsp;<input type="radio" name="mode" value="max" onClick="javascript:setMaxMode()">Max<BR>';
+            packForm.innerHTML = '<tr><td colspan=3>(Optional) Add packs of items to the desired items list</td></tr>';
+            packForm.innerHTML += '<tr><td colspan=3><input type="radio" name="mode" value="sum" checked="checked" onClick="javascript:setSumMode()">Sum&nbsp;<input type="radio" name="mode" value="max" onClick="javascript:setMaxMode()">Max</td></tr>';
             for (var j = 0; j < matrixHeader.length; ++j) {
-                packForm.innerHTML += '<tr><td><input type="button" value="Add" onClick="javascript:addPack(' + j + ')"></td><td>' + matrixHeader[j] + '</td><td>$' + packPrices[j] + '</td></tr>';
+                packForm.innerHTML += '<tr><td style="width: 30px"><input type="button" value="Add" onClick="javascript:addPack(' + j + ')"></td><td style="width: 90px; font-size:8pt;"><input type="checkbox" id="omit_'+j+'">Omit</td><td>' + matrixHeader[j] + '</td><td>$' + packPrices[j] + '</td></tr>';
             }
         }
 
@@ -470,6 +470,9 @@
 
             // Initialize pack/item numbers.
             for (var j = 0; j < matrixHeader.length; ++j) {
+                if(document.getElementById("omit_"+j).checked){
+                    continue;
+                }
                 model['ints'][matrixHeader[j]] = 1;
                 model['variables'][matrixHeader[j]] = {};
                 for (var i = 0; i < matrixData.length; ++i) {
