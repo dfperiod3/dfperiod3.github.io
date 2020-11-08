@@ -163,6 +163,11 @@
                 }
             });
         }
+
+        function showToleranceMessage(){
+            alert("Large lists of desired items can take a very long time to optimize. A non-zero tolerance of say, 5, indicates you are willing to accept a solution within 5% of the optimal cost.  These approximate results can be much faster to find.");
+        }
+
         function populateDesiredCollapsed() {
             var outerDiv = document.getElementById("desired");
             var desiredForm = document.createElement('table');
@@ -174,6 +179,7 @@
             outerDiv.innerHTML += 'Load-><input type=file id="load-mypledge" name="load" value="load">';
             outerDiv.innerHTML += '<BR>';
             outerDiv.innerHTML += '<input type=button value="optimize" onClick="javascript:optimize()">';
+            outerDiv.innerHTML += 'Tolerance[<a href="javascript:showToleranceMessage()">?</a>]: <input id="tolerance" type=text name="tolerance" value="0" size=4>'
             $("#load-mypledge").change(handleLoadMyPledge);
             var prefixMap = {};
             for (var i = 0; i < items.length; ++i) {
@@ -453,6 +459,17 @@
         function optimize() {
             model = { "optimize": "cost", "osType": "min", "constraints": {}, "variables": {}, "ints": {} };
 
+            var tolerance=parseFloat(document.getElementById('tolerance').value);
+            
+            if(!Number.isFinite(tolerance)){
+                alert('Invalid value '+tolerance+' for tolerance -- must be a number > 0 (e.g. 5 indicates you will accept a solution within 5% of the optimal cost)');
+                return;
+            }
+
+            if(tolerance > 0){                
+                model['options'] = {"tolerance": (tolerance/100.0)};
+            }
+
             // Desired quantities are constraints of integer linear program.
             for (var i = 0; i < items.length; ++i) {
                 var qty = document.getElementById("item_" + i).value;
@@ -475,14 +492,21 @@
                 }
                 model['ints'][matrixHeader[j]] = 1;
                 model['variables'][matrixHeader[j]] = {};
+                model['variables'][matrixHeader[j]]['cost'] = packPrices[j];
                 for (var i = 0; i < matrixData.length; ++i) {
                     var packQty = matrixData[i][j];
-                    model['variables'][matrixHeader[j]][items[i]] = packQty;
-                    model['variables'][matrixHeader[j]]['cost'] = packPrices[j];
+                    if(packQty > 0){                    
+                        model['variables'][matrixHeader[j]][items[i]] = packQty;
+                    }
+                    
                 }
             }
             console.log("%j", model);
+            var bottom = document.getElementById("optimalpledge");
 
+            var modelstr = JSON.stringify(model, null, 2); // spacing level = 2
+            bottom.innerHTML="Optimizing...<BR>";
+            
             solution = solver.Solve(model);
             console.log(solution);
             showSolution();
