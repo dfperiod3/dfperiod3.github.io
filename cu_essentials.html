@@ -457,7 +457,8 @@
             itemCounts = sortObject(itemCounts);    
             for(item in itemCounts){
                 if(itemCounts[item] > 0){
-                    var desiredItemQty = parseInt(document.getElementById("item_" + itemsMap[item]).value);
+//                    var desiredItemQty = parseInt(document.getElementById("item_" + itemsMap[item]).value);
+                    var desiredItemQty=quantities[item]
                     var overDesired =  itemCounts[item] - desiredItemQty;
                     if(!onlyShowExtras || overDesired > 0){
                         var percentIncrease;
