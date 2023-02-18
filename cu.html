@@ -77,7 +77,10 @@
                             var packName = results.data[0][j];
                             var sku = results.data[1][j]
                             //some item names are duplicated, so we have to prepend the sku
-                            
+                         
+                            if(results.data[0][j] == 'Inn to the Pit'){
+                                results.data[3][j] = 1494; //inject unpainted price
+                            }
                             if(results.data[2][j] == null || results.data[3][j] == null){
                                 console.log("Skipping pack because it is missing the painted pack price, unpainted pack price, or both")
                             }else if(results.data[2][j] < 0.01 || results.data[3][j] < 0.01){
