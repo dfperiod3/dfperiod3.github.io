@@ -73,18 +73,20 @@
  
                         if (foundFirstCol && results.data[1][j] != null) {  //Sku exists.
                             console.log("Got item "+results.data[0][j]+", SKU="+results.data[1][j]);
+                            var packName = results.data[0][j];
+                            var sku = results.data[1][j]
 
                             if(results.data[2][j] == null || results.data[3][j] == null){
                                 console.log("Skipping pack because it is missing the painted pack price, unpainted pack price, or both")
                             }else if(results.data[2][j] < 0.01 || results.data[3][j] < 0.01){
                                 console.log("Skipping pack because either or both of the unpainted or painted pack price is <0.01")                            
                             }else{
-                                matrixHeader[colCount] = results.data[0][j]+" - Painted"//painted set name.  Do not change this suffix.
+                                matrixHeader[colCount] = results.data[0][j]+" - Painted - "+sku //painted set name.  Do not change this suffix. sku needed to disambiguate stone/wood names
                                 columnIndices[colCount] = j;
                                 packPrices[colCount] = results.data[2][j]
                                 console.log("   Painted Pack Price: "+packPrices[colCount])
                                 colCount++;
-                                matrixHeader[colCount] = results.data[0][j]+" - Unpainted" //unpainted set name.  Do not change this suffix.                         
+                                matrixHeader[colCount] = results.data[0][j]+" - Unpainted - "+sku //unpainted set name.  Do not change this suffix. sku needed to disambiguate stone/wood names                         
                                 columnIndices[colCount] = j;
                                 packPrices[colCount] = results.data[3][j]
                                 console.log("   Unpainted Pack Price: "+packPrices[colCount])
@@ -154,6 +156,10 @@
                             console.log("Skipping item Rug - Red Griffon because it doesn't exist in any packs with a non-zero price")
                             continue;
                         }
+                        if(results.data[i][1]== 'Rug - Giant Badger Pelt'){
+                            console.log("Skipping item Rug - Red Griffon because it doesn't exist in any packs with a non-zero price")
+                            continue;
+                        }                        
                         items[rowIndex] = results.data[i][1] + " - Painted" //record quantity for painted
                         items[rowIndex+1] = results.data[i][1] + " - Unpainted"; //and for unpainted, which will always be the same.                    
                         matrixData[rowIndex] = new Array(columnIndices.length);
@@ -715,7 +721,7 @@
     <p1>
         <B>Enter CSV export of Randy's Spreadsheet: <input type="file" id="csv-file" name="files" /> OR <a
                 href="javascript:loadCsv('https://dfperiod3.github.io/cuLowtownPledgePlanner.csv', true);">Use
-                Version downloaded Feb. 16@11:46PM EST</a></B>
+                Version downloaded Feb. 16@11:46PM EST</a></B> (optimizer updated Feb. 17 @11:21PM EDT)
                 
     </p1>
 

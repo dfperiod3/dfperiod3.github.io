@@ -9,7 +9,7 @@
     <script src="https://unpkg.com/papaparse@latest/papaparse.min.js"></script>
     <script src="https://code.jquery.com/jquery-2.2.4.min.js"
         integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/javascript-lp-solver/prod/solver.js"></script>
+    <script src="https://unpkg.com/javascript-lp-solver/prod/solver.js"></script>   
     <!-- ILP solved via library at https://github.com/JWally/jsLPSolver -->
     <script>
         var data;
@@ -72,19 +72,23 @@
                         }
  
                         if (foundFirstCol && results.data[1][j] != null) {  //Sku exists.
-                            console.log("Got item "+results.data[0][j]+", SKU="+results.data[1][j]);
-
+                            console.log("Got pack "+results.data[0][j]+", SKU="+results.data[1][j]);
+                            
+                            var packName = results.data[0][j];
+                            var sku = results.data[1][j]
+                            //some item names are duplicated, so we have to prepend the sku
+                            
                             if(results.data[2][j] == null || results.data[3][j] == null){
                                 console.log("Skipping pack because it is missing the painted pack price, unpainted pack price, or both")
                             }else if(results.data[2][j] < 0.01 || results.data[3][j] < 0.01){
                                 console.log("Skipping pack because either or both of the unpainted or painted pack price is <0.01")                            
                             }else{
-                                matrixHeader[colCount] = results.data[0][j]+" - Painted"//painted set name.  Do not change this suffix.
+                                matrixHeader[colCount] = packName+" - Painted - "+sku //painted set name.  Do not change this suffix.  note sku is required to diambiguate duplicate wood/stone items.
                                 columnIndices[colCount] = j;
                                 packPrices[colCount] = results.data[2][j]
                                 console.log("   Painted Pack Price: "+packPrices[colCount])
                                 colCount++;
-                                matrixHeader[colCount] = results.data[0][j]+" - Unpainted" //unpainted set name.  Do not change this suffix.                         
+                                matrixHeader[colCount] = packName+" - Unpainted - "+sku //unpainted set name.  Do not change this suffix.  note sku is required to diambiguate duplicate wood/stone items.                       
                                 columnIndices[colCount] = j;
                                 packPrices[colCount] = results.data[3][j]
                                 console.log("   Unpainted Pack Price: "+packPrices[colCount])
@@ -99,20 +103,6 @@
                         }
                     }
                     
-
-                    //init packPrices
-                    // for (var j = 1; j < results.data.length; ++j) {
-                    //     if (results.data[j][1] == 'Painted Set Price') {
-                    //         for (var j = 0; j < columnIndices.length; ++j) {
-                    //             packPrices[j] = results.data[j][columnIndices[j]];
-                    //         }
-                    //     }
-                    //     if (results.data[j][1] == 'Unpainted Set Price') {
-                    //         for (var j = 0; j < columnIndices.length; ++j) {
-                    //             packPrices['Unpainted'][j] = results.data[j][columnIndices[j]];
-                    //         }
-                    //     }
-                    // }
 
                     var beginRowIndexInclusive = -1; //init row index of first item.
                     for (var j = 1; j < results.data.length; ++j) { //skip over rows until we reach the first item, and record its row index
@@ -140,6 +130,12 @@
                             console.log("Skipping item Rug - Red Griffon because it doesn't exist in any packs with a non-zero price")
                             continue;
                         }
+                        if(results.data[i][1]== 'Rug - Giant Badger Pelt'){
+                            console.log("Skipping item Rug - Red Griffon because it doesn't exist in any packs with a non-zero price")
+                            continue;
+                        }
+
+                        if(results.data[i][1] )
                         items[rowIndex] = results.data[i][1] + " - Painted" //record quantity for painted
                         items[rowIndex+1] = results.data[i][1] + " - Unpainted"; //and for unpainted, which will always be the same.                    
                         matrixData[rowIndex] = new Array(columnIndices.length);
@@ -252,6 +248,7 @@
             outerDiv.innerHTML += '<input type=button value="optimize" onClick="javascript:optimize()">';
             outerDiv.innerHTML += 'Tolerance[<a href="javascript:showToleranceMessage()">?</a>]: <input id="tolerance" type=text name="tolerance" value="0" size=4>'
             outerDiv.innerHTML += 'Debug <input id="dbg" type="text">'
+            outerDiv.innerHTML += '<input type=button value="show desired items" onClick="javascript:showSummaryOfItems()">';
             $("#load-mypledge").change(handleLoadMyPledge);
             var prefixMap = {};
             for (var i = 0; i < items.length; ++i) {
@@ -323,7 +320,31 @@
             return indices;
         }
 
+        function subPack(packIndex){
+            if (maxMode == true){
+                alert("Error - can't substract sets in max mode")
+            }
+
+            var subtracted=false;
+            for (var i = 0; i < matrixData.length; ++i) {
+                var qty = matrixData[i][packIndex];
+                var current = parseInt(document.getElementById("item_" + i).value);            
+                if((qty > 0) && (current - qty) >= 0){
+                    document.getElementById("item_" + i).value = current - qty;
+                    subtracted=true;
+                    console.log("Subtracted " + qty + " of " + items[i]);
+                }    
+            }
+            if(subtracted){
+                console.log('Subtracted ' + matrixHeader[packIndex]);
+            }else{
+                console.log("Nothing to subtract for "+matrixHeader[packIndex])
+            }
+        }
+
+
         function addPack(packIndex) {
+         
             //get pack composition.
             for (var i = 0; i < matrixData.length; ++i) {
                 var qty = matrixData[i][packIndex];
@@ -335,30 +356,15 @@
                 } else {
                     document.getElementById("item_" + i).value = Math.max(current, qty, 0);
                 }
-
-                console.log("Added " + qty + " of " + items[i]);
+                if(qty > 0){
+                    console.log("Added " + qty + " of " + items[i]);
+                }
 
             }
-            console.log('Added ' + matrixHeader[packIndex]);
+            console.log('Added ' + matrixHeader[packIndex]+" with cost "+packPrices[packIndex]);
 
         }
-
-        // function populateDesired() {
-        //     var outerDiv = document.getElementById("desired");
-        //     var desiredForm = document.createElement('table');    
-
-        //     desiredForm.innerHTML = "Set desired items:<BR>";
-        //     desiredForm.innerHTML += '<input type=button value="add 1 of each painted" onClick="javascript:oneOfEachPainted()">';
-        //     desiredForm.innerHTML += '<input type=button value="add 1 of each unpainted" onClick="javascript:oneOfEachUnpainted()">';
-        //     desiredForm.innerHTML += '<input type=button value="clear" onClick="javascript:clearDesired()">';
-        //     desiredForm.innerHTML += '<BR>';
-        //     desiredForm.innerHTML += '<input type=button value="optimize" onClick="javascript:optimize()">';
-        //     for (var i = 0; i < items.length; ++i) {
-        //         desiredForm.innerHTML += '<tr><td><input value=0 type="text" id="item_' + i + '"></td><td>' + items[i] + '</td></tr>';
-        //     }
-
-        //     outerDiv.appendChild(desiredForm);
-        // }
+       
 
         function setMaxMode() {
             maxMode = true;
@@ -370,10 +376,10 @@
 
         function populatePacks() {
             var packForm = document.getElementById("packs");
-            packForm.innerHTML = '<tr><td colspan=3>(Optional) Add packs of items to the desired items list</td></tr>';
-            packForm.innerHTML += '<tr><td colspan=3><input type="radio" name="mode" value="sum" checked="checked" onClick="javascript:setSumMode()">Sum&nbsp;<input type="radio" name="mode" value="max" onClick="javascript:setMaxMode()">Max</td></tr>';
+            packForm.innerHTML = '<tr><td colspan=4>(Optional) Add packs of items to the desired items list</td></tr>';
+            packForm.innerHTML += '<tr><td colspan=4><input type="radio" name="mode" value="sum" checked="checked" onClick="javascript:setSumMode()">Sum&nbsp;<input type="radio" name="mode" value="max" onClick="javascript:setMaxMode()">Max</td></tr>';
             for (var j = 0; j < matrixHeader.length; ++j) {
-                packForm.innerHTML += '<tr><td style="width: 30px"><input type="button" value="Add" onClick="javascript:addPack(' + j + ')"></td><td style="width: 90px; font-size:8pt;"><input type="checkbox" id="omit_'+j+'">Omit</td><td>' + matrixHeader[j] + '</td><td>$' + packPrices[j] + '</td></tr>';
+                packForm.innerHTML += '<tr><td style="width: 30px"><input type="button" value="Add" onClick="javascript:addPack(' + j + ')"></td><td style="width: 3-px"><input type="button" value="Sub" onClick="javascript:subPack(' + j + ')"></td><td style="width: 90px; font-size:8pt;"><input type="checkbox" id="omit_'+j+'">Omit</td><td>' + matrixHeader[j] + '</td><td>$' + packPrices[j] + '</td></tr>';
             }
         }
 
@@ -476,6 +482,35 @@
             bottom.appendChild(table);
         }
 
+        function showSummaryOfItems(){
+            var bottom = document.getElementById('optimalpledge')
+            s = "<table>\n"
+            s += "<tr><td colspan='2'><B>List of *desired* items</B></td></tr>\n"
+            for (var i = 0; i < items.length; ++i) {
+                var qty = document.getElementById("item_" + i).value;
+                qty = parseInt(qty);
+                if (qty > 0) {
+                    // if(qty == 12){                        
+                    //     //works if i cut out the upper half.
+                    //     // if(i < (items.length/2)){
+                    //     if(i >=126 && i<=176){
+                    //         console.log("Cutting out item "+items[i]+" with index "+i); //178                            
+                    //         qty = 0;
+                    //     } //zero all <176 OK.    zero all <150 NOT ok.  
+                    // }
+                    // if ((items[i].endsWith('(1 PER BACKER)') || items[i] == 'Wildlands Backer Tote Bag') && qty > 1) {
+                    //     console.log("Forcing quantity of " + items[i] + " to 1");
+                    //     document.getElementById("item_" + i).value = 1;
+                    //     qty = 1;
+                    // }
+                    s += '<tr><td>'+items[i]+"</td><td>"+qty+"</td></tr>\n"
+                    //model['constraints'][items[i]] = { "min": qty };
+                }                          
+            }
+            s += '</table>'
+            bottom.innerHTML = s        
+        }
+
         function showSolution() {
             if (solution.feasible !== true) {
                 alert("ERROR: solution was not feasible");
@@ -544,6 +579,7 @@
             var dbg = parseInt(document.getElementById('dbg').value);
             //model['options'] = {"timeout":dbg}
            if (tolerance > 0) {
+                model['options']=[]
                 model['options']['tolerance'] = (tolerance / 100.0)                    
             }
             
@@ -555,7 +591,7 @@
             for (var i = 0; i < items.length; ++i) {
                 var qty = document.getElementById("item_" + i).value;
                 qty = parseInt(qty);
-                if (qty > 0) {
+                if (qty >= 0) {
                     // if(qty == 12){                        
                     //     //works if i cut out the upper half.
                     //     // if(i < (items.length/2)){
@@ -583,7 +619,7 @@
                 model['variables'][matrixHeader[j]]['cost'] = packPrices[j];
                 for (var i = 0; i < matrixData.length; ++i) {
                     var packQty = matrixData[i][j];
-                    if(packQty > 0){                    
+                    if(packQty >= 0){                    
                         model['variables'][matrixHeader[j]][items[i]] = packQty;
                     }
                     
@@ -669,7 +705,7 @@
     <p1>
         <B>Enter CSV export of Randy's Spreadsheet: <input type="file" id="csv-file" name="files" /> OR <a
                 href="javascript:loadCsv('https://dfperiod3.github.io/cuLowtownPledgePlanner.csv', true);">Use
-                Version downloaded Feb. 16@11:46PM EST</a></B>
+                Version downloaded Feb. 16@11:46PM EST</a></B> (optimizer updated Feb. 17 @11:21PM EDT)
                 
     </p1>
 
@@ -677,7 +713,7 @@
         <!--<table id="desired" class="altcolor"></table>-->
     </div>
 
-    <div class="split right">
+    <div class="split right">        
         <form id="p">
             <table id="packs"></table>
         </form>
