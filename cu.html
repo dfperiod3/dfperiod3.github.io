@@ -25,6 +25,31 @@
         var matrixHeaderMap;
         var solution;
         var model;
+        var filesetting;
+        var dlsetting;
+
+        function showDiscountsMessage(){
+            alert("Discounts support is disabled by default because it can slow down the optimization process in some cases (by 10x or more).  Every possible double-landmark, double-district, and triple district pack is injected as a sort of virtual 'pack' to be considered, greatly expanding the spaces of packs that need to be considered")
+        }
+        function resetFrames(){
+            if(filesetting != null){ //otherwise, there's nothing to reset.
+                model=null;
+                solution=null;
+                matrixHeaderMap=null;
+                itemsMap=null;
+                maxMode = false;
+                matrixData = null;
+                matrixHeader = null;
+                packPrices = [[]];
+                items = [];
+                endColIndexInclusive = Number.MAX_SAFE_INTEGER;
+                beginColIndexInclusive = -1;
+                data=null;
+                loadCsv(filesetting, dlsetting)
+            }else{
+                console.log("nothing to reset.")
+            }
+        }
 
         function swap(json) {
             var ret = {};
@@ -34,7 +59,76 @@
             return ret;
         }
 
+        function injectDoubleDiscounts(districts, description, paintedDiscount, unpaintedDiscount){
+            //var matrixData; //quantity matrix.  maps [i][j] -> quantity of the item called items[i] in the set called matrixHeader[j]        
+            paint=['painted', 'unpainted']
+            console.log("==============")
+            console.log(districts)
+            for (var di = 0; di < districts.length; ++di) {
+                for (var dj = di; dj < districts.length; ++dj) {                    
+                    for(var k = 0; k < paint.length; ++k){      
+                        console.log("matrixHeader.length="+matrixHeader.length) //increase as we accumulate new double district columns.
+                        console.log("matrixData[0].length="+matrixData[0].length) //this stays fixed.           
+                        console.log("matrixData[1].length="+matrixData[1].length)                  
+                        var newColIndex = matrixHeader.length;
+                        var paintstatus = paint[k]
+                        if(paintstatus == 'painted'){
+                            discount = paintedDiscount;
+                        }else{
+                            discount = unpaintedDiscount;
+                        }
+                        matrixHeader[newColIndex] = 'Double '+description+' (' + districts[di][paintstatus]['simple_name'] + ', ' + districts[dj][paintstatus]['simple_name'] + ')' //inject double districts into header.
+                        packPrices[newColIndex] = districts[di][paintstatus]['price'] + districts[dj][paintstatus]['price'] - discount;
+
+                        //now add the compositions of the two districts
+                        matrixHeaderIndex1 = districts[di][paintstatus]['matrixHeaderIndex'];
+                        matrixHeaderIndex2 = districts[dj][paintstatus]['matrixHeaderIndex']
+                        //newIndex = matrixData.length;
+                        for (var i = 0; i < matrixData.length; ++i) {
+                            // matrixData[i][matrixHeader[i].length] = matrixData[i][matrixHeaderIndex1] + matrixData[i][matrixHeaderIndex2]
+                            matrixData[i][matrixData[i].length] = matrixData[i][matrixHeaderIndex1] + matrixData[i][matrixHeaderIndex2]
+                        }
+                    }
+                }
+            }
+        }
+
+        function injectTripleDiscounts(districts, description, paintedDiscount, unpaintedDiscount){
+            for (var di = 0; di < districts.length; ++di) {
+                for (var dj = di; dj < districts.length; ++dj) {   
+                    for(var dk = dj; dk < districts.length; ++dk){                 
+                        for(var k = 0; k < paint.length; ++k){                                         
+                            var newColIndex = matrixHeader.length;
+                            var paintstatus = paint[k]
+                            if(paint == 'painted'){
+                                discount = paintedDiscount;
+                            }else{
+                                discount = unpaintedDiscount;
+                            }
+                            matrixHeader[newColIndex] = 'Triple '+description+' (' + districts[di][paintstatus]['simple_name'] + ', ' + districts[dj][paintstatus]['simple_name'] + ', '+districts[dk][paintstatus]['simple_name']+')' //inject double districts into header.
+                            packPrices[newColIndex] = districts[di][paintstatus]['price'] + districts[dj][paintstatus]['price'] +  districts[dk][paintstatus]['price'] - discount
+
+                            //now add the compositions of the two districts
+                            matrixHeaderIndex1 = districts[di][paintstatus]['matrixHeaderIndex'];
+                            matrixHeaderIndex2 = districts[dj][paintstatus]['matrixHeaderIndex'];
+                            matrixHeaderIndex3 = districts[dk][paintstatus]['matrixHeaderIndex'];
+                            //newIndex = matrixData.length;
+                            for (var i = 0; i < matrixData.length; ++i) {
+                                // matrixData[i][matrixHeader[i].length] = matrixData[i][matrixHeaderIndex1] + matrixData[i][matrixHeaderIndex2]
+                                matrixData[i][matrixData[i].length] = matrixData[i][matrixHeaderIndex1] + matrixData[i][matrixHeaderIndex2] + matrixData[i][matrixHeaderIndex3];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+
         function loadCsv(file, dl) {
+            filesetting=file;
+            dlsetting=dl;
+            
+
             Papa.parse(file, {
                 header: false,
                 download: dl,
@@ -63,7 +157,11 @@
                         alert("Unexpected file format -- Painted Set Price was not found in the expected row");
                         return
                     }
-                    
+                    districts = new Set(['Ambush Alley', 'Downtown Dockside', 'Frontier Outpost',	"Lumberbaron's Lodge",'District - Market Square', 'Warfield Village', 'Inn to the Pit'])
+                    landmarks = new Set(['City Barracks', "Harbormaster's Hut",	'Humble Homesteads', 'Midtown Merchants', 'Speakeasy Murderbar', "Thieves' Guild", 'Wharf Warehouse', "Wizard's Townhouse",	'Ye Olde Time Inn'])
+
+                    districtMap=[]
+                    landmarkMap=[]
                     //init matrixHeader, columnIndices, packPrices         
                     for (var j = 0; j < results.data[0].length; ++j) { //iterate over columns of the header
                         if (results.data[0][j] == 'City Builder Basics - Wood Starter') {
@@ -78,27 +176,54 @@
                             var sku = results.data[1][j]
                             //some item names are duplicated, so we have to prepend the sku
                          
-                            if(results.data[0][j] == 'Inn to the Pit'){
-                                results.data[3][j] = 1494; //inject unpainted price
-                            }
+                            // if(results.data[0][j] == 'Inn to the Pit'){
+                            //     results.data[3][j] = 1494; //inject unpainted price
+                            // }
                             if(results.data[2][j] == null || results.data[3][j] == null){
                                 console.log("Skipping pack because it is missing the painted pack price, unpainted pack price, or both")
                             }else if(results.data[2][j] < 0.01 || results.data[3][j] < 0.01){
                                 console.log("Skipping pack because either or both of the unpainted or painted pack price is <0.01")                            
                             }else{
+                                var m=[]
+                                var isDistrict=false;
+                                var isLandmark=false;
+                                if(districts.has(packName)){
+                                    isDistrict=true;
+                                }
+                                if(landmarks.has(packName)){
+                                    isLandmark = true;
+                                }
                                 matrixHeader[colCount] = packName+" - Painted - "+sku //painted set name.  Do not change this suffix.  note sku is required to diambiguate duplicate wood/stone items.
                                 columnIndices[colCount] = j;
                                 packPrices[colCount] = results.data[2][j]
                                 console.log("   Painted Pack Price: "+packPrices[colCount])
+                                m['painted']={
+                                    "simple_name": packName+" - Painted",
+                                    "price": results.data[2][j],    
+                                    "matrixHeaderIndex": colCount
+                                }
                                 colCount++;
                                 matrixHeader[colCount] = packName+" - Unpainted - "+sku //unpainted set name.  Do not change this suffix.  note sku is required to diambiguate duplicate wood/stone items.                       
                                 columnIndices[colCount] = j;
                                 packPrices[colCount] = results.data[3][j]
+                                m['unpainted']={
+                                    "simple_name": packName+" - Unpainted",
+                                    "price": results.data[3][j],    
+                                    "matrixHeaderIndex": colCount
+                                }
                                 console.log("   Unpainted Pack Price: "+packPrices[colCount])
                                 colCount++;
+
+                                if(isDistrict){
+                                    districtMap.push(m)
+                                }else if(isLandmark){
+                                    landmarkMap.push(m)
+                                }
                             }
                         }
                     }
+                    // double district, triple district, double landmark
+
                     //sanity checK: assert every set has a price.
                     for(var i = 0; i < packPrices.length; ++i){
                         if(packPrices[i] <= 0){
@@ -143,7 +268,7 @@
                         items[rowIndex+1] = results.data[i][1] + " - Unpainted"; //and for unpainted, which will always be the same.                    
                         matrixData[rowIndex] = new Array(columnIndices.length);
                         matrixData[rowIndex+1] = new Array(columnIndices.length);
-                        for (var j = 0; j <= columnIndices.length; j+=2) { //go over all painted and unpainted sets.
+                        for (var j = 0; j < columnIndices.length; j+=2) { //go over all painted and unpainted sets. //used to be <= !!!
                             //j is painted, j+1 is unpainted
                             if (!results.data[i][columnIndices[j]]) { // no quantity
                                 matrixData[rowIndex][colIndex] = 0;   
@@ -177,7 +302,12 @@
                         }
                     }
 
-                    
+                    if(document.getElementById("supportDiscounts").checked){
+                        console.log("Enabling discount support")
+                        injectDoubleDiscounts(districtMap, 'Districts', 180, 125)
+                        injectDoubleDiscounts(landmarkMap, 'Landmarks', 50, 30)
+                        injectTripleDiscounts(districtMap, 'Districts', 370, 250)
+                    }
                     
                     console.log("Read items as " + items);
                     console.log("Read packs as " + matrixHeader);
@@ -650,7 +780,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
         .split {
-            height: 60%;
+            height: 50%;
             width: 50%;
             position: fixed;
             z-index: 1;
@@ -706,9 +836,11 @@
 
 <body>
     <p1>
+        <center><h1>Cities Untold Optimizer</h1></center>
+        Identifies the minimum cost combination of packs containing at least the items indicated on the left. <A href="https://github.com/dfperiod3/dfperiod3.github.io#readme">Documentation</A> <BR>
         <B>Enter CSV export of Randy's Spreadsheet: <input type="file" id="csv-file" name="files" /> OR <a
-                href="javascript:loadCsv('https://dfperiod3.github.io/cuLowtownPledgePlanner.csv', true);">Use
-                Version downloaded Feb. 16@11:46PM EST</a></B> (optimizer updated Feb. 17 @11:21PM EDT)
+                href="javascript:loadCsv('https://dfperiod3.github.io/cuLowtownPledgePlanner.csv', true, false);">Use
+                Version downloaded Feb. 16@11:46PM EST</a></B> (optimizer updated Feb. 17 @11:21PM EDT) <input id="supportDiscounts" type="checkbox" onClick="javascript:resetFrames()">Support Discounts[<a href="javascript:showDiscountsMessage()">?</a>] <HR>
                 
     </p1>
 
@@ -716,7 +848,8 @@
         <!--<table id="desired" class="altcolor"></table>-->
     </div>
 
-    <div class="split right">        
+    
+    <div class="split right">                
         <form id="p">
             <table id="packs"></table>
         </form>
