@@ -1,86 +1,78 @@
-# wildlandsoptimizer
+# Cities-Untold Pledge Optimizer
 
 ## Intro
-Optimizes Dwarven Forge Wildlands pledges
+This tool helps you figure out your optimal pledge.   Enter in the items you want on the left, click optimize, and it will tell you which sets to buy 
+to achieve at least those items at minimal cost.  
 
-It will probably work best on a laptop or computer, rather than a mobile device or tablet, as it runs locally in your browser and has to do some 
-crunchy computation.
+This and other features allow the optimizer to solve other problems including:
 
-I use it for "subtractive" pledge building, where you start with more and then eliminate or reduce the quantity of certain items you decide you can live without, and then use the program to identify which packs you need to buy to achieve the reduced 
-configuration.
-
-Example problems it can help with:
-
-- I want N of every sculpt.  What's the least expensive combination of packs to achieve this?
-- I want wildlands untamed, but I'm willing to paint this, this, and this; whereas I want this, this and this pre-painted.  
-What's the least expensive combination of packs?
-- I have certain encounters/layouts in mind.  I want to be able to build any of them, just not all at the same time.  What's the least expensive
+- I want a bunch of districts and landmarks, but there are some items I'm willing to paint and some I'm not. What's the least expensive 
 combination of packs?
+- I have certain encounters/layouts in mind.  I want to be able to build any of them, just not all at the same time.  What's the least 
+expensive combination of packs?
+
+The algorithm always finds the combination of sets that gives at least the items entered.  This means it may at times 
+add on an entire expensive set just to get one item.  
 
 ## Kudos:
-- Randy, whose spreadsheet powers the thing.
-- The guy who wrote the linear program solver library I use
+- Dwarven Forge, for making this stuff
+- "Randy", whose spreadsheet powers this thing.
+- The guy who wrote the integer linear program solver library that I use (https://github.com/JWally/jsLPSolver)
 
-## How do I use this thing?
-You can either upload an export of Randy's latest spreadsheet, or just click the link at the top to use the most recent version.  If you choose to upload the export yourself, here are the steps:
+## How do I use this?
 
-1.  Navigate to Randy's spreadsheet (see FAQ for link)
-2.  Select the 'Details' tab.
-3.  Click File->Download->Comma separated values
-4.  Navigate to the app at https://dfperiod3.github.io/
-5.  Click 'Browse' and select the .csv file you just downloaded
+### Input
+To work, the program needs to know what packs exist, their composition, and their price.  It gets this information from the 'Details' tab 
+of Randy's spreadsheet. Generally, you'll want to click the 'Use Version...' link.  But, if you prefer, you can use the 'Browse' button to upload a .CSV export of this 'Details' tab yourself.  The 
+ONLY information considered is pack composition and price from this 'Details' tab of the spreadsheet.  
 
-Otherwise, just click the link.  (The link may not be updated as frequently as Randy's spreadsheet).
+### User Interface
+The display has three panes: the left pane is where you make your desired item selections.   The right pane is a convenience, and offers 
+all the packs offered in the CULT KS.  You can click 'Add' beside any of these packs to update the desired item list (left pane) 
+with the items comprising the pack.  If the 'Sum' button is selected, the pack's contents are ADDED to the existing quantities of items
+in the desired item list.  If 'Max' is selected, then for each item in the corresponding pack, the desired quantity of that item will be set 
+to at least that quantity.   Most of the time, you'll want "sum", but if you're trying to see how to build one thing or another thing, but not at the same time, choose max.  
 
-The display has three panes: the left pane is where you make your desired item selections.  The right pane is a convenience, and offers all the packs offered in the Wildlands KS.  You can click 'Add' beside any of these packs to update the desired item list (left pane) with the items comprising the pack.  If the 'Sum' button is selected, the pack's contents are ADDED to the existing quantities of items in the desired item list.  If 'Max' is selected, then the desired quantity of each item in the left pane is set to Max(a,b) where a is the current desired quantity of the item, and b is the number of that item in the selected pack.  Each pack also has an 'Omit' checkbox.  If this clicked, it means the pack will NOT be considered in the optimization.  You can still add the contents of the pack to your desired item list, but the pack itself will never be selected as part of the optimal solution.  This can be helpful for force-excluding larger packs to see how they might be decomposed into smaller packs.
+Each pack also has an 'Omit' checkbox.  If this is clicked, it means the pack will NOT be considered in the optimization.  
+You can still add the contents of the pack to your desired item list, but the pack itself will never be selected as part of the optimal
+solution.  This can be helpful to force-exclude larger packs to see how they might be decomposed into smaller packs.
+(This is probably less useful for CULT, but the feature remains as a holdover from the wildlands pledge optimizer)
 
-The left pane additionally has some short cut buttons that set the desired quantities for 1 of every painted or unpainted sculpt, excluding surface textures, trays, foggers, or anything that isn't a sculpt.
+The left pane additionally has some short cut buttons that set the desired quantities for 1 of every painted or unpainted sculpt, 
+excluding trays, battle boards, or anything that isn't a sculpt.
 
-When you're ready, click 'Optimize'.  Most of the time this will take less than a few seconds.  However, in some cases it can take several minutes and your browser may complain about the script being unresponsive.  Give it some time.
+When you're ready, click 'Optimize'.  Most of the time this will take less than a few seconds.  However, in some cases it can take a
+minute or two and your browser may complain about the script being unresponsive.  Give it some time.  In other cases, it just might not 
+work. Sorry!
 
-Once it finds the optimal packs, they will be listed in a third pane across the bottom.  There will be a link to the item manifest, where you can see all the items that make up the optimal pledge.  Within the item manifest, there is also a toggle link that allows you to only show those items which were NOT requested.  These are all the "spillover" items / extras / leftovers that were part of the optimal packs, but not actually required to fulfill your desired items.  
+Once it finds the optimal packs, they will be listed in a third pane across the bottom.  There will be a link to the item manifest, 
+where you can see all the items that make up the optimal pledge.  Within the item manifest, there is also a toggle link that allows you
+to only show those items which were NOT requested.  These are all the "spillover" items / extras / leftovers that were part of the 
+optimal pack selection, but which you didn't request in the left pane.
 
-### Interpreting "% Lost if Omitted" and "Desired items lost if omitted"
-Consider a desired item list consisting of the full contents of a majestic waterfalls pack, plus 1 extra cascading waterfall (for a total of 2),
-plus one balefire lantern.
+### Example - I want to build dockside district or warfield village, but not at the same time.
+1. Click 'Use Version...' link to load the Details tab in Randy's spreadsheet
+2. In the right pane, click the 'max' radio button.  This ensures that we are not adding the contents of each district we select.  Instead, for each piece, we want the max(A,B), where A is the quantity of the item in the first district, and B is the quantity of the item in the second district.
+3. Click 'Add' beside the Dockside district.  This will add all items comprising the dockside district to our desired item list.
+4. Click 'Add' beside the Warfield Village district.  This will add all the items comprising Warfield village that aren't in Dockside to our desired item list.  It will also "bump up" the quantity of any items present in both districts, if the existing quantity is insufficient for Warfield village.
+5. Click 'Optimize'.
+6. Wait a few hundred milliseconds, then see the optimal pledge in the bottom pane. 
 
-The optimal pledge will choose a majestic waterfalls pack, and then it will select *another* majestic waterfalls pack because it's the 
-only way to get another cascading waterfall.  Then it will select an entire spooky swamp pack because it's the cheapest way to get a 
-balefire lantern.
-
-
-In the output below, you will see:
-
-| Qty |	Item |	Cost |	% Lost if Omitted	| Desired items lost if omitted |
-|:----|:----:|:-----:|:------------------:|------------------------------:| 
-| 2 |	Majestic Waterfalls - Unpainted |	$110 |	14 |	-1 Cascading Waterfall - Unpainted |
-| 1 |	Spooky Swamp - Painted |	$38 |	6 |	-1 Balefire Lantern (LED) - Painted |
-
-
-
-%Lost if omitted is the number of DESIRED items lost if ONE of the corresponding packs was dropped, relative to the total number of items in 
-the pack.   In the above example, if we drop one of the majestic waterfalls, we lose a whole bunch of stuff, but everything is still at
-or equal to our desired quantities except the cascading waterfall, which is under the desired amount by 1.  Therefore the fraction is computed as
-(2-1)/(# items in waterfall pack).
-
-A low % Lost if Omitted suggests that a pack isn't contributing much to your desired set list, and is giving lots of extra pieces that are
-either not in your list, or are over and above the quantity you want.
-
-The 'Desired items lost if omitted' shows you which items from your desired list would be lost if ONE of the corresponding pack was
-dropped.  Once again, this only counts if the item count would drop below your desired quantity.  In the above, dropping the waterfall 
-means we lose a bunch of stuff, but only the cascading waterfall is reduced below our desired quantity.   This column roughly shows 
-what this pack is contributing to your pledge.  Few items in this column means that at least one of the corresponding pack isn't contributing much to your desired items, and/or giving you a lot of extras.
 
 ## FAQ
 **My browser hung!**
 
-It probably didn't.  Some configurations (e.g. 1 of each item) are just harder to solve and could take several minutes.  However, most configurations are very fast (< 1s)
+It probably didn't.  Some configurations (e.g. 1 of each item) are just harder to solve and could take several minutes.  For example, 
+calculating the optimal packs to buy to get 1 of every sculpt takes about 5 hours to solve, WITHOUT discount support (see below).
+
+However, many configurations are very fast. 
 
 **Do the prices include shipping?**
-
 No.
 
-**What version of Randy's spreadsheet do I use?**
+**What's with the discounts support**
+Discounts are supported if you click the checkbox.  If the checkbox is NOT checked, then the algorithm is unaware of the double-district, triple-district, and double-landmark discounts.  If its checked, it is aware and will consider these discounts in its search.  However, this can drastically slow performance, in some cases resulting in a 2-minute problem becoming a 2 hour problem.  For that reason, I've made it optional.
 
-I used this one https://docs.google.com/spreadsheets/d/1RwR0uuu4ei2bNVJ__59HXnwZbXncjYEX/edit#gid=2070237370 dated 2020-10-24
+
+
 
