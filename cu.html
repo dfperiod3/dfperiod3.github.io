@@ -773,7 +773,27 @@
                 table.innerHTML = "<tr><th style='text-align: left; '>Pack</th><th style='text-align: left; width: 40px'>Qty</th><th style='text-align: left; width: 40px'>Cost</th><th style='text-align: left;'>% Lost if Omitted</th><th style='text-align: left;'>Desired items lost if omitted</th></tr>";
                 var itemCounts = getItemCounts();
 
-                for (key in solution) { //key is pack
+                var solutionPackNames = []
+                for(key in solution){
+                    if (key != 'feasible' && key != 'result' && key != 'bounded' && key != 'isIntegral') {
+                        //key is a packname
+                        solutionPackNames.push(key)
+                    }
+                }
+                solutionPackNames.sort(function(a, b){ // sort the output so it appears in the same order as the right pane pack list.               
+                    thing1=parseInt(matrixHeaderMap[a])
+                    thing2=parseInt(matrixHeaderMap[b])                    
+                    if(thing1 < thing2){
+                        return -1;
+                    }
+                    if(thing2>thing1){
+                        return 1;
+                    }
+                    return 0;                   
+                });
+
+                for(var i = 0; i < solutionPackNames.length; ++i){
+                    key = solutionPackNames[i]
                     if (key != 'feasible' && key != 'result' && key != 'bounded' && key != 'isIntegral') {
                         // What are the total number of items introduced by this pack.
                         var packContents = getPackContents(matrixHeaderMap[key]);
@@ -808,7 +828,7 @@
                             omissionString = omissionString.substring(0, omissionString.length - 1);
                         }
                         itemsLost = omissionString;
-                        table.innerHTML += "<tr><td>" + key + "</td><td>" + solution[key] + "</td><td>$" + (solution[key] * packPrices[matrixHeaderMap[key]]) + "</td><td>" + fractionLost + "</td><td>" + itemsLost + "</td></tr>"
+                        table.innerHTML += "<tr><td>" + key + "</td><td><a href=''>-</a>"+solution[key]+"<a href=''>+</a>" + "</td><td>$" + (solution[key] * packPrices[matrixHeaderMap[key]]) + "</td><td>" + fractionLost + "</td><td>" + itemsLost + "</td></tr>"
                     }
                 }
                 bottom.appendChild(table);
@@ -958,7 +978,7 @@
         Identifies the minimum cost combination of packs containing at least the items indicated on the left. <A href="https://github.com/dfperiod3/dfperiod3.github.io#readme">Documentation</A> <BR>
         <B>Enter CSV export of Randy's Spreadsheet: <input type="file" id="csv-file" name="files" /> OR <a
                 href="javascript:loadCsv('https://dfperiod3.github.io/cuLowtownPledgePlanner.csv', true, false);">Use
-                Version downloaded Feb. 28@1:33AM EST</a></B> (optimizer code last updated Mar. 5 @7:10PM EST) <input id="supportDiscounts" type="checkbox" onClick="javascript:resetFrames()">Support Discounts[<a href="javascript:showDiscountsMessage()">?</a>] <HR>
+                Version downloaded Feb. 28@1:33AM EST</a></B> (optimizer code last updated Mar. 9 @11:52PM EST) <input id="supportDiscounts" type="checkbox" onClick="javascript:resetFrames()">Support Discounts[<a href="javascript:showDiscountsMessage()">?</a>] <HR>
                 
     </p1>
 
