@@ -10,7 +10,6 @@
     <script src="https://code.jquery.com/jquery-2.2.4.min.js"
         integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/javascript-lp-solver/prod/solver.js"></script>   
-    <!-- <script src="jsLPSolver/src/solver.js"></script> -->
     <!-- ILP solved via library at https://github.com/JWally/jsLPSolver -->
     <script>
         var data;
@@ -62,7 +61,6 @@
 
         function injectDoubleDiscounts(districts, description, paintedDiscount, unpaintedDiscount){
             //var matrixData; //quantity matrix.  maps [i][j] -> quantity of the item called items[i] in the set called matrixHeader[j]        
-            var injected=0;
             paint=['painted', 'unpainted']
             console.log("==============")
             console.log(districts)
@@ -86,7 +84,6 @@
                         matrixHeaderIndex1 = districts[di][paintstatus]['matrixHeaderIndex'];
                         matrixHeaderIndex2 = districts[dj][paintstatus]['matrixHeaderIndex']
                         //newIndex = matrixData.length;
-                        ++injected;
                         for (var i = 0; i < matrixData.length; ++i) {
                             // matrixData[i][matrixHeader[i].length] = matrixData[i][matrixHeaderIndex1] + matrixData[i][matrixHeaderIndex2]
                             matrixData[i][matrixData[i].length] = matrixData[i][matrixHeaderIndex1] + matrixData[i][matrixHeaderIndex2]
@@ -94,11 +91,9 @@
                     }
                 }
             }
-            return injected;
         }
 
         function injectTripleDiscounts(districts, description, paintedDiscount, unpaintedDiscount){
-            var injected=0;
             for (var di = 0; di < districts.length; ++di) {
                 for (var dj = di; dj < districts.length; ++dj) {   
                     for(var dk = dj; dk < districts.length; ++dk){                 
@@ -110,23 +105,6 @@
                             }else{
                                 discount = unpaintedDiscount;
                             }
-
-                             //count how many times di, dj, dk, and dl are equal. 
-                             var m={}
-                            incMap(m, di.toString())
-                            incMap(m, dj.toString())
-                            incMap(m, dk.toString())
-                            // var disregard=false
-                            // for(var l in m){
-                            //     if(m[l] > 2){
-                            //         disregard=true
-                            //     }
-                            // }
-                            // if(disregard == true){
-                            //     //For performance reasons, we only allow up to two of the same set to be chosen.
-                            //     break;
-                            // }
-
                             matrixHeader[newColIndex] = 'Triple '+description+' (' + districts[di][paintstatus]['simple_name'] + ', ' + districts[dj][paintstatus]['simple_name'] + ', '+districts[dk][paintstatus]['simple_name']+')' //inject double districts into header.
                             packPrices[newColIndex] = districts[di][paintstatus]['price'] + districts[dj][paintstatus]['price'] +  districts[dk][paintstatus]['price'] - discount
 
@@ -135,7 +113,6 @@
                             matrixHeaderIndex2 = districts[dj][paintstatus]['matrixHeaderIndex'];
                             matrixHeaderIndex3 = districts[dk][paintstatus]['matrixHeaderIndex'];
                             //newIndex = matrixData.length;
-                            ++injected;
                             for (var i = 0; i < matrixData.length; ++i) {
                                 // matrixData[i][matrixHeader[i].length] = matrixData[i][matrixHeaderIndex1] + matrixData[i][matrixHeaderIndex2]
                                 matrixData[i][matrixData[i].length] = matrixData[i][matrixHeaderIndex1] + matrixData[i][matrixHeaderIndex2] + matrixData[i][matrixHeaderIndex3];
@@ -144,74 +121,6 @@
                     }
                 }
             }
-            return injected;
-        }
-
-        function incMap(m, key){
-            if(key in m){
-                m[key] += 1
-            }else{
-                m[key] = 1
-            }
-            return m
-        }
-
-        //340 unpainted, 560 painted
-        function injectQuadDiscounts(districts, description, paintedDiscount, unpaintedDiscount){
-            var injected = 0;
-            console.log("Injecting quad discounts")
-            for (var di = 0; di < districts.length; ++di) {
-                console.log(di)
-                for (var dj = di; dj < districts.length; ++dj) {   
-                    for(var dk = dj; dk < districts.length; ++dk){                 
-                        for(var dl = dk; dl < districts.length; ++dl){
-                            for(var k = 0; k < paint.length; ++k){                                         
-                                var newColIndex = matrixHeader.length;
-                                var paintstatus = paint[k]
-                                if(paint == 'painted'){
-                                    discount = paintedDiscount;
-                                }else{
-                                    discount = unpaintedDiscount;
-                                }
-
-                                //count how many times di, dj, dk, and dl are equal. 
-                                var m={}
-                                incMap(m, di.toString())
-                                incMap(m, dj.toString())
-                                incMap(m, dk.toString())
-                                incMap(m, dl.toString())
-                                var disregard=false
-                                for(var l in m){
-                                    if(m[l] > 2){
-                                        disregard=true
-                                    }
-                                }
-                                if(disregard == true){
-                                    //For performance reasons, we only allow up to two of the same set to be chosen.
-                                    break;
-                                }
-                                
-                                
-                                matrixHeader[newColIndex] = 'Quad '+description+' (' + districts[di][paintstatus]['simple_name'] + ', ' + districts[dj][paintstatus]['simple_name'] + ', '+districts[dk][paintstatus]['simple_name']+ ', '+districts[dl][paintstatus]['simple_name']+')' //inject quad districts into header.
-                                packPrices[newColIndex] = districts[di][paintstatus]['price'] + districts[dj][paintstatus]['price'] +  districts[dk][paintstatus]['price'] + districts[dl][paintstatus]['price'] - discount
-
-                                //now add the compositions of the two districts
-                                matrixHeaderIndex1 = districts[di][paintstatus]['matrixHeaderIndex'];
-                                matrixHeaderIndex2 = districts[dj][paintstatus]['matrixHeaderIndex'];
-                                matrixHeaderIndex3 = districts[dk][paintstatus]['matrixHeaderIndex'];
-                                matrixHeaderIndex4 = districts[dl][paintstatus]['matrixHeaderIndex'];
-                                ++injected;
-                                //newIndex = matrixData.length;
-                                for (var i = 0; i < matrixData.length; ++i) {
-                                    // matrixData[i][matrixHeader[i].length] = matrixData[i][matrixHeaderIndex1] + matrixData[i][matrixHeaderIndex2]
-                                    matrixData[i][matrixData[i].length] = matrixData[i][matrixHeaderIndex1] + matrixData[i][matrixHeaderIndex2] + matrixData[i][matrixHeaderIndex3]+ matrixData[i][matrixHeaderIndex4];
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            return injected;
         }
         
 
@@ -248,20 +157,18 @@
                         alert("Unexpected file format -- Painted Set Price was not found in the expected row");
                         return
                     }
-                    districts = new Set(['Ambush Alley', 'Downtown Dockside', 'Frontier Outpost',	"Lumberbaron's Lodge", 'District - Market Square', 'Warfield Village', 'Inn to the Pit', 'Elven Trading Post', 'Compl. A: Building Blocks',	'Compl. B: Dressing & Building Systems', 'Compl. D:  All Modular Roofs'])
+                    districts = new Set(['Ambush Alley', 'Downtown Dockside', 'Frontier Outpost',	"Lumberbaron's Lodge",'Market Square', 'Warfield Village', 'Inn to the Pit', 'Elven Trading Post'])
                     landmarks = new Set(['City Barracks', "Harbormaster's Hut",	'Humble Homesteads', 'Midtown Merchants', 'Speakeasy Murderbar', "Thieves' Guild", 'Wharf Warehouse', "Wizard's Townhouse",	'Ye Olde Time Inn'])
 
                     districtMap=[]
                     landmarkMap=[]
-                    dark=[]
-                    green=[]
                     //init matrixHeader, columnIndices, packPrices         
                     for (var j = 0; j < results.data[0].length; ++j) { //iterate over columns of the header
                         if (results.data[0][j] == 'City Builder Basics - Wood Starter') {
                             foundFirstCol = true;
                             columnOffset = j;                        
                         }
-                         
+ 
                         if (foundFirstCol && results.data[1][j] != null) {  //Sku exists.
                             console.log("Got pack "+results.data[0][j]+", SKU="+results.data[1][j]);
                             
@@ -312,8 +219,6 @@
                                 }else if(isLandmark){
                                     landmarkMap.push(m)
                                 }
-                                                              
-                        
                             }
                         }
                     }
@@ -329,7 +234,7 @@
 
                     var beginRowIndexInclusive = -1; //init row index of first item.
                     for (var j = 1; j < results.data.length; ++j) { //skip over rows until we reach the first item, and record its row index
-                        if (results.data[j][2] == '4-GH-009') {
+                        if (results.data[j][2] == '4-PA-006') {
                             beginRowIndexInclusive = j;
                             //console.log('Found row at '+beginRowIndexInclusive);
                         }
@@ -357,12 +262,8 @@
                             console.log("Skipping item Rug - Red Griffon because it doesn't exist in any packs with a non-zero price")
                             continue;
                         }
-                        var itemName=results.data[i][1]
-                        if(itemName.endsWith('Dark')){                            
-                            dark.push(itemName)
-                        }else if(itemName.endsWith('Green')){
-                            green.push(itemName)
-                        }
+
+                        if(results.data[i][1] )
                         items[rowIndex] = results.data[i][1] + " - Painted" //record quantity for painted
                         items[rowIndex+1] = results.data[i][1] + " - Unpainted"; //and for unpainted, which will always be the same.                    
                         matrixData[rowIndex] = new Array(columnIndices.length);
@@ -401,34 +302,15 @@
                         }
                     }
 
-                  
+                    if(document.getElementById("supportDiscounts").checked){
+                        console.log("Enabling discount support")
+                        injectDoubleDiscounts(districtMap, 'Districts', 180, 125)
+                        injectDoubleDiscounts(landmarkMap, 'Landmarks', 50, 30)
+                        injectTripleDiscounts(districtMap, 'Districts', 370, 250)
+                    }
                     
                     console.log("Read items as " + items);
                     console.log("Read packs as " + matrixHeader);
-
-                    console.log("====")
-                    console.log("Dark")
-                    console.log("====")
-                    for(var c = 0; c < dark.length; ++c){
-                        console.log(dark[c])
-                    }
-                    console.log("====")
-                    console.log("Green")
-                    console.log("====")
-                    for(var c = 0; c < green.length; ++c){
-                        console.log(green[c])
-                    }
-
-                    
-                    if(document.getElementById("supportDiscounts").checked){
-                        console.log("Enabling discount support")
-                        var injected=injectDoubleDiscounts(districtMap, 'Districts', 180, 125)
-                        injected+=injectDoubleDiscounts(landmarkMap, 'Landmarks', 50, 30)
-                        injected+=injectTripleDiscounts(districtMap, 'Districts', 370, 250)
-                        // injected+=injectTripleDiscounts(landmarkMap, 'Landmarks', 80, 45)
-                        // injected+=injectQuadDiscounts(districtMap, 'Districts', 560, 340)                        
-                        console.log("Injected "+injected+" discount packs")
-                    }
                     populateDesiredCollapsed();
                     populatePacks();
                     
@@ -773,27 +655,7 @@
                 table.innerHTML = "<tr><th style='text-align: left; '>Pack</th><th style='text-align: left; width: 40px'>Qty</th><th style='text-align: left; width: 40px'>Cost</th><th style='text-align: left;'>% Lost if Omitted</th><th style='text-align: left;'>Desired items lost if omitted</th></tr>";
                 var itemCounts = getItemCounts();
 
-                var solutionPackNames = []
-                for(key in solution){
-                    if (key != 'feasible' && key != 'result' && key != 'bounded' && key != 'isIntegral') {
-                        //key is a packname
-                        solutionPackNames.push(key)
-                    }
-                }
-                solutionPackNames.sort(function(a, b){ // sort the output so it appears in the same order as the right pane pack list.               
-                    thing1=parseInt(matrixHeaderMap[a])
-                    thing2=parseInt(matrixHeaderMap[b])                    
-                    if(thing1 < thing2){
-                        return -1;
-                    }
-                    if(thing2>thing1){
-                        return 1;
-                    }
-                    return 0;                   
-                });
-
-                for(var i = 0; i < solutionPackNames.length; ++i){
-                    key = solutionPackNames[i]
+                for (key in solution) { //key is pack
                     if (key != 'feasible' && key != 'result' && key != 'bounded' && key != 'isIntegral') {
                         // What are the total number of items introduced by this pack.
                         var packContents = getPackContents(matrixHeaderMap[key]);
@@ -828,7 +690,7 @@
                             omissionString = omissionString.substring(0, omissionString.length - 1);
                         }
                         itemsLost = omissionString;
-                        table.innerHTML += "<tr><td>" + key + "</td><td>"+solution[key]+ "</td><td>$" + (solution[key] * packPrices[matrixHeaderMap[key]]) + "</td><td>" + fractionLost + "</td><td>" + itemsLost + "</td></tr>"
+                        table.innerHTML += "<tr><td>" + key + "</td><td>" + solution[key] + "</td><td>$" + (solution[key] * packPrices[matrixHeaderMap[key]]) + "</td><td>" + fractionLost + "</td><td>" + itemsLost + "</td></tr>"
                     }
                 }
                 bottom.appendChild(table);
@@ -978,7 +840,7 @@
         Identifies the minimum cost combination of packs containing at least the items indicated on the left. <A href="https://github.com/dfperiod3/dfperiod3.github.io#readme">Documentation</A> <BR>
         <B>Enter CSV export of Randy's Spreadsheet: <input type="file" id="csv-file" name="files" /> OR <a
                 href="javascript:loadCsv('https://dfperiod3.github.io/cuLowtownPledgePlanner.csv', true, false);">Use
-                Version downloaded Mar. 12@3:40PM EDT</a></B> (optimizer code last updated Mar. 9 @11:56PM EST) <input id="supportDiscounts" type="checkbox" onClick="javascript:resetFrames()">Support Discounts[<a href="javascript:showDiscountsMessage()">?</a>] <HR>
+                Version downloaded Feb. 26@11:45PM EST</a></B> (optimizer code last updated Feb. 27 @12:15AM EST) <input id="supportDiscounts" type="checkbox" onClick="javascript:resetFrames()">Support Discounts[<a href="javascript:showDiscountsMessage()">?</a>] <HR>
                 
     </p1>
 
