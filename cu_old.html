@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script src="https://unpkg.com/papaparse@latest/papaparse.min.js"></script>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"
+        integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/javascript-lp-solver/prod/solver.js"></script>   
+    <!-- <script src="jsLPSolver/src/solver.js"></script> -->
+    <!-- ILP solved via library at https://github.com/JWally/jsLPSolver -->
+    <script>
+        var data;
+
+        var beginColIndexInclusive = -1;
+        var endColIndexInclusive = Number.MAX_SAFE_INTEGER;
+        var items = [];  //item names
+        var packPrices = [[]]; //Maps ['Painted'|'Unpainted'][j] -> price of the painted|unpainted set named in matrixHeader[j]
+        var matrixHeader;
+        var matrixData; //quantity matrix.  maps [i][j] -> quantity of the item called items[i] in the set called matrixHeader[j]
+        var maxMode = false;
+        var itemsMap;
+        var matrixHeaderMap;
+        var solution;
+        var model;
+        var filesetting;
+        var dlsetting;
+
+        function showDiscountsMessage(){
+            alert("Discounts support is disabled by default because it can slow down the optimization process in some cases (by 10x or more).  Every possible double-landmark, double-district, and triple district pack is injected as a sort of virtual 'pack' to be considered, greatly expanding the spaces of packs that need to be considered")
+        }
+        function resetFrames(){
+            if(filesetting != null){ //otherwise, there's nothing to reset.
+                model=null;
+                solution=null;
+                matrixHeaderMap=null;
+                itemsMap=null;
+                maxMode = false;
+                matrixData = null;
+                matrixHeader = null;
+                packPrices = [[]];
+                items = [];
+                endColIndexInclusive = Number.MAX_SAFE_INTEGER;
+                beginColIndexInclusive = -1;
+                data=null;
+                loadCsv(filesetting, dlsetting)
+            }else{
+                console.log("nothing to reset.")
+            }
+        }
+
+        function swap(json) {
+            var ret = {};
+            for (var key in json) {
+                ret[json[key]] = key;
+            }
+            return ret;
+        }
+
+        function injectDoubleDiscounts(districts, description, paintedDiscount, unpaintedDiscount){
+            //var matrixData; //quantity matrix.  maps [i][j] -> quantity of the item called items[i] in the set called matrixHeader[j]        
+            var injected=0;
+            paint=['painted', 'unpainted']
+            console.log("==============")
+            console.log(districts)
+            for (var di = 0; di < districts.length; ++di) {
+                for (var dj = di; dj < districts.length; ++dj) {                    
+                    for(var k = 0; k < paint.length; ++k){      
+                        console.log("matrixHeader.length="+matrixHeader.length) //increase as we accumulate new double district columns.
+                        console.log("matrixData[0].length="+matrixData[0].length) //this stays fixed.           
+                        console.log("matrixData[1].length="+matrixData[1].length)                  
+                        var newColIndex = matrixHeader.length;
+                        var paintstatus = paint[k]
+                        if(paintstatus == 'painted'){
+                            discount = paintedDiscount;
+                        }else{
+                            discount = unpaintedDiscount;
+                        }
+                        matrixHeader[newColIndex] = 'Double '+description+' (' + districts[di][paintstatus]['simple_name'] + ', ' + districts[dj][paintstatus]['simple_name'] + ')' //inject double districts into header.
+                        packPrices[newColIndex] = districts[di][paintstatus]['price'] + districts[dj][paintstatus]['price'] - discount;
+
+                        //now add the compositions of the two districts
+                        matrixHeaderIndex1 = districts[di][paintstatus]['matrixHeaderIndex'];
+                        matrixHeaderIndex2 = districts[dj][paintstatus]['matrixHeaderIndex']
+                        //newIndex = matrixData.length;
+                        ++injected;
+                        for (var i = 0; i < matrixData.length; ++i) {
+                            // matrixData[i][matrixHeader[i].length] = matrixData[i][matrixHeaderIndex1] + matrixData[i][matrixHeaderIndex2]
+                            matrixData[i][matrixData[i].length] = matrixData[i][matrixHeaderIndex1] + matrixData[i][matrixHeaderIndex2]
+                        }
+                    }
+                }
+            }
+            return injected;
+        }
+
+        function injectTripleDiscounts(districts, description, paintedDiscount, unpaintedDiscount){
+            var injected=0;
+            for (var di = 0; di < districts.length; ++di) {
+                for (var dj = di; dj < districts.length; ++dj) {   
+                    for(var dk = dj; dk < districts.length; ++dk){                 
+                        for(var k = 0; k < paint.length; ++k){                                         
+                            var newColIndex = matrixHeader.length;
+                            var paintstatus = paint[k]
+                            if(paint == 'painted'){
+                                discount = paintedDiscount;
+                            }else{
+                                discount = unpaintedDiscount;
+                            }
+
+                             //count how many times di, dj, dk, and dl are equal. 
+                             var m={}
+                            incMap(m, di.toString())
+                            incMap(m, dj.toString())
+                            incMap(m, dk.toString())
+                            // var disregard=false
+                            // for(var l in m){
+                            //     if(m[l] > 2){
+                            //         disregard=true
+                            //     }
+                            // }
+                            // if(disregard == true){
+                            //     //For performance reasons, we only allow up to two of the same set to be chosen.
+                            //     break;
+                            // }
+
+                            matrixHeader[newColIndex] = 'Triple '+description+' (' + districts[di][paintstatus]['simple_name'] + ', ' + districts[dj][paintstatus]['simple_name'] + ', '+districts[dk][paintstatus]['simple_name']+')' //inject double districts into header.
+                            packPrices[newColIndex] = districts[di][paintstatus]['price'] + districts[dj][paintstatus]['price'] +  districts[dk][paintstatus]['price'] - discount
+
+                            //now add the compositions of the two districts
+                            matrixHeaderIndex1 = districts[di][paintstatus]['matrixHeaderIndex'];
+                            matrixHeaderIndex2 = districts[dj][paintstatus]['matrixHeaderIndex'];
+                            matrixHeaderIndex3 = districts[dk][paintstatus]['matrixHeaderIndex'];
+                            //newIndex = matrixData.length;
+                            ++injected;
+                            for (var i = 0; i < matrixData.length; ++i) {
+                                // matrixData[i][matrixHeader[i].length] = matrixData[i][matrixHeaderIndex1] + matrixData[i][matrixHeaderIndex2]
+                                matrixData[i][matrixData[i].length] = matrixData[i][matrixHeaderIndex1] + matrixData[i][matrixHeaderIndex2] + matrixData[i][matrixHeaderIndex3];
+                            }
+                        }
+                    }
+                }
+            }
+            return injected;
+        }
+
+        function incMap(m, key){
+            if(key in m){
+                m[key] += 1
+            }else{
+                m[key] = 1
+            }
+            return m
+        }
+
+        //340 unpainted, 560 painted
+        function injectQuadDiscounts(districts, description, paintedDiscount, unpaintedDiscount){
+            var injected = 0;
+            console.log("Injecting quad discounts")
+            for (var di = 0; di < districts.length; ++di) {
+                console.log(di)
+                for (var dj = di; dj < districts.length; ++dj) {   
+                    for(var dk = dj; dk < districts.length; ++dk){                 
+                        for(var dl = dk; dl < districts.length; ++dl){
+                            for(var k = 0; k < paint.length; ++k){                                         
+                                var newColIndex = matrixHeader.length;
+                                var paintstatus = paint[k]
+                                if(paint == 'painted'){
+                                    discount = paintedDiscount;
+                                }else{
+                                    discount = unpaintedDiscount;
+                                }
+
+                                //count how many times di, dj, dk, and dl are equal. 
+                                var m={}
+                                incMap(m, di.toString())
+                                incMap(m, dj.toString())
+                                incMap(m, dk.toString())
+                                incMap(m, dl.toString())
+                                var disregard=false
+                                for(var l in m){
+                                    if(m[l] > 2){
+                                        disregard=true
+                                    }
+                                }
+                                if(disregard == true){
+                                    //For performance reasons, we only allow up to two of the same set to be chosen.
+                                    break;
+                                }
+                                
+                                
+                                matrixHeader[newColIndex] = 'Quad '+description+' (' + districts[di][paintstatus]['simple_name'] + ', ' + districts[dj][paintstatus]['simple_name'] + ', '+districts[dk][paintstatus]['simple_name']+ ', '+districts[dl][paintstatus]['simple_name']+')' //inject quad districts into header.
+                                packPrices[newColIndex] = districts[di][paintstatus]['price'] + districts[dj][paintstatus]['price'] +  districts[dk][paintstatus]['price'] + districts[dl][paintstatus]['price'] - discount
+
+                                //now add the compositions of the two districts
+                                matrixHeaderIndex1 = districts[di][paintstatus]['matrixHeaderIndex'];
+                                matrixHeaderIndex2 = districts[dj][paintstatus]['matrixHeaderIndex'];
+                                matrixHeaderIndex3 = districts[dk][paintstatus]['matrixHeaderIndex'];
+                                matrixHeaderIndex4 = districts[dl][paintstatus]['matrixHeaderIndex'];
+                                ++injected;
+                                //newIndex = matrixData.length;
+                                for (var i = 0; i < matrixData.length; ++i) {
+                                    // matrixData[i][matrixHeader[i].length] = matrixData[i][matrixHeaderIndex1] + matrixData[i][matrixHeaderIndex2]
+                                    matrixData[i][matrixData[i].length] = matrixData[i][matrixHeaderIndex1] + matrixData[i][matrixHeaderIndex2] + matrixData[i][matrixHeaderIndex3]+ matrixData[i][matrixHeaderIndex4];
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return injected;
+        }
+        
+
+        function loadCsv(file, dl) {
+            filesetting=file;
+            dlsetting=dl;
+            
+
+            Papa.parse(file, {
+                header: false,
+                download: dl,
+                skipEmptyLines: true,
+                dynamicTyping: true,
+                beforeFirstChunk: function (s) {
+                    var n = s.indexOf('Sets and Pieces');
+                    //alert('got n '+n);
+                    var chunk = "crap," + s.substring(n);
+                    return chunk;
+                },
+
+                complete: function (results) {
+                    matrixHeader = []; //set names.
+                    matrixData = [];
+                    var columnIndices = []; // maps the index of each set in matrixHeader to the colum index of that set in the matrix 'results'
+                    var foundFirstCol = false;
+                    var colCount = 0;
+
+                    //initial checks
+                    if(results.data[2][1] != 'Painted Set Price'){                    
+                        alert("Unexpected file format -- Painted Set Price was not found in the expected row");
+                        return
+                    }
+                    if(results.data[3][1] != 'Unpainted Set Price'){
+                        alert("Unexpected file format -- Painted Set Price was not found in the expected row");
+                        return
+                    }
+                    districts = new Set(['Ambush Alley', 'Downtown Dockside', 'Frontier Outpost',	"Lumberbaron's Lodge", 'District - Market Square', 'Warfield Village', 'Inn to the Pit', 'Elven Trading Post', 'Compl. A: Building Blocks',	'Compl. B: Dressing & Building Systems', 'Compl. D:  All Modular Roofs'])
+                    landmarks = new Set(['City Barracks', "Harbormaster's Hut",	'Humble Homesteads', 'Midtown Merchants', 'Speakeasy Murderbar', "Thieves' Guild", 'Wharf Warehouse', "Wizard's Townhouse",	'Ye Olde Time Inn'])
+
+                    districtMap=[]
+                    landmarkMap=[]
+                    dark=[]
+                    green=[]
+                    //init matrixHeader, columnIndices, packPrices         
+                    for (var j = 0; j < results.data[0].length; ++j) { //iterate over columns of the header
+                        if (results.data[0][j] == 'City Builder Basics - Wood Starter') {
+                            foundFirstCol = true;
+                            columnOffset = j;                        
+                        }
+                         
+                        if (foundFirstCol && results.data[1][j] != null) {  //Sku exists.
+                            console.log("Got pack "+results.data[0][j]+", SKU="+results.data[1][j]);
+                            
+                            var packName = results.data[0][j];
+                            var sku = results.data[1][j]
+                            //some item names are duplicated, so we have to prepend the sku
+                         
+                            // if(results.data[0][j] == 'Inn to the Pit'){
+                            //     results.data[3][j] = 1494; //inject unpainted price
+                            // }
+                            if(results.data[2][j] == null || results.data[3][j] == null){
+                                console.log("Skipping pack because it is missing the painted pack price, unpainted pack price, or both")
+                            }else if(results.data[2][j] < 0.01 || results.data[3][j] < 0.01){
+                                console.log("Skipping pack because either or both of the unpainted or painted pack price is <0.01")                            
+                            }else{
+                                var m=[]
+                                var isDistrict=false;
+                                var isLandmark=false;
+                                if(districts.has(packName)){
+                                    isDistrict=true;
+                                }
+                                if(landmarks.has(packName)){
+                                    isLandmark = true;
+                                }
+                                matrixHeader[colCount] = packName+" - Painted - "+sku //painted set name.  Do not change this suffix.  note sku is required to diambiguate duplicate wood/stone items.
+                                columnIndices[colCount] = j;
+                                packPrices[colCount] = results.data[2][j]
+                                console.log("   Painted Pack Price: "+packPrices[colCount])
+                                m['painted']={
+                                    "simple_name": packName+" - Painted",
+                                    "price": results.data[2][j],    
+                                    "matrixHeaderIndex": colCount
+                                }
+                                colCount++;
+                                matrixHeader[colCount] = packName+" - Unpainted - "+sku //unpainted set name.  Do not change this suffix.  note sku is required to diambiguate duplicate wood/stone items.                       
+                                columnIndices[colCount] = j;
+                                packPrices[colCount] = results.data[3][j]
+                                m['unpainted']={
+                                    "simple_name": packName+" - Unpainted",
+                                    "price": results.data[3][j],    
+                                    "matrixHeaderIndex": colCount
+                                }
+                                console.log("   Unpainted Pack Price: "+packPrices[colCount])
+                                colCount++;
+
+                                if(isDistrict){
+                                    districtMap.push(m)
+                                }else if(isLandmark){
+                                    landmarkMap.push(m)
+                                }
+                                                              
+                        
+                            }
+                        }
+                    }
+                    // double district, triple district, double landmark
+
+                    //sanity checK: assert every set has a price.
+                    for(var i = 0; i < packPrices.length; ++i){
+                        if(packPrices[i] <= 0){
+                            alert("pack price <=0 at index "+i)
+                        }
+                    }
+                    
+
+                    var beginRowIndexInclusive = -1; //init row index of first item.
+                    for (var j = 1; j < results.data.length; ++j) { //skip over rows until we reach the first item, and record its row index
+                        if (results.data[j][2] == '4-GH-009') {
+                            beginRowIndexInclusive = j;
+                            //console.log('Found row at '+beginRowIndexInclusive);
+                        }
+                    }
+
+
+                    var colIndex = 0;
+                    var rowIndex = 0;
+                    var colIndex = 0;
+                    matrixData = [];
+
+                    //matrixData[i][j] -> quantity of item i of set j.  
+
+                    //init items, matrixData                                            
+                    for (var i = beginRowIndexInclusive; i < results.data.length; ++i) { //for all items
+                        colIndex = 0;
+                        if (!results.data[i][1]) { //skip row if there's no item name
+                            continue;
+                        }
+                        if(results.data[i][1] == 'Rug - Red Griffon'){
+                            console.log("Skipping item Rug - Red Griffon because it doesn't exist in any packs with a non-zero price")
+                            continue;
+                        }
+                        if(results.data[i][1]== 'Rug - Giant Badger Pelt'){
+                            console.log("Skipping item Rug - Red Griffon because it doesn't exist in any packs with a non-zero price")
+                            continue;
+                        }
+                        var itemName=results.data[i][1]
+                        if(itemName.endsWith('Dark')){                            
+                            dark.push(itemName)
+                        }else if(itemName.endsWith('Green')){
+                            green.push(itemName)
+                        }
+                        items[rowIndex] = results.data[i][1] + " - Painted" //record quantity for painted
+                        items[rowIndex+1] = results.data[i][1] + " - Unpainted"; //and for unpainted, which will always be the same.                    
+                        matrixData[rowIndex] = new Array(columnIndices.length);
+                        matrixData[rowIndex+1] = new Array(columnIndices.length);
+                        for (var j = 0; j < columnIndices.length; j+=2) { //go over all painted and unpainted sets. //used to be <= !!!
+                            //j is painted, j+1 is unpainted
+                            if (!results.data[i][columnIndices[j]]) { // no quantity
+                                matrixData[rowIndex][colIndex] = 0;   
+                                matrixData[rowIndex][colIndex+1] = 0;
+                                matrixData[rowIndex+1][colIndex] = 0;
+                                matrixData[rowIndex+1][colIndex+1] = 0;                                                             
+                            } else {
+                                //results.data[i][columnIndices[j]] is the quantity of item i (which has not yet been split into painted and unpainted), in set j, which HAS
+                                //been split into painted and unpainted. 
+                                matrixData[rowIndex][colIndex] = results.data[i][columnIndices[j]];
+                                matrixData[rowIndex][colIndex+1] = 0
+                                matrixData[rowIndex+1][colIndex] = 0
+                                matrixData[rowIndex+1][colIndex+1] = results.data[i][columnIndices[j+1]];                                
+                            }
+                            
+                            colIndex += 2
+                        }
+                        rowIndex += 2                        
+                    }
+                    
+                    //sanity checks.  assert every item exists in at least one set.
+                    for(var i = 0; i < items.length; ++i){
+                        var max = -1;
+                        for(var j = 0; j < matrixData[i].length; ++j){
+                            if(matrixData[i][j] > max){
+                                max = matrixData[i][j]
+                            }
+                        }
+                        if(max < 0){
+                            alert("No quantity found for item "+items[i])
+                        }
+                    }
+
+                  
+                    
+                    console.log("Read items as " + items);
+                    console.log("Read packs as " + matrixHeader);
+
+                    console.log("====")
+                    console.log("Dark")
+                    console.log("====")
+                    for(var c = 0; c < dark.length; ++c){
+                        console.log(dark[c])
+                    }
+                    console.log("====")
+                    console.log("Green")
+                    console.log("====")
+                    for(var c = 0; c < green.length; ++c){
+                        console.log(green[c])
+                    }
+
+                    
+                    if(document.getElementById("supportDiscounts").checked){
+                        console.log("Enabling discount support")
+                        var injected=injectDoubleDiscounts(districtMap, 'Districts', 180, 125)
+                        injected+=injectDoubleDiscounts(landmarkMap, 'Landmarks', 50, 30)
+                        injected+=injectTripleDiscounts(districtMap, 'Districts', 370, 250)
+                        // injected+=injectTripleDiscounts(landmarkMap, 'Landmarks', 80, 45)
+                        // injected+=injectQuadDiscounts(districtMap, 'Districts', 560, 340)                        
+                        console.log("Injected "+injected+" discount packs")
+                    }
+                    populateDesiredCollapsed();
+                    populatePacks();
+                    
+                    itemsMap = swap(items);
+                    matrixHeaderMap = swap(matrixHeader);
+                }
+            });
+        }
+
+        function save() {
+            var date = new Date();
+            var filename = 'mydfpledge_' + date.getFullYear() + "-" + date.getMonth() + "-" + date.getDay() + "_" + date.getHours() + "." + date.getMinutes() + "." + date.getSeconds() + '.csv';
+            var array = [];
+            for (var i = 0; i < items.length; ++i) {
+                var qty = document.getElementById('item_' + i).value;
+                var item = items[i];
+                array[i] = { "qty": qty, "item": items[i] };
+            }
+            var csv = Papa.unparse(array);
+            var csvData = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            var csvURL = null;
+            if (navigator.msSaveBlob) {
+                csvURL = navigator.msSaveBlob(csvData, filename);
+            }
+            else {
+                csvURL = window.URL.createObjectURL(csvData);
+            }
+
+            var tempLink = document.createElement('a');
+            tempLink.href = csvURL;
+            tempLink.setAttribute('download', filename);
+            tempLink.click();
+        }
+        function handleLoadMyPledge(evt) {
+            var file = evt.target.files[0];
+            Papa.parse(file, {
+                header: true,
+                download: false,
+                skipEmptyLines: true,
+                dynamicTyping: true,
+
+                complete: function (results) {
+                    clearDesired(false);
+                    for (var i = 0; i < results.data.length; ++i) {
+                        var qty = results.data[i]["qty"];
+                        var item = results.data[i]["item"];
+
+                        document.getElementById('item_' + itemsMap[item]).value = qty;
+                    }
+                }
+            });
+        }
+
+        function showToleranceMessage(){
+            alert("Large lists of desired items can take a very long time to optimize. A non-zero tolerance of say, 5, indicates you are willing to accept a solution within 5% of the optimal cost.  These approximate results can be much faster to find.");
+        }
+
+        function populateDesiredCollapsed() {
+            var outerDiv = document.getElementById("desired");
+            var desiredForm = document.createElement('table');
+            outerDiv.innerHTML = "Set desired items:<BR>";
+            outerDiv.innerHTML += '<input type=button value="add 1 of each painted" onClick="javascript:oneOfEachPainted()">'
+                + '<input type=button value="add 1 of each unpainted" onClick="javascript:oneOfEachUnpainted()">';
+            outerDiv.innerHTML += '<input type=button value="clear" onClick="javascript:clearDesired(true)">';
+            outerDiv.innerHTML += '<input type=button value="save" onClick="javascript:save()">';
+            outerDiv.innerHTML += 'Load-><input type=file id="load-mypledge" name="load" value="load">';
+            outerDiv.innerHTML += '<BR>';
+            outerDiv.innerHTML += '<input type=button value="optimize" onClick="javascript:optimize()">';
+            outerDiv.innerHTML += 'Tolerance[<a href="javascript:showToleranceMessage()">?</a>]: <input id="tolerance" type=text name="tolerance" value="0" size=4>'
+            outerDiv.innerHTML += 'Debug <input id="dbg" type="text">'
+            outerDiv.innerHTML += '<input type=button value="show desired items" onClick="javascript:showSummaryOfItems()">';
+            $("#load-mypledge").change(handleLoadMyPledge);
+            var prefixMap = {};
+            for (var i = 0; i < items.length; ++i) {
+                if (items[i].endsWith(" - Painted")) {
+                    var n = items[i].indexOf(' - Painted');
+                    var prefix = items[i].substring(0, n);
+                    if (prefix in prefixMap) {
+                        prefixMap[prefix]['painted'] = i;
+                    } else {
+                        prefixMap[prefix] = { "painted": i };
+                    }
+                } else if (items[i].endsWith(" - Unpainted")) {
+                    var n = items[i].indexOf(' - Unpainted');
+                    var prefix = items[i].substring(0, n);
+                    if (prefix in prefixMap) {
+                        prefixMap[prefix]['unpainted'] = i;
+                    } else {
+                        prefixMap[prefix] = { "unpainted": i };
+                    }
+                } else {
+                    if (items[i] in prefixMap) {
+                        alert("ERROR: Unexpected duplicate item" + items[i] + " in spreadsheet: behavior undefined.");
+                    }
+                    prefixMap[items[i]] = { "unpainted": i };
+                }
+            }
+            var tbody = document.createElement('tbody');
+            tbody.innerHTML = "<tr><th style='text-align: left; width: 40px;'>Unpainted<BR>Qty</th><th style='text-align: left; width: 40px'>Painted Qty</th><th style='text-align: left;'>Item</th></tr>"
+            desiredForm.append(tbody);
+            for (var item in prefixMap) {
+                var tbody = document.createElement('tbody');
+                if ("unpainted" in prefixMap[item]) {
+                    if ("painted" in prefixMap[item]) {
+                        tbody.innerHTML = '<tr><td><input size=4 value=0 type="text" id="item_' + prefixMap[item]['unpainted'] + '"></td>'
+                            + '<td><input size=4 value=0 type="text" id="item_' + prefixMap[item]['painted'] + '"></td>'
+                            + '<td>' + item + '</td>'
+                            + '</tr>'
+                    } else {
+                        tbody.innerHTML = '<tr><td colspan=2><input value=0 type="text" size=4 id="item_' + prefixMap[item]['unpainted'] + '"></td>'
+                            + '<td>' + item + '</td></tr>';
+                    }
+                } else {
+                    tbody.innerHTML = '<tr><td>&nbsp;</td><td><input value=0 type="text" size=4 id="item_' + prefixMap[item]['painted'] + '"></td>'
+                        + '<td>' + item + ' - Painted</td></tr>';
+                }
+                desiredForm.appendChild(tbody);
+            }
+
+            outerDiv.appendChild(desiredForm);
+
+        }
+
+
+
+        function handleFileSelect(evt) {
+            var file = evt.target.files[0];
+            loadCsv(file, false);
+        }
+
+        function getPackContents(packIndex) {
+            var indices = {};
+            var n = 0;
+            for (var i = 0; i < matrixData.length; ++i) {
+                var qty = matrixData[i][packIndex];
+                if (qty > 0) {
+                    indices[items[i]] = qty;
+                }
+            }
+            return indices;
+        }
+
+        function subPack(packIndex){
+            if (maxMode == true){
+                alert("Error - can't substract sets in max mode")
+            }
+
+            var subtracted=false;
+            for (var i = 0; i < matrixData.length; ++i) {
+                var qty = matrixData[i][packIndex];
+                var current = parseInt(document.getElementById("item_" + i).value);            
+                if((qty > 0) && (current - qty) >= 0){
+                    document.getElementById("item_" + i).value = current - qty;
+                    subtracted=true;
+                    console.log("Subtracted " + qty + " of " + items[i]);
+                }    
+            }
+            if(subtracted){
+                console.log('Subtracted ' + matrixHeader[packIndex]);
+            }else{
+                console.log("Nothing to subtract for "+matrixHeader[packIndex])
+            }
+        }
+
+
+        function addPack(packIndex) {
+         
+            //get pack composition.
+            for (var i = 0; i < matrixData.length; ++i) {
+                var qty = matrixData[i][packIndex];
+
+                var current = parseInt(document.getElementById("item_" + i).value);
+
+                if (maxMode === false) {
+                    document.getElementById("item_" + i).value = current + qty;
+                } else {
+                    document.getElementById("item_" + i).value = Math.max(current, qty, 0);
+                }
+                if(qty > 0){
+                    console.log("Added " + qty + " of " + items[i]);
+                }
+
+            }
+            console.log('Added ' + matrixHeader[packIndex]+" with cost "+packPrices[packIndex]);
+
+        }
+       
+
+        function setMaxMode() {
+            maxMode = true;
+        }
+
+        function setSumMode() {
+            maxMode = false;
+        }
+
+        function populatePacks() {
+            var packForm = document.getElementById("packs");
+            packForm.innerHTML = '<tr><td colspan=4>(Optional) Add packs of items to the desired items list</td></tr>';
+            packForm.innerHTML += '<tr><td colspan=4><input type="radio" name="mode" value="sum" checked="checked" onClick="javascript:setSumMode()">Sum&nbsp;<input type="radio" name="mode" value="max" onClick="javascript:setMaxMode()">Max</td></tr>';
+            for (var j = 0; j < matrixHeader.length; ++j) {
+                packForm.innerHTML += '<tr><td style="width: 30px"><input type="button" value="Add" onClick="javascript:addPack(' + j + ')"></td><td style="width: 3-px"><input type="button" value="Sub" onClick="javascript:subPack(' + j + ')"></td><td style="width: 90px; font-size:8pt;"><input type="checkbox" id="omit_'+j+'">Omit</td><td>' + matrixHeader[j] + '</td><td>$' + packPrices[j] + '</td></tr>';
+            }
+        }
+
+        function oneOfEachPainted() {
+            for (var i = 0; i < items.length; ++i) {
+                if (items[i].endsWith("Painted")) {
+                    document.getElementById("item_" + i).value = Math.max(document.getElementById("item_" + i).value, 1)
+                }
+            }
+        }
+
+        function oneOfEachUnpainted() {
+            //var dbg = parseInt(document.getElementById('dbg').value);
+        
+            for (var i = 0; i < items.length; ++i) {
+            //for (var i = 0; i < dbg; ++i){
+                if (items[i].endsWith("Unpainted")) {
+                    document.getElementById("item_" + i).value = Math.max(document.getElementById("item_" + i).value, 1)
+                }
+            }
+        }
+
+        function clearDesired(clearLoadMyPledge) {
+            for (var i = 0; i < items.length; ++i) {
+                document.getElementById("item_" + i).value = 0;
+            }
+            if (clearLoadMyPledge) {
+                document.getElementById("load-mypledge").value = '';
+            }
+        }
+
+        function getLowerPaneLinks(deactivatedLink){   
+            var s;        
+            if(deactivatedLink == 'solutionLink'){
+                s = '<center><b>Pledge Summary</b>&nbsp;&nbsp;<a id="manifestLink" href="javascript:showManifest()">Item Manifest</a></center>';
+            }else if(deactivatedLink == 'manifestLink'){
+                s = '<center><a id="solutionLink" href="javascript:showSolution()">Pledge Summary</a>&nbsp;&nbsp;<b>Item Manifest</b></center>';
+            }            
+            return s + "<center><B>TOTAL COST: $" + solution.result + "</B></center><BR>";
+        }
+
+        function deactivateLink(linkId){
+            var linkToDeactivate = document.getElementById(linkid);
+            linkToDeactive.href("");
+        }        
+
+        function getItemCounts(){
+            var itemCounts = {};
+            for (key in solution) { //key is pack
+                var packContents = getPackContents(matrixHeaderMap[key]);
+                for (item in packContents) {
+                    if(item.endsWith('(1 PER BACKER)')){
+                        itemCounts[item] = 1;
+                    }else if (item in itemCounts) {
+                        itemCounts[item] += solution[key] * packContents[item];
+                    } else {
+                        itemCounts[item] = solution[key] * packContents[item];
+                    }                    
+                }
+            }            
+            return itemCounts;
+        }
+
+        var onlyShowExtras = false;
+        function toggleOnlyShowExtras(){
+            onlyShowExtras = !onlyShowExtras;
+            showManifest();            
+        }
+
+        function showManifest(){
+            var bottom = document.getElementById("optimalpledge");
+            bottom.innerHTML = getLowerPaneLinks('manifestLink');
+            if(onlyShowExtras){
+                bottom.innerHTML += "<a href='javascript:toggleOnlyShowExtras()'>Show everything</a><BR><BR>";
+            }else{
+                bottom.innerHTML += "<a href='javascript:toggleOnlyShowExtras()'>Only show Extras</a><BR><BR>";
+            }
+            bottom.innerHTML += "<B><U>MANIFEST</U></B><BR>"                
+            var table = document.createElement("table");
+
+            table.innerHTML = "<tr><th style='text-align: left; '>Item</th><th style='text-align: left; width: 40px'>Qty</th><th style='text-align: left; width: 40px;'># Desired&nbsp;&nbsp;</th><th style='text-align: left; width: 60px;'># Over Desired Qty&nbsp;&nbsp;</th><th style='text-align: left; width: 40px;'>% Over</th></tr>";
+            var itemCounts = getItemCounts();
+            const sortObject = obj => Object.keys(obj).sort().reduce((res, key) => (res[key] = obj[key], res), {});
+            itemCounts = sortObject(itemCounts);    
+            for(item in itemCounts){
+                if(itemCounts[item] > 0){
+                    var desiredItemQty = parseInt(document.getElementById("item_" + itemsMap[item]).value);
+                    var overDesired =  itemCounts[item] - desiredItemQty;
+                    if(!onlyShowExtras || overDesired > 0){
+                        var percentIncrease;
+                        if(desiredItemQty < 1){
+                            percentIncrease="None desired";
+                        }else{
+                            percentIncrease = Math.round(100*(itemCounts[item]/desiredItemQty - 1)) + "%";
+                        }
+                        table.innerHTML += "<tr><td>"+item+"</td><td>"+itemCounts[item]+"</td><td>"+desiredItemQty+"</td><td>"+overDesired+"</td><td>"+percentIncrease+"</td></tr>";
+                    }
+                }
+            }
+            bottom.appendChild(table);
+        }
+
+        function showSummaryOfItems(){
+            var bottom = document.getElementById('optimalpledge')
+            s = "<table>\n"
+            s += "<tr><td colspan='2'><B>List of *desired* items</B></td></tr>\n"
+            for (var i = 0; i < items.length; ++i) {
+                var qty = document.getElementById("item_" + i).value;
+                qty = parseInt(qty);
+                if (qty > 0) {
+                    // if(qty == 12){                        
+                    //     //works if i cut out the upper half.
+                    //     // if(i < (items.length/2)){
+                    //     if(i >=126 && i<=176){
+                    //         console.log("Cutting out item "+items[i]+" with index "+i); //178                            
+                    //         qty = 0;
+                    //     } //zero all <176 OK.    zero all <150 NOT ok.  
+                    // }
+                    // if ((items[i].endsWith('(1 PER BACKER)') || items[i] == 'Wildlands Backer Tote Bag') && qty > 1) {
+                    //     console.log("Forcing quantity of " + items[i] + " to 1");
+                    //     document.getElementById("item_" + i).value = 1;
+                    //     qty = 1;
+                    // }
+                    s += '<tr><td>'+items[i]+"</td><td>"+qty+"</td></tr>\n"
+                    //model['constraints'][items[i]] = { "min": qty };
+                }                          
+            }
+            s += '</table>'
+            bottom.innerHTML = s        
+        }
+
+        function showSolution() {
+            if (solution.feasible !== true) {
+                alert("ERROR: solution was not feasible");
+            } else {
+                var bottom = document.getElementById("optimalpledge");
+                bottom.innerHTML = getLowerPaneLinks('solutionLink')+"<B><U>PLEDGE SUMMARY</U></B><BR>"                
+                
+                var table = document.createElement("table");
+                table.innerHTML = "<tr><th style='text-align: left; '>Pack</th><th style='text-align: left; width: 40px'>Qty</th><th style='text-align: left; width: 40px'>Cost</th><th style='text-align: left;'>% Lost if Omitted</th><th style='text-align: left;'>Desired items lost if omitted</th></tr>";
+                var itemCounts = getItemCounts();
+
+                var solutionPackNames = []
+                for(key in solution){
+                    if (key != 'feasible' && key != 'result' && key != 'bounded' && key != 'isIntegral') {
+                        //key is a packname
+                        solutionPackNames.push(key)
+                    }
+                }
+                solutionPackNames.sort(function(a, b){ // sort the output so it appears in the same order as the right pane pack list.               
+                    thing1=parseInt(matrixHeaderMap[a])
+                    thing2=parseInt(matrixHeaderMap[b])                    
+                    if(thing1 < thing2){
+                        return -1;
+                    }
+                    if(thing2>thing1){
+                        return 1;
+                    }
+                    return 0;                   
+                });
+
+                for(var i = 0; i < solutionPackNames.length; ++i){
+                    key = solutionPackNames[i]
+                    if (key != 'feasible' && key != 'result' && key != 'bounded' && key != 'isIntegral') {
+                        // What are the total number of items introduced by this pack.
+                        var packContents = getPackContents(matrixHeaderMap[key]);
+                        var totalPackQty = 0;
+                        var amountBelowDesiredIfDropped = 0;
+                        var omissionDescription = {};
+                        for (item in packContents) {
+                            var packQuantity = packContents[item];
+                            var desiredItemQty = parseInt(document.getElementById("item_" + itemsMap[item]).value);
+
+                            //var finalPledgeQty = solution[key] * packQuantity; //this is NUMBer of packs.
+                            var finalPledgeQty = itemCounts[item];
+
+                            var leftAfterDropping = finalPledgeQty - packQuantity;
+                            if (leftAfterDropping < desiredItemQty) {
+                                amountBelowDesiredIfDropped += (desiredItemQty - leftAfterDropping);
+                                omissionDescription[item] = desiredItemQty - leftAfterDropping;
+                            }
+                            totalPackQty += packQuantity;
+                        }
+
+                        var fractionLost = Math.round(100 * amountBelowDesiredIfDropped / totalPackQty);
+
+                        var itemsLost = 0;
+
+                        var omissionString = "";
+                        if (Object.keys(omissionDescription).length > 0) {
+                            var n = 0;
+                            for (item in omissionDescription) {
+                                omissionString += "-" + omissionDescription[item] + " " + item + ",";
+                            }
+                            omissionString = omissionString.substring(0, omissionString.length - 1);
+                        }
+                        itemsLost = omissionString;
+                        table.innerHTML += "<tr><td>" + key + "</td><td>"+solution[key]+ "</td><td>$" + (solution[key] * packPrices[matrixHeaderMap[key]]) + "</td><td>" + fractionLost + "</td><td>" + itemsLost + "</td></tr>"
+                    }
+                }
+                bottom.appendChild(table);
+            }
+
+            console.log("done");
+        }
+
+        function optimize() {
+            model = { "optimize": "cost", "osType": "min", "constraints": {}, "variables": {}, "ints": {} };
+
+            var tolerance=parseFloat(document.getElementById('tolerance').value);
+            
+            if(!Number.isFinite(tolerance)){
+                alert('Invalid value '+tolerance+' for tolerance -- must be a number > 0 (e.g. 5 indicates you will accept a solution within 5% of the optimal cost)');
+                return;
+            }
+
+            var dbg = parseInt(document.getElementById('dbg').value);
+            //model['options'] = {"timeout":dbg}
+           if (tolerance > 0) {
+                model['options']=[]
+                model['options']['tolerance'] = (tolerance / 100.0)                    
+            }
+            
+            
+            
+            
+            console.log('dbg='+dbg)
+            // Desired quantities are constraints of integer linear program.
+            for (var i = 0; i < items.length; ++i) {
+                var qty = document.getElementById("item_" + i).value;
+                qty = parseInt(qty);
+                if (qty >= 0) {
+                    // if(qty == 12){                        
+                    //     //works if i cut out the upper half.
+                    //     // if(i < (items.length/2)){
+                    //     if(i >=126 && i<=176){
+                    //         console.log("Cutting out item "+items[i]+" with index "+i); //178                            
+                    //         qty = 0;
+                    //     } //zero all <176 OK.    zero all <150 NOT ok.  
+                    // }
+                    // if ((items[i].endsWith('(1 PER BACKER)') || items[i] == 'Wildlands Backer Tote Bag') && qty > 1) {
+                    //     console.log("Forcing quantity of " + items[i] + " to 1");
+                    //     document.getElementById("item_" + i).value = 1;
+                    //     qty = 1;
+                    // }
+                    model['constraints'][items[i]] = { "min": qty };
+                }
+            }
+
+            // Initialize pack/item numbers.
+            for (var j = 0; j < matrixHeader.length; ++j) {
+                if(document.getElementById("omit_"+j).checked){
+                    continue;
+                }
+                model['ints'][matrixHeader[j]] = 1;
+                model['variables'][matrixHeader[j]] = {};
+                model['variables'][matrixHeader[j]]['cost'] = packPrices[j];
+                for (var i = 0; i < matrixData.length; ++i) {
+                    var packQty = matrixData[i][j];
+                    if(packQty >= 0){                    
+                        model['variables'][matrixHeader[j]][items[i]] = packQty;
+                    }
+                    
+                }
+            }
+            console.log("%j", model);
+            var bottom = document.getElementById("optimalpledge");
+
+            var modelstr = JSON.stringify(model, null, 2); // spacing level = 2
+            bottom.innerHTML="Optimizing...<BR>";
+            
+            t=Date.now()                    
+            solution = solver.Solve(model);
+            console.log("Time it took to arrive at solution: "+(Date.now()-t)/1000+"s")
+            console.log(solution);
+            showSolution();
+        }
+
+
+        $(document).ready(function () {
+            $("#csv-file").change(handleFileSelect);
+        });
+    </script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        .split {
+            height: 50%;
+            width: 50%;
+            position: fixed;
+            z-index: 1;
+            top: 40;
+            overflow-x: hidden;
+            padding-top: 20px;
+        }
+
+        .left {
+            left: 0;
+
+        }
+
+        .right {
+            right: 0;
+        }
+
+        .bottom {
+            height: 30%;
+            width: 99%;
+            z-index: 1;
+            overflow-y: scroll;
+
+            left: 10px;
+            right: 20px;
+            bottom: 10px;
+            position: fixed;
+        }
+
+        table.scrolldown tbody {
+            /* Set vertical scroll */
+            overflow-y: scroll;
+
+            /* Hide the horizontal scroll */
+            overflow-x: hidden;
+        }
+
+
+        .centered {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .centered img {
+            width: 150px;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+
+<body>
+    <p1>
+        <center><h1>*OLD* Cities Untold Optimizer</h1></center>
+        Identifies the minimum cost combination of packs containing at least the items indicated on the left. <A href="https://github.com/dfperiod3/dfperiod3.github.io#readme">Documentation</A> <BR>
+        <B>Enter CSV export of Randy's Spreadsheet: <input type="file" id="csv-file" name="files" /> OR <a
+                href="javascript:loadCsv('https://dfperiod3.github.io/cuLowtownPledgePlanner_old.csv', true, false);">Use
+                Version downloaded Mar. 12@3:40PM EDT</a></B> (optimizer code last updated Mar. 9 @11:56PM EST) <input id="supportDiscounts" type="checkbox" onClick="javascript:resetFrames()">Support Discounts[<a href="javascript:showDiscountsMessage()">?</a>] <HR>
+                
+    </p1>
+
+    <div class="split left" id="desired">
+        <!--<table id="desired" class="altcolor"></table>-->
+    </div>
+
+    
+    <div class="split right">                
+        <form id="p">
+            <table id="packs"></table>
+        </form>
+    </div>
+
+    <div id="optimalpledge" class="bottom">
+    </div>
+
+</html>
