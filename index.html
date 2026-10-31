@@ -2,598 +2,211 @@
 <html lang="en">
 
 <head>
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-    <meta http-equiv="Pragma" content="no-cache" />
-    <meta http-equiv="Expires" content="0" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <script src="https://unpkg.com/papaparse@latest/papaparse.min.js"></script>
-    <script src="https://code.jquery.com/jquery-2.2.4.min.js"
-        integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/javascript-lp-solver/prod/solver.js"></script>
-    <!-- ILP solved via library at https://github.com/JWally/jsLPSolver -->
-    <script>
-        var data;
-
-        var beginColIndexInclusive = -1;
-        var endColIndexInclusive = Number.MAX_SAFE_INTEGER;
-        var items = [];
-        var packPrices = [];
-        var matrixHeader;
-        var matrixData;
-        var maxMode = false;
-        var itemsMap;
-        var matrixHeaderMap;
-        var solution;
-        var model;
-
-        function swap(json) {
-            var ret = {};
-            for (var key in json) {
-                ret[json[key]] = key;
-            }
-            return ret;
-        }
-
-        function loadCsv(file, dl) {
-            Papa.parse(file, {
-                header: false,
-                download: dl,
-                skipEmptyLines: true,
-                dynamicTyping: true,
-                beforeFirstChunk: function (s) {
-                    var n = s.indexOf('Sets and Pieces');
-                    //alert('got n '+n);
-                    var chunk = "crap," + s.substring(n);
-                    return chunk;
-                },
-
-                complete: function (results) {
-                    matrixHeader = [];
-                    var foundFirstCol = false;
-                    var colCount = 0;
-
-                    matrixData = [];
-
-                    columnIndices = [];
-                    for (var i = 0; i < results.data[0].length; ++i) {
-                        if (results.data[0][i] == 'Pack for Battle!') {
-                            foundFirstCol = true;
-                        }
-
-                        if (foundFirstCol && results.data[1][i] != null) {
-                            // console.log("Got value "+results.data[0][i]+" with part num "+results.data[1][i]);
-                            matrixHeader[colCount] = results.data[0][i];
-                            columnIndices[colCount] = i;
-                            colCount++;
-                        }
-
-                    }
-
-                    for (var i = 1; i < results.data.length; ++i) {
-                        if (results.data[i][1] == 'Set Price') {
-                            for (var j = 0; j < columnIndices.length; ++j) {
-                                packPrices[j] = results.data[i][columnIndices[j]];
-                            }
-                        }
-                    }
-
-                    var beginRowIndexInclusive = -1;
-                    for (var i = 1; i < results.data.length; ++i) {
-                        if (results.data[i][2] == 'AC-702-P') {
-                            beginRowIndexInclusive = i;
-                            //console.log('Found row at '+beginRowIndexInclusive);
-                        }
-                    }
-
-
-                    var colIndex = 0;
-                    var rowIndex = 0;
-                    var colIndex = 0;
-                    matrixData = [];
-
-                    for (var i = beginRowIndexInclusive; i < results.data.length; ++i) {
-                        colIndex = 0;
-                        if (!results.data[i][1]) {
-                            continue;
-                        }
-                        items[rowIndex] = results.data[i][1];
-                        matrixData[rowIndex] = new Array(columnIndices.length);
-                        for (var j = 0; j <= columnIndices.length; ++j) {
-
-                            if (!results.data[i][columnIndices[j]]) {
-                                matrixData[rowIndex][colIndex] = 0;
-                            } else {
-                                matrixData[rowIndex][colIndex] = results.data[i][columnIndices[j]];
-                            }
-                            ++colIndex;
-                        }
-                        ++rowIndex;
-                    }
-
-                    console.log("Read items as " + items);
-                    console.log("Read packs as " + matrixHeader);
-                    populateDesiredCollapsed();
-                    populatePacks();
-                    itemsMap = swap(items);
-                    matrixHeaderMap = swap(matrixHeader);
-                }
-            });
-        }
-
-        function save() {
-            var date = new Date();
-            var filename = 'mydfpledge_' + date.getFullYear() + "-" + date.getMonth() + "-" + date.getDay() + "_" + date.getHours() + "." + date.getMinutes() + "." + date.getSeconds() + '.csv';
-            var array = [];
-            for (var i = 0; i < items.length; ++i) {
-                var qty = document.getElementById('item_' + i).value;
-                var item = items[i];
-                array[i] = { "qty": qty, "item": items[i] };
-            }
-            var csv = Papa.unparse(array);
-            var csvData = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            var csvURL = null;
-            if (navigator.msSaveBlob) {
-                csvURL = navigator.msSaveBlob(csvData, filename);
-            }
-            else {
-                csvURL = window.URL.createObjectURL(csvData);
-            }
-
-            var tempLink = document.createElement('a');
-            tempLink.href = csvURL;
-            tempLink.setAttribute('download', filename);
-            tempLink.click();
-        }
-        function handleLoadMyPledge(evt) {
-            var file = evt.target.files[0];
-            Papa.parse(file, {
-                header: true,
-                download: false,
-                skipEmptyLines: true,
-                dynamicTyping: true,
-
-                complete: function (results) {
-                    clearDesired(false);
-                    for (var i = 0; i < results.data.length; ++i) {
-                        var qty = results.data[i]["qty"];
-                        var item = results.data[i]["item"];
-
-                        document.getElementById('item_' + itemsMap[item]).value = qty;
-                    }
-                }
-            });
-        }
-
-        function showToleranceMessage(){
-            alert("Large lists of desired items can take a very long time to optimize. A non-zero tolerance of say, 5, indicates you are willing to accept a solution within 5% of the optimal cost.  These approximate results can be much faster to find.");
-        }
-
-        function populateDesiredCollapsed() {
-            var outerDiv = document.getElementById("desired");
-            var desiredForm = document.createElement('table');
-            outerDiv.innerHTML = "Set desired items:<BR>";
-            outerDiv.innerHTML += '<input type=button value="add 1 of each painted" onClick="javascript:oneOfEachPainted()">'
-                + '<input type=button value="add 1 of each unpainted" onClick="javascript:oneOfEachUnpainted()">';
-            outerDiv.innerHTML += '<input type=button value="clear" onClick="javascript:clearDesired(true)">';
-            outerDiv.innerHTML += '<input type=button value="save" onClick="javascript:save()">';
-            outerDiv.innerHTML += 'Load-><input type=file id="load-mypledge" name="load" value="load">';
-            outerDiv.innerHTML += '<BR>';
-            outerDiv.innerHTML += '<input type=button value="optimize" onClick="javascript:optimize()">';
-            outerDiv.innerHTML += 'Tolerance[<a href="javascript:showToleranceMessage()">?</a>]: <input id="tolerance" type=text name="tolerance" value="0" size=4>'
-            $("#load-mypledge").change(handleLoadMyPledge);
-            var prefixMap = {};
-            for (var i = 0; i < items.length; ++i) {
-                if (items[i].endsWith(" - Painted")) {
-                    var n = items[i].indexOf(' - Painted');
-                    var prefix = items[i].substring(0, n);
-                    if (prefix in prefixMap) {
-                        prefixMap[prefix]['painted'] = i;
-                    } else {
-                        prefixMap[prefix] = { "painted": i };
-                    }
-                } else if (items[i].endsWith(" - Unpainted")) {
-                    var n = items[i].indexOf(' - Unpainted');
-                    var prefix = items[i].substring(0, n);
-                    if (prefix in prefixMap) {
-                        prefixMap[prefix]['unpainted'] = i;
-                    } else {
-                        prefixMap[prefix] = { "unpainted": i };
-                    }
-                } else {
-                    if (items[i] in prefixMap) {
-                        alert("ERROR: Unexpected duplicate item" + items[i] + " in spreadsheet: behavior undefined.");
-                    }
-                    prefixMap[items[i]] = { "unpainted": i };
-                }
-            }
-            var tbody = document.createElement('tbody');
-            tbody.innerHTML = "<tr><th style='text-align: left; width: 40px;'>Unpainted<BR>Qty</th><th style='text-align: left; width: 40px'>Painted Qty</th><th style='text-align: left;'>Item</th></tr>"
-            desiredForm.append(tbody);
-            for (var item in prefixMap) {
-                var tbody = document.createElement('tbody');
-                if ("unpainted" in prefixMap[item]) {
-                    if ("painted" in prefixMap[item]) {
-                        tbody.innerHTML = '<tr><td><input size=4 value=0 type="text" id="item_' + prefixMap[item]['unpainted'] + '"></td>'
-                            + '<td><input size=4 value=0 type="text" id="item_' + prefixMap[item]['painted'] + '"></td>'
-                            + '<td>' + item + '</td>'
-                            + '</tr>'
-                    } else {
-                        tbody.innerHTML = '<tr><td colspan=2><input value=0 type="text" size=4 id="item_' + prefixMap[item]['unpainted'] + '"></td>'
-                            + '<td>' + item + '</td></tr>';
-                    }
-                } else {
-                    tbody.innerHTML = '<tr><td>&nbsp;</td><td><input value=0 type="text" size=4 id="item_' + prefixMap[item]['painted'] + '"></td>'
-                        + '<td>' + item + ' - Painted</td></tr>';
-                }
-                desiredForm.appendChild(tbody);
-            }
-
-            outerDiv.appendChild(desiredForm);
-
-        }
-
-
-
-        function handleFileSelect(evt) {
-            var file = evt.target.files[0];
-            loadCsv(file, false);
-        }
-
-        function getPackContents(packIndex) {
-            var indices = {};
-            var n = 0;
-            for (var i = 0; i < matrixData.length; ++i) {
-                var qty = matrixData[i][packIndex];
-                if (qty > 0) {
-                    indices[items[i]] = qty;
-                }
-            }
-            return indices;
-        }
-
-        function addPack(packIndex) {
-            //get pack composition.
-            for (var i = 0; i < matrixData.length; ++i) {
-                var qty = matrixData[i][packIndex];
-
-                var current = parseInt(document.getElementById("item_" + i).value);
-
-                if (maxMode === false) {
-                    document.getElementById("item_" + i).value = current + qty;
-                } else {
-                    document.getElementById("item_" + i).value = Math.max(current, qty, 0);
-                }
-
-                console.log("Added " + qty + " of " + items[i]);
-
-            }
-            console.log('Added ' + matrixHeader[packIndex]);
-
-        }
-
-        // function populateDesired() {
-        //     var outerDiv = document.getElementById("desired");
-        //     var desiredForm = document.createElement('table');    
-
-        //     desiredForm.innerHTML = "Set desired items:<BR>";
-        //     desiredForm.innerHTML += '<input type=button value="add 1 of each painted" onClick="javascript:oneOfEachPainted()">';
-        //     desiredForm.innerHTML += '<input type=button value="add 1 of each unpainted" onClick="javascript:oneOfEachUnpainted()">';
-        //     desiredForm.innerHTML += '<input type=button value="clear" onClick="javascript:clearDesired()">';
-        //     desiredForm.innerHTML += '<BR>';
-        //     desiredForm.innerHTML += '<input type=button value="optimize" onClick="javascript:optimize()">';
-        //     for (var i = 0; i < items.length; ++i) {
-        //         desiredForm.innerHTML += '<tr><td><input value=0 type="text" id="item_' + i + '"></td><td>' + items[i] + '</td></tr>';
-        //     }
-
-        //     outerDiv.appendChild(desiredForm);
-        // }
-
-        function setMaxMode() {
-            maxMode = true;
-        }
-
-        function setSumMode() {
-            maxMode = false;
-        }
-
-        function populatePacks() {
-            var packForm = document.getElementById("packs");
-            packForm.innerHTML = '<tr><td colspan=3>(Optional) Add packs of items to the desired items list</td></tr>';
-            packForm.innerHTML += '<tr><td colspan=3><input type="radio" name="mode" value="sum" checked="checked" onClick="javascript:setSumMode()">Sum&nbsp;<input type="radio" name="mode" value="max" onClick="javascript:setMaxMode()">Max</td></tr>';
-            for (var j = 0; j < matrixHeader.length; ++j) {
-                packForm.innerHTML += '<tr><td style="width: 30px"><input type="button" value="Add" onClick="javascript:addPack(' + j + ')"></td><td style="width: 90px; font-size:8pt;"><input type="checkbox" id="omit_'+j+'">Omit</td><td>' + matrixHeader[j] + '</td><td>$' + packPrices[j] + '</td></tr>';
-            }
-        }
-
-        function oneOfEachPainted() {
-            for (var i = 0; i < items.length; ++i) {
-                if (items[i].endsWith("Painted")) {
-                    document.getElementById("item_" + i).value = Math.max(document.getElementById("item_" + i).value, 1)
-                }
-            }
-        }
-
-        function oneOfEachUnpainted() {
-            for (var i = 0; i < items.length; ++i) {
-                if (items[i].endsWith("Unpainted")) {
-                    document.getElementById("item_" + i).value = Math.max(document.getElementById("item_" + i).value, 1)
-                }
-            }
-        }
-
-        function clearDesired(clearLoadMyPledge) {
-            for (var i = 0; i < items.length; ++i) {
-                document.getElementById("item_" + i).value = 0;
-            }
-            if (clearLoadMyPledge) {
-                document.getElementById("load-mypledge").value = '';
-            }
-        }
-
-        function getLowerPaneLinks(deactivatedLink){   
-            var s;        
-            if(deactivatedLink == 'solutionLink'){
-                s = '<center><b>Pledge Summary</b>&nbsp;&nbsp;<a id="manifestLink" href="javascript:showManifest()">Item Manifest</a></center>';
-            }else if(deactivatedLink == 'manifestLink'){
-                s = '<center><a id="solutionLink" href="javascript:showSolution()">Pledge Summary</a>&nbsp;&nbsp;<b>Item Manifest</b></center>';
-            }            
-            return s + "<center><B>TOTAL COST: $" + solution.result + "</B></center><BR>";
-        }
-
-        function deactivateLink(linkId){
-            var linkToDeactivate = document.getElementById(linkid);
-            linkToDeactive.href("");
-        }        
-
-        function getItemCounts(){
-            var itemCounts = {};
-            for (key in solution) { //key is pack
-                var packContents = getPackContents(matrixHeaderMap[key]);
-                for (item in packContents) {
-                    if(item.endsWith('(1 PER BACKER)')){
-                        itemCounts[item] = 1;
-                    }else if (item in itemCounts) {
-                        itemCounts[item] += solution[key] * packContents[item];
-                    } else {
-                        itemCounts[item] = solution[key] * packContents[item];
-                    }                    
-                }
-            }            
-            return itemCounts;
-        }
-
-        var onlyShowExtras = false;
-        function toggleOnlyShowExtras(){
-            onlyShowExtras = !onlyShowExtras;
-            showManifest();            
-        }
-
-        function showManifest(){
-            var bottom = document.getElementById("optimalpledge");
-            bottom.innerHTML = getLowerPaneLinks('manifestLink');
-            if(onlyShowExtras){
-                bottom.innerHTML += "<a href='javascript:toggleOnlyShowExtras()'>Show everything</a><BR><BR>";
-            }else{
-                bottom.innerHTML += "<a href='javascript:toggleOnlyShowExtras()'>Only show Extras</a><BR><BR>";
-            }
-            bottom.innerHTML += "<B><U>MANIFEST</U></B><BR>"                
-            var table = document.createElement("table");
-
-            table.innerHTML = "<tr><th style='text-align: left; '>Item</th><th style='text-align: left; width: 40px'>Qty</th><th style='text-align: left; width: 40px;'># Desired&nbsp;&nbsp;</th><th style='text-align: left; width: 60px;'># Over Desired Qty&nbsp;&nbsp;</th><th style='text-align: left; width: 40px;'>% Over</th></tr>";
-            var itemCounts = getItemCounts();
-            const sortObject = obj => Object.keys(obj).sort().reduce((res, key) => (res[key] = obj[key], res), {});
-            itemCounts = sortObject(itemCounts);    
-            for(item in itemCounts){
-                if(itemCounts[item] > 0){
-                    var desiredItemQty = parseInt(document.getElementById("item_" + itemsMap[item]).value);
-                    var overDesired =  itemCounts[item] - desiredItemQty;
-                    if(!onlyShowExtras || overDesired > 0){
-                        var percentIncrease;
-                        if(desiredItemQty < 1){
-                            percentIncrease="None desired";
-                        }else{
-                            percentIncrease = Math.round(100*(itemCounts[item]/desiredItemQty - 1)) + "%";
-                        }
-                        table.innerHTML += "<tr><td>"+item+"</td><td>"+itemCounts[item]+"</td><td>"+desiredItemQty+"</td><td>"+overDesired+"</td><td>"+percentIncrease+"</td></tr>";
-                    }
-                }
-            }
-            bottom.appendChild(table);
-        }
-
-        function showSolution() {
-            if (solution.feasible !== true) {
-                alert("ERROR: solution was not feasible");
-            } else {
-                var bottom = document.getElementById("optimalpledge");
-                bottom.innerHTML = getLowerPaneLinks('solutionLink')+"<B><U>PLEDGE SUMMARY</U></B><BR>"                
-                
-                var table = document.createElement("table");
-                table.innerHTML = "<tr><th style='text-align: left; '>Pack</th><th style='text-align: left; width: 40px'>Qty</th><th style='text-align: left; width: 40px'>Cost</th><th style='text-align: left;'>% Lost if Omitted</th><th style='text-align: left;'>Desired items lost if omitted</th></tr>";
-                var itemCounts = getItemCounts();
-
-                for (key in solution) { //key is pack
-                    if (key != 'feasible' && key != 'result' && key != 'bounded' && key != 'isIntegral') {
-                        // What are the total number of items introduced by this pack.
-                        var packContents = getPackContents(matrixHeaderMap[key]);
-                        var totalPackQty = 0;
-                        var amountBelowDesiredIfDropped = 0;
-                        var omissionDescription = {};
-                        for (item in packContents) {
-                            var packQuantity = packContents[item];
-                            var desiredItemQty = parseInt(document.getElementById("item_" + itemsMap[item]).value);
-
-                            //var finalPledgeQty = solution[key] * packQuantity; //this is NUMBer of packs.
-                            var finalPledgeQty = itemCounts[item];
-
-                            var leftAfterDropping = finalPledgeQty - packQuantity;
-                            if (leftAfterDropping < desiredItemQty) {
-                                amountBelowDesiredIfDropped += (desiredItemQty - leftAfterDropping);
-                                omissionDescription[item] = desiredItemQty - leftAfterDropping;
-                            }
-                            totalPackQty += packQuantity;
-                        }
-
-                        var fractionLost = Math.round(100 * amountBelowDesiredIfDropped / totalPackQty);
-
-                        var itemsLost = 0;
-
-                        var omissionString = "";
-                        if (Object.keys(omissionDescription).length > 0) {
-                            var n = 0;
-                            for (item in omissionDescription) {
-                                omissionString += "-" + omissionDescription[item] + " " + item + ",";
-                            }
-                            omissionString = omissionString.substring(0, omissionString.length - 1);
-                        }
-                        itemsLost = omissionString;
-                        table.innerHTML += "<tr><td>" + key + "</td><td>" + solution[key] + "</td><td>$" + (solution[key] * packPrices[matrixHeaderMap[key]]) + "</td><td>" + fractionLost + "</td><td>" + itemsLost + "</td></tr>"
-                    }
-                }
-                bottom.appendChild(table);
-            }
-
-            console.log("done");
-        }
-
-        function optimize() {
-            model = { "optimize": "cost", "osType": "min", "constraints": {}, "variables": {}, "ints": {} };
-
-            var tolerance=parseFloat(document.getElementById('tolerance').value);
-            
-            if(!Number.isFinite(tolerance)){
-                alert('Invalid value '+tolerance+' for tolerance -- must be a number > 0 (e.g. 5 indicates you will accept a solution within 5% of the optimal cost)');
-                return;
-            }
-
-            if(tolerance > 0){                
-                model['options'] = {"tolerance": (tolerance/100.0)};
-            }
-
-            // Desired quantities are constraints of integer linear program.
-            for (var i = 0; i < items.length; ++i) {
-                var qty = document.getElementById("item_" + i).value;
-
-                if (qty > 0) {
-                    qty = parseInt(qty);
-                    if ((items[i].endsWith('(1 PER BACKER)') || items[i] == 'Wildlands Backer Tote Bag') && qty > 1) {
-                        console.log("Forcing quantity of " + items[i] + " to 1");
-                        document.getElementById("item_" + i).value = 1;
-                        qty = 1;
-                    }
-                    model['constraints'][items[i]] = { "min": qty };
-                }
-            }
-
-            // Initialize pack/item numbers.
-            for (var j = 0; j < matrixHeader.length; ++j) {
-                if(document.getElementById("omit_"+j).checked){
-                    continue;
-                }
-                model['ints'][matrixHeader[j]] = 1;
-                model['variables'][matrixHeader[j]] = {};
-                model['variables'][matrixHeader[j]]['cost'] = packPrices[j];
-                for (var i = 0; i < matrixData.length; ++i) {
-                    var packQty = matrixData[i][j];
-                    if(packQty > 0){                    
-                        model['variables'][matrixHeader[j]][items[i]] = packQty;
-                    }
-                    
-                }
-            }
-            console.log("%j", model);
-            var bottom = document.getElementById("optimalpledge");
-
-            var modelstr = JSON.stringify(model, null, 2); // spacing level = 2
-            bottom.innerHTML="Optimizing...<BR>";
-            
-            solution = solver.Solve(model);
-            console.log(solution);
-            showSolution();
-        }
-
-
-        $(document).ready(function () {
-            $("#csv-file").change(handleFileSelect);
-        });
-    </script>
-
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style>
-        .split {
-            height: 60%;
-            width: 50%;
-            position: fixed;
-            z-index: 1;
-            top: 40;
-            overflow-x: hidden;
-            padding-top: 20px;
-        }
-
-        .left {
-            left: 0;
-
-        }
-
-        .right {
-            right: 0;
-        }
-
-        .bottom {
-            height: 30%;
-            width: 99%;
-            z-index: 1;
-            overflow-y: scroll;
-
-            left: 10px;
-            right: 20px;
-            bottom: 10px;
-            position: fixed;
-        }
-
-        table.scrolldown tbody {
-            /* Set vertical scroll */
-            overflow-y: scroll;
-
-            /* Hide the horizontal scroll */
-            overflow-x: hidden;
-        }
-
-
-        .centered {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-        }
-
-        .centered img {
-            width: 150px;
-            border-radius: 50%;
-        }
-    </style>
+    <title>Perilous Frontiers Pledge Optimizer</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="style.css">
+    <script>
+        // Apply the saved theme before first paint (see the theme picker in app.js).
+        try { document.documentElement.dataset.theme = localStorage.getItem('pf-optimizer-theme') || 'desert'; }
+        catch (e) { document.documentElement.dataset.theme = 'desert'; }
+    </script>
+    <!-- HiGHS MILP solver compiled to WebAssembly: https://github.com/lovasoa/highs-js -->
+    <script src="https://cdn.jsdelivr.net/npm/highs@1.15.3/build/highs.js"></script>
+    <script src="optimizer.js"></script>
+    <script src="app.js" defer></script>
 </head>
 
 <body>
-    <p1>
-        <B>Enter CSV export of Randy's Spreadsheet: <input type="file" id="csv-file" name="files" /> OR <a
-                href="javascript:loadCsv('https://dfperiod3.github.io/WildlandsPledgePlannerDetailsExport.csv', true);">Use
-                Version 2020/10/30 6:04 PM CDT</a></B>
-                
-    </p1>
+    <header>
+        <div class="title-row">
+            <h1>Perilous Frontiers Pledge Optimizer</h1>
+            <div class="toolbar">
+                <label>Theme
+                    <select id="theme">
+                        <option value="desert">Desert</option>
+                        <option value="arctic">Arctic</option>
+                    </select>
+                </label>
+                <button id="help-open" data-tip="How to use this page">Help</button>
+            </div>
+        </div>
+        <p>
+            Enter the pieces you want on the left, then click <b>Optimize</b> to find the cheapest
+            combination of sets and bundles that contains at least those pieces.
+            <a href="#" id="help-link">How it works</a>
+        </p>
+        <p class="meta">
+            Set data from the <a id="source" href="#">community spreadsheet</a>, downloaded <span id="generated"></span>.
+            Gamefound campaign prices; shipping and tax not included.
+        </p>
+    </header>
 
-    <div class="split left" id="desired">
-        <!--<table id="desired" class="altcolor"></table>-->
-    </div>
+    <main>
+        <section id="desired-pane" class="pane">
+            <div class="pane-head">
+                <h2>Desired pieces <span id="desired-count" class="count"></span>
+                    <span class="help" tabindex="0" data-tip="Enter how many of each piece you want. The optimizer finds the cheapest pledge with at least these quantities. Pieces are grouped as in the community spreadsheet. Codes ending -w-P are Desert painted, -i-P Arctic painted, other -P painted in both schemes, -U unpainted, and -T / -Z printed materials and hardware.">?</span></h2>
+                <div class="toolbar">
+                    <button id="one-painted" data-tip="Raise every painted piece (Desert, Arctic and universal) to at least 1. Quantities above 1 are kept.">+1 of each painted</button>
+                    <button id="one-unpainted" data-tip="Raise every unpainted piece to at least 1. Quantities above 1 are kept.">+1 of each unpainted</button>
+                    <button id="clear" data-tip="Set every desired quantity back to 0">Clear</button>
+                    <button id="save" data-tip="Download your desired pieces as a CSV file. Your entries are also remembered in this browser automatically.">Save</button>
+                    <label class="button" data-tip="Replace your desired pieces with a CSV file saved earlier">Load<input type="file" id="load" accept=".csv,text/csv" hidden></label>
+                </div>
+                <div class="toolbar">
+                    <input type="search" id="piece-filter" placeholder="Filter pieces">
+                    <label data-tip="Hide pieces whose desired quantity is 0"><input type="checkbox" id="only-desired"> Only show desired</label>
+                </div>
+            </div>
+            <div id="pieces" class="pane-body"></div>
+        </section>
 
-    <div class="split right">
-        <form id="p">
-            <table id="packs"></table>
-        </form>
-    </div>
+        <section id="sets-pane" class="pane">
+            <div class="pane-head">
+                <h2>Sets &amp; bundles
+                    <span class="help" tabindex="0" data-tip="Everything offered in the campaign, at Gamefound prices (bundles at their bundle price). Use Add / Sub to copy a set's contents into your desired pieces, Omit to stop the optimizer from choosing it, and click a name to see what's inside. SG marks stretch-goal sets.">?</span></h2>
+                <div class="toolbar">
+                    Add a set's contents to your desired pieces:
+                    <label data-tip="Add: put the set's quantities on top of what you already have"><input type="radio" name="mode" value="sum" checked> Sum</label>
+                    <label data-tip="Add: raise each piece to at least the set's quantity instead of adding to it. Add set A, then set B, to get enough to build either one (but not both at once)."><input type="radio" name="mode" value="max"> Max</label>
+                </div>
+                <div class="toolbar">
+                    <input type="search" id="set-filter" placeholder="Filter sets">
+                    <button id="clear-omit" data-tip="Uncheck every Omit box so all sets can be chosen again">Clear omits</button>
+                </div>
+            </div>
+            <div id="sets" class="pane-body"></div>
+        </section>
+    </main>
 
-    <div id="optimalpledge" class="bottom">
-    </div>
+    <section id="results-pane" class="pane">
+        <div class="pane-head toolbar">
+            <button id="optimize" class="primary" disabled data-tip="Find the cheapest combination of sets with at least your desired pieces">Loading solver…</button>
+            <label>
+                Tolerance % <input type="number" id="tolerance" value="0" min="0" step="1">
+            </label>
+            <span class="help" tabindex="0" data-tip="0 finds the guaranteed cheapest pledge. A value like 5 lets the solver stop at any pledge proven to be within 5% of the cheapest. Only worth changing if a solve is slow.">?</span>
+            <label>
+                Time limit s <input type="number" id="time-limit" value="60" min="1" step="1">
+            </label>
+            <span class="help" tabindex="0" data-tip="If the solver runs this many seconds, it stops and shows the best pledge found so far, which may not be the cheapest. Most solves take well under a second.">?</span>
+            <span id="status"></span>
+            <span class="spacer"></span>
+            <nav id="tabs">
+                <button data-tab="summary" class="active" data-tip="The sets to buy, with quantities and cost">Pledge summary</button>
+                <button data-tab="manifest" data-tip="Every piece the pledge contains, compared with what you asked for">Item manifest</button>
+                <button data-tab="desired" data-tip="Just the pieces you've entered, with their quantities">Desired list</button>
+            </nav>
+        </div>
+        <div id="results" class="pane-body"></div>
+    </section>
+
+    <dialog id="help" aria-labelledby="help-title">
+        <div class="help-head">
+            <h2 id="help-title">How to use the pledge optimizer</h2>
+            <button id="help-close" aria-label="Close help">✕</button>
+        </div>
+        <div class="help-body">
+            <p>
+                Perilous Frontiers offers many sets and bundles, and they share a lot of pieces. Tell
+                the optimizer which pieces you want, and it finds the <b>cheapest combination of
+                sets</b> that gives you at least that many of each. It also shows what extras come
+                along.
+            </p>
+
+            <h3>Quick start</h3>
+            <ol>
+                <li>Enter quantities in <b>Desired pieces</b> (left). Or click <b>Add</b> beside sets on
+                    the right to copy in their contents as a starting point.</li>
+                <li>Click <b>Optimize</b>.</li>
+                <li>Read the <b>Pledge summary</b> for what to buy and the <b>Item manifest</b> for
+                    everything you'll get.</li>
+            </ol>
+
+            <h3>Desired pieces</h3>
+            <p>
+                Each row is a piece. Type how many you want, and leave 0 for pieces you don't care
+                about. Groups follow the community spreadsheet: new pieces by color scheme
+                (Universal, Arctic, Desert), all unpainted pieces, printed materials, accessories,
+                and pieces reused from earlier Dwarven Forge products.
+            </p>
+            <p>The code beside each piece tells you which version it is (hover over it for a reminder):</p>
+            <table class="legend">
+                <tr><td class="code">…-w-P</td><td>Painted, Desert scheme</td></tr>
+                <tr><td class="code">…-i-P</td><td>Painted, Arctic scheme</td></tr>
+                <tr><td class="code">…-P</td><td>Painted, same in both schemes</td></tr>
+                <tr><td class="code">…-U</td><td>Unpainted. One unpainted sculpt matches both painted versions.</td></tr>
+                <tr><td class="code">…-T</td><td>Printed materials: textures, mats, backdrops</td></tr>
+                <tr><td class="code">…-Z</td><td>Hardware and accessories: pegs, rods, stilts, lights</td></tr>
+            </table>
+            <p>
+                <b>+1 of each painted / unpainted</b> raises every piece of that kind to at least 1.
+                <b>Filter pieces</b> searches names and codes, and <b>Only show desired</b> hides the zeros.
+                Your entries are saved in this browser automatically. Use <b>Save</b> / <b>Load</b>
+                to keep them in a CSV file or move them to another computer.
+            </p>
+
+            <h3>Sets &amp; bundles</h3>
+            <ul>
+                <li><b>Add</b> copies a set's contents into your desired pieces and <b>Sub</b> removes
+                    them. Click a set's name to see what's inside.</li>
+                <li><b>Sum</b> mode (normal) adds the set's quantities to what you already have.
+                    <b>Max</b> mode raises each piece to <i>at least</i> the set's quantity instead.</li>
+                <li><b>Omit</b> stops the optimizer from choosing a set. You can still Add its contents.</li>
+                <li><b>SG</b> marks stretch-goal sets.</li>
+            </ul>
+
+            <h3>Results</h3>
+            <ul>
+                <li><b>Pledge summary</b>: the sets to buy and the total cost. <i>Desired pieces
+                    lost with one fewer</i> shows what you'd be short if you dropped one copy of a
+                    set. "All spare" means that set only adds extras, which happens when pieces
+                    can only be bought in bigger sets.</li>
+                <li><b>Item manifest</b>: every piece in the pledge next to what you asked for. Tick
+                    <i>Only show extras</i> to see just the leftovers.</li>
+                <li><b>Desired list</b>: a compact list of what you've entered.</li>
+            </ul>
+
+            <h3>Recipes</h3>
+            <dl>
+                <dt>"I want this bundle, but cheaper"</dt>
+                <dd>Add the bundle, tick its Omit box, and Optimize. You'll see whether a mix of
+                    smaller sets beats it. (Usually not: bundles are discounted.)</dd>
+                <dt>"I want to build A <i>or</i> B, not both at once"</dt>
+                <dd>Switch to <b>Max</b>, Add A, then Add B. Shared pieces are counted once, at the
+                    larger quantity.</dd>
+                <dt>"I want painted pieces but will paint some myself"</dt>
+                <dd>Enter painted quantities for the pieces you want painted and unpainted
+                    quantities for the rest. The optimizer mixes painted and unpainted sets.</dd>
+                <dt>"I want one of everything"</dt>
+                <dd>Click <b>+1 of each painted</b> (or unpainted) and Optimize.</dd>
+            </dl>
+
+            <h3>Good to know</h3>
+            <ul>
+                <li>Prices are Gamefound campaign prices, with bundles at their bundle price.
+                    Shipping, tax, pledge-level extras and any other discounts are <b>not</b> included.</li>
+                <li>The answer is the guaranteed cheapest unless you set a <b>Tolerance</b> or the
+                    <b>Time limit</b> runs out, and the status message says when that happens.
+                    Solving normally takes well under a second.</li>
+                <li>Set contents and prices come from the
+                    <a class="source-link" href="#" target="_blank" rel="noopener">community spreadsheet</a>
+                    (see the date under the title). If something looks wrong, check the sheet first.</li>
+                <li>Everything runs in your browser. Nothing you enter is sent anywhere.</li>
+            </ul>
+
+            <h3>Credits</h3>
+            <p>
+                Terrain by <a href="https://gamefound.com/en/projects/dwarven-forge/perilous-frontiers" target="_blank" rel="noopener">Dwarven Forge</a>.
+                Set data from the community spreadsheet. Optimization by
+                <a href="https://highs.dev" target="_blank" rel="noopener">HiGHS</a>.
+                Source and developer notes on
+                <a href="https://github.com/dfperiod3/dfperiod3.github.io" target="_blank" rel="noopener">GitHub</a>.
+            </p>
+        </div>
+    </dialog>
+</body>
 
 </html>
