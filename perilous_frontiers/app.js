@@ -503,6 +503,23 @@ function initTooltips() {
     document.addEventListener('scroll', hideTip, true);
 }
 
+// ---- help dialog -------------------------------------------------------------------
+
+function initHelp() {
+    var dialog = $('help');
+    function open(e) {
+        e.preventDefault();
+        hideTip();
+        dialog.showModal();
+        dialog.querySelector('.help-body').scrollTop = 0;
+    }
+    $('help-open').addEventListener('click', open);
+    $('help-link').addEventListener('click', open);
+    $('help-close').addEventListener('click', function () { dialog.close(); });
+    // A click on the backdrop lands on the <dialog> itself rather than its contents.
+    dialog.addEventListener('click', function (e) { if (e.target === dialog) dialog.close(); });
+}
+
 // ---- startup -----------------------------------------------------------------------
 
 function init(json) {
@@ -510,6 +527,7 @@ function init(json) {
     data.pieces.forEach(function (p) { pieceByCode[p.code] = p; });
     data.sets.forEach(function (s) { setByCode[s.code] = s; });
     $('source').href = data.source;
+    document.querySelectorAll('.source-link').forEach(function (l) { l.href = data.source; });
     $('generated').textContent = data.generated;
 
     restore();
@@ -547,6 +565,7 @@ function init(json) {
 }
 
 initTooltips();
+initHelp();
 loadSolver();
 fetch('data.json')
     .then(function (r) { if (!r.ok) throw new Error(r.status + ' ' + r.statusText); return r.json(); })

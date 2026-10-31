@@ -32,7 +32,9 @@ including "one of every painted piece".
   pledge within 5% of the cheapest. When the time limit is reached, you get the best
   pledge found so far.
 
-Hover over (or tap) any button, column heading or **?** badge for help.
+The **Help** button (top right) opens the full in-page guide, including recipes for
+common questions. Hover over (or tap) any button, column heading or **?** badge for
+quick help.
 
 ## Updating the data
 

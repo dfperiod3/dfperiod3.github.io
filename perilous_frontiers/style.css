@@ -199,6 +199,35 @@ label + .help { margin-left: -4px; margin-right: 8px; }
     box-shadow: 0 2px 8px rgba(0, 0, 0, .25);
 }
 #tooltip[hidden] { display: none; }
+
+dialog#help {
+    width: min(760px, calc(100vw - 32px));
+    max-height: calc(100vh - 48px);
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--panel);
+    color: var(--text);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, .35);
+}
+dialog#help[open] { display: flex; flex-direction: column; }
+dialog#help::backdrop { background: rgba(0, 0, 0, .45); }
+.help-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+}
+.help-body { overflow-y: auto; padding: 4px 16px 16px; line-height: 1.5; }
+.help-body h3 { font-size: 1em; margin: 18px 0 4px; color: var(--accent); }
+.help-body p, .help-body ul, .help-body ol, .help-body dl { margin: 6px 0; }
+.help-body li { margin: 3px 0; }
+.help-body dt { font-weight: 600; margin-top: 8px; }
+.help-body dd { margin: 2px 0 0 16px; }
+.help-body table.legend { width: auto; margin: 4px 0 8px; }
+.help-body table.legend td.code { font-family: ui-monospace, monospace; font-size: .9em; }
 .lost { color: var(--muted); font-size: .9em; }
 
 @media (max-width: 800px) {
@@ -207,3 +236,4 @@ label + .help { margin-left: -4px; margin-right: 8px; }
     main, #results-pane { flex: none; }
     .pane-body { max-height: 60vh; }
 }
+.title-row .toolbar { margin-top: 0; }
