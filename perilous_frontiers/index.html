@@ -43,17 +43,18 @@
     <main>
         <section id="desired-pane" class="pane">
             <div class="pane-head">
-                <h2>Desired pieces <span id="desired-count" class="count"></span></h2>
+                <h2>Desired pieces <span id="desired-count" class="count"></span>
+                    <span class="help" tabindex="0" data-tip="Enter how many of each piece you want. The optimizer finds the cheapest pledge with at least these quantities. Pieces are grouped as in the community spreadsheet. Codes ending -w-P are Desert painted, -i-P Arctic painted, other -P painted in both schemes, -U unpainted, and -T / -Z printed materials and hardware.">?</span></h2>
                 <div class="toolbar">
-                    <button id="one-painted" title="Set every painted piece to at least 1">+1 of each painted</button>
-                    <button id="one-unpainted" title="Set every unpainted piece to at least 1">+1 of each unpainted</button>
-                    <button id="clear">Clear</button>
-                    <button id="save" title="Download your desired pieces as a CSV file">Save</button>
-                    <label class="button" title="Load a CSV file saved earlier">Load<input type="file" id="load" accept=".csv,text/csv" hidden></label>
+                    <button id="one-painted" data-tip="Raise every painted piece (Desert, Arctic and universal) to at least 1. Quantities above 1 are kept.">+1 of each painted</button>
+                    <button id="one-unpainted" data-tip="Raise every unpainted piece to at least 1. Quantities above 1 are kept.">+1 of each unpainted</button>
+                    <button id="clear" data-tip="Set every desired quantity back to 0">Clear</button>
+                    <button id="save" data-tip="Download your desired pieces as a CSV file. Your entries are also remembered in this browser automatically.">Save</button>
+                    <label class="button" data-tip="Replace your desired pieces with a CSV file saved earlier">Load<input type="file" id="load" accept=".csv,text/csv" hidden></label>
                 </div>
                 <div class="toolbar">
                     <input type="search" id="piece-filter" placeholder="Filter pieces">
-                    <label><input type="checkbox" id="only-desired"> Only show desired</label>
+                    <label data-tip="Hide pieces whose desired quantity is 0"><input type="checkbox" id="only-desired"> Only show desired</label>
                 </div>
             </div>
             <div id="pieces" class="pane-body"></div>
@@ -61,15 +62,16 @@
 
         <section id="sets-pane" class="pane">
             <div class="pane-head">
-                <h2>Sets &amp; bundles</h2>
+                <h2>Sets &amp; bundles
+                    <span class="help" tabindex="0" data-tip="Everything offered in the campaign, at Gamefound prices (bundles at their bundle price). Use Add / Sub to copy a set's contents into your desired pieces, Omit to stop the optimizer from choosing it, and click a name to see what's inside. SG marks stretch-goal sets.">?</span></h2>
                 <div class="toolbar">
                     Add a set's contents to your desired pieces:
-                    <label title="Add the set's quantities to what you already have"><input type="radio" name="mode" value="sum" checked> Sum</label>
-                    <label title="Raise each quantity to at least the set's quantity; useful for 'build A or B, not both at once'"><input type="radio" name="mode" value="max"> Max</label>
+                    <label data-tip="Add: put the set's quantities on top of what you already have"><input type="radio" name="mode" value="sum" checked> Sum</label>
+                    <label data-tip="Add: raise each piece to at least the set's quantity instead of adding to it. Add set A, then set B, to get enough to build either one (but not both at once)."><input type="radio" name="mode" value="max"> Max</label>
                 </div>
                 <div class="toolbar">
                     <input type="search" id="set-filter" placeholder="Filter sets">
-                    <button id="clear-omit">Clear omits</button>
+                    <button id="clear-omit" data-tip="Uncheck every Omit box so all sets can be chosen again">Clear omits</button>
                 </div>
             </div>
             <div id="sets" class="pane-body"></div>
@@ -78,19 +80,21 @@
 
     <section id="results-pane" class="pane">
         <div class="pane-head toolbar">
-            <button id="optimize" class="primary" disabled>Loading solver…</button>
-            <label title="Accept a solution within this percentage of the optimum. Only needed if a solve is slow.">
+            <button id="optimize" class="primary" disabled data-tip="Find the cheapest combination of sets with at least your desired pieces">Loading solver…</button>
+            <label>
                 Tolerance % <input type="number" id="tolerance" value="0" min="0" step="1">
             </label>
-            <label title="Give up and show the best pledge found so far after this many seconds">
+            <span class="help" tabindex="0" data-tip="0 finds the guaranteed cheapest pledge. A value like 5 lets the solver stop at any pledge proven to be within 5% of the cheapest. Only worth changing if a solve is slow.">?</span>
+            <label>
                 Time limit s <input type="number" id="time-limit" value="60" min="1" step="1">
             </label>
+            <span class="help" tabindex="0" data-tip="If the solver runs this many seconds, it stops and shows the best pledge found so far, which may not be the cheapest. Most solves take well under a second.">?</span>
             <span id="status"></span>
             <span class="spacer"></span>
             <nav id="tabs">
-                <button data-tab="summary" class="active">Pledge summary</button>
-                <button data-tab="manifest">Item manifest</button>
-                <button data-tab="desired">Desired list</button>
+                <button data-tab="summary" class="active" data-tip="The sets to buy, with quantities and cost">Pledge summary</button>
+                <button data-tab="manifest" data-tip="Every piece the pledge contains, compared with what you asked for">Item manifest</button>
+                <button data-tab="desired" data-tip="Just the pieces you've entered, with their quantities">Desired list</button>
             </nav>
         </div>
         <div id="results" class="pane-body"></div>

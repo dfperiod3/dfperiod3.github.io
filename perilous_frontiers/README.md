@@ -32,6 +32,8 @@ including "one of every painted piece".
   pledge within 5% of the cheapest. When the time limit is reached, you get the best
   pledge found so far.
 
+Hover over (or tap) any button, column heading or **?** badge for help.
+
 ## Updating the data
 
 Set compositions and prices come from the community spreadsheet

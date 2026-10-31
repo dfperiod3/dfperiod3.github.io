@@ -100,7 +100,7 @@ function renderPieces() {
             var row = el('tr', {}, [
                 el('td', {}, [input]),
                 el('td', { text: p.name }),
-                el('td', { class: 'code', text: p.code })
+                el('td', { class: 'code', text: p.code, 'data-tip': describeCode(p.code) })
             ]);
             row.dataset.search = (p.name + ' ' + p.code).toLowerCase();
             row.dataset.code = p.code;
@@ -120,6 +120,15 @@ function filterPieces() {
         var show = row.dataset.search.indexOf(q) >= 0 && (!only || desired[row.dataset.code] > 0);
         row.hidden = !show;
     });
+}
+
+function describeCode(code) {
+    if (/-w-P$/.test(code)) return 'Painted, Desert scheme';
+    if (/-i-P$/.test(code)) return 'Painted, Arctic scheme';
+    if (/-P$/.test(code)) return 'Painted, same in both schemes';
+    if (/-U$/.test(code)) return 'Unpainted';
+    if (/-T$/.test(code)) return 'Printed material (texture, mat or backdrop)';
+    return 'Hardware or accessory';
 }
 
 function oneOfEach(suffix) {
@@ -188,17 +197,17 @@ function renderSets() {
     groupBy(data.sets, 'category').forEach(function (sets, category) {
         var tbody = el('tbody');
         sets.forEach(function (s) {
-            var omit = el('input', { type: 'checkbox', title: 'Never pick this set when optimizing' });
+            var omit = el('input', { type: 'checkbox' });
             omit.checked = omitted.has(s.code);
             var row = el('tr', {}, [
                 el('td', { class: 'actions' }, [
-                    el('button', { text: 'Add', title: 'Add contents to desired pieces', onclick: function () { addSet(s, 1); } }),
-                    el('button', { text: 'Sub', title: 'Subtract contents from desired pieces', onclick: function () { addSet(s, -1); } }),
-                    el('label', { title: 'Never pick this set when optimizing' }, [omit, document.createTextNode(' Omit')])
+                    el('button', { text: 'Add', 'data-tip': "Add this set's contents to your desired pieces (Sum or Max, above)", onclick: function () { addSet(s, 1); } }),
+                    el('button', { text: 'Sub', 'data-tip': "Subtract this set's contents from your desired pieces (never below 0)", onclick: function () { addSet(s, -1); } }),
+                    el('label', { 'data-tip': "Never choose this set when optimizing. You can still Add its contents, e.g. to see how a bundle breaks down into smaller sets." }, [omit, document.createTextNode(' Omit')])
                 ]),
                 el('td', {}, [
-                    el('a', { href: '#', text: s.name, title: 'Show contents', onclick: function (e) { e.preventDefault(); showSetContents(s); } }),
-                    s.stretchGoal ? el('span', { class: 'tag', text: 'SG' }) : null
+                    el('a', { href: '#', text: s.name, 'data-tip': 'Show what this set contains', onclick: function (e) { e.preventDefault(); showSetContents(s); } }),
+                    s.stretchGoal ? el('span', { class: 'tag', text: 'SG', 'data-tip': 'Stretch goal: unlocked during the campaign' }) : null
                 ]),
                 el('td', { class: 'num', text: pieceCount(s) + ' pcs' }),
                 el('td', { class: 'num', text: money(s.price) })
@@ -331,9 +340,10 @@ function renderResults() {
     if (activeTab === 'summary') renderSummary(out); else renderManifest(out);
 }
 
+// cols: [label, className?, helpText?]
 function headRow(cols) {
     return el('thead', {}, [el('tr', {}, cols.map(function (c) {
-        return el('th', { text: c[0], class: c[1] || '' });
+        return el('th', { text: c[0] + ' ', class: c[1] || '' }, [c[2] ? helpBadge(c[2]) : null]);
     }))]);
 }
 
@@ -357,7 +367,8 @@ function renderSummary(out) {
         ]));
     });
     out.appendChild(el('table', {}, [
-        headRow([['Set'], ['Qty', 'num'], ['Each', 'num'], ['Cost', 'num'], ['Desired pieces lost with one fewer']]),
+        headRow([['Set'], ['Qty', 'num'], ['Each', 'num'], ['Cost', 'num'], ['Desired pieces lost with one fewer', '',
+            "What you'd fall short on if you bought one fewer of this set. Shows how much of the set you actually need: 'all spare' means every piece it adds is extra."]]),
         tbody
     ]));
 }
@@ -383,7 +394,8 @@ function renderManifest(out) {
         ]));
     });
     out.appendChild(el('table', {}, [
-        headRow([['Piece'], ['Code'], ['In pledge', 'num'], ['Desired', 'num'], ['Extra', 'num']]),
+        headRow([['Piece'], ['Code'], ['In pledge', 'num'], ['Desired', 'num'],
+            ['Extra', 'num', "Pieces beyond what you asked for that come along because they're in the chosen sets"]]),
         tbody
     ]));
 }
@@ -435,6 +447,62 @@ function showSetContents(set, fromHistory) {
     out.appendChild(el('table', {}, [headRow([['Piece'], ['Code'], ['Qty', 'num']]), tbody]));
 }
 
+// ---- tooltips ----------------------------------------------------------------------
+// Any element with data-tip gets a themed tooltip on hover, keyboard focus or tap.
+
+var tooltip = el('div', { id: 'tooltip', role: 'tooltip' });
+var tipTarget = null;
+var tipTimer;
+
+function helpBadge(text) {
+    return el('span', { class: 'help', tabindex: 0, 'data-tip': text, text: '?' });
+}
+
+function showTip(target) {
+    clearTimeout(tipTimer);
+    tipTarget = target;
+    tooltip.textContent = target.dataset.tip;
+    tooltip.hidden = false;
+    var r = target.getBoundingClientRect();
+    var w = tooltip.offsetWidth, h = tooltip.offsetHeight;
+    var left = Math.max(8, Math.min(r.left + r.width / 2 - w / 2, window.innerWidth - w - 8));
+    var top = r.bottom + 6 + h < window.innerHeight ? r.bottom + 6 : r.top - h - 6;
+    tooltip.style.left = left + 'px';
+    tooltip.style.top = Math.max(8, top) + 'px';
+}
+
+function hideTip() {
+    clearTimeout(tipTimer);
+    tipTarget = null;
+    tooltip.hidden = true;
+}
+
+function initTooltips() {
+    tooltip.hidden = true;
+    document.body.appendChild(tooltip);
+    document.addEventListener('mouseover', function (e) {
+        var t = e.target.closest('[data-tip]');
+        if (t === tipTarget) return;
+        hideTip();
+        if (!t) return;
+        // "?" badges answer immediately; everything else waits so tips don't flicker past.
+        if (t.classList.contains('help')) showTip(t);
+        else tipTimer = setTimeout(function () { showTip(t); }, 400);
+    });
+    document.addEventListener('focusin', function (e) {
+        var t = e.target.closest('[data-tip]');
+        if (t) showTip(t); else hideTip();
+    });
+    document.addEventListener('focusout', hideTip);
+    document.addEventListener('click', function (e) {
+        var t = e.target.closest('.help');
+        if (t && t !== tipTarget) showTip(t);
+        else if (!t) hideTip();
+    });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') hideTip(); });
+    document.addEventListener('scroll', hideTip, true);
+}
+
 // ---- startup -----------------------------------------------------------------------
 
 function init(json) {
@@ -478,6 +546,7 @@ function init(json) {
     if (history.state && history.state.set) history.replaceState(null, ''); // stale entry from a reload
 }
 
+initTooltips();
 loadSolver();
 fetch('data.json')
     .then(function (r) { if (!r.ok) throw new Error(r.status + ' ' + r.statusText); return r.json(); })

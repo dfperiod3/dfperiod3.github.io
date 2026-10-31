@@ -166,6 +166,39 @@ tr.omitted td:not(.actions) { text-decoration: line-through; color: var(--muted)
 #status.ok { color: var(--good); }
 .total { font-size: 1.15em; font-weight: bold; margin: 8px 0; }
 button.back { margin-top: 8px; }
+
+.help {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.25em;
+    height: 1.25em;
+    border-radius: 50%;
+    border: 1px solid var(--muted);
+    color: var(--muted);
+    font-size: .75rem;
+    font-weight: bold;
+    cursor: help;
+    vertical-align: middle;
+}
+label + .help { margin-left: -4px; margin-right: 8px; }
+.help:hover, .help:focus { border-color: var(--accent); color: var(--accent); outline: none; }
+
+#tooltip {
+    position: fixed;
+    z-index: 10;
+    max-width: 320px;
+    padding: 6px 9px;
+    border-radius: 5px;
+    background: var(--text);
+    color: var(--bg);
+    font-size: 13px;
+    font-weight: normal;
+    line-height: 1.35;
+    pointer-events: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .25);
+}
+#tooltip[hidden] { display: none; }
 .lost { color: var(--muted); font-size: .9em; }
 
 @media (max-width: 800px) {
