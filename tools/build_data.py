@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build perilous_frontiers/data.json from the community Perilous Frontiers spreadsheet.
+"""Build data.json from the community Perilous Frontiers spreadsheet.
 
 Usage:
     python3 tools/build_data.py                # download the sheet and rebuild data.json
