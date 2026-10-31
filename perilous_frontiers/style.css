@@ -165,6 +165,7 @@ tr.omitted td:not(.actions) { text-decoration: line-through; color: var(--muted)
 #status.error { color: var(--bad); }
 #status.ok { color: var(--good); }
 .total { font-size: 1.15em; font-weight: bold; margin: 8px 0; }
+button.back { margin-top: 8px; }
 .lost { color: var(--muted); font-size: .9em; }
 
 @media (max-width: 800px) {

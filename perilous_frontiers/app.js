@@ -14,6 +14,7 @@ var qtyInputs = {};       // pieceCode -> <input>
 var highs;                // HiGHS solver instance
 var solution;             // last readSolution() result
 var activeTab = 'summary';
+var lastTab = 'summary';  // tab to return to from a set's contents
 var onlyExtras = false;
 
 var $ = function (id) { return document.getElementById(id); };
@@ -309,7 +310,9 @@ function covers(sol) {
 // ---- results pane ------------------------------------------------------------------
 
 function showTab(tab) {
-    activeTab = tab;
+    // Leaving a set's contents via a tab: drop its history entry so Back doesn't reopen it.
+    if (history.state && history.state.set) history.replaceState(null, '');
+    activeTab = lastTab = tab;
     document.querySelectorAll('#tabs button').forEach(function (b) {
         b.classList.toggle('active', b.dataset.tab === tab);
     });
@@ -403,11 +406,16 @@ function renderDesiredList(out) {
     out.appendChild(el('table', {}, [headRow([['Piece'], ['Code'], ['Qty', 'num']]), tbody]));
 }
 
-function showSetContents(set) {
+// Shows a set's contents in the results pane.  Each view gets a browser history entry so the
+// browser's Back button returns to the previous view instead of leaving the page.
+function showSetContents(set, fromHistory) {
+    if (!fromHistory) history.pushState({ set: set.code }, '');
     activeTab = 'contents';
     document.querySelectorAll('#tabs button').forEach(function (b) { b.classList.remove('active'); });
     var out = $('results');
     out.innerHTML = '';
+    var tabNames = { summary: 'pledge summary', manifest: 'item manifest', desired: 'desired list' };
+    out.appendChild(el('button', { class: 'back', text: '← Back to ' + tabNames[lastTab], onclick: function () { history.back(); } }));
     out.appendChild(el('div', { class: 'total', text: set.name + ' — ' + set.code }));
     if (set.sets) {
         out.appendChild(el('p', { text: 'Bundle of: ' + Object.keys(set.sets).map(function (c) {
@@ -463,6 +471,11 @@ function init(json) {
         b.addEventListener('click', function () { showTab(b.dataset.tab); });
     });
     $('optimize').addEventListener('click', optimize);
+    window.addEventListener('popstate', function (e) {
+        var set = e.state && e.state.set && setByCode[e.state.set];
+        if (set) showSetContents(set, true); else showTab(lastTab);
+    });
+    if (history.state && history.state.set) history.replaceState(null, ''); // stale entry from a reload
 }
 
 loadSolver();
