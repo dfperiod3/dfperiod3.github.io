@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Perilous Frontiers Pledge Optimizer</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="style.css">
+    <!-- HiGHS MILP solver compiled to WebAssembly: https://github.com/lovasoa/highs-js -->
+    <script src="https://cdn.jsdelivr.net/npm/highs@1.15.3/build/highs.js"></script>
+    <script src="optimizer.js"></script>
+    <script src="app.js" defer></script>
+</head>
+
+<body>
+    <header>
+        <h1>Perilous Frontiers Pledge Optimizer</h1>
+        <p>
+            Enter the pieces you want on the left, then click <b>Optimize</b> to find the cheapest
+            combination of sets and bundles that contains at least those pieces.
+            <a href="https://github.com/dfperiod3/dfperiod3.github.io/blob/main/perilous_frontiers/README.md">Documentation</a>
+        </p>
+        <p class="meta">
+            Set data from the <a id="source" href="#">community spreadsheet</a>, downloaded <span id="generated"></span>.
+            Prices:
+            <label><input type="radio" name="price" value="gf" checked> Gamefound</label>
+            <label><input type="radio" name="price" value="web"> Web store</label>
+            &middot; Shipping and tax not included.
+        </p>
+    </header>
+
+    <main>
+        <section id="desired-pane" class="pane">
+            <div class="pane-head">
+                <h2>Desired pieces <span id="desired-count" class="count"></span></h2>
+                <div class="toolbar">
+                    <button id="one-painted" title="Set every painted piece to at least 1">+1 of each painted</button>
+                    <button id="one-unpainted" title="Set every unpainted piece to at least 1">+1 of each unpainted</button>
+                    <button id="clear">Clear</button>
+                    <button id="save" title="Download your desired pieces as a CSV file">Save</button>
+                    <label class="button" title="Load a CSV file saved earlier">Load<input type="file" id="load" accept=".csv,text/csv" hidden></label>
+                </div>
+                <div class="toolbar">
+                    <input type="search" id="piece-filter" placeholder="Filter pieces">
+                    <label><input type="checkbox" id="only-desired"> Only show desired</label>
+                </div>
+            </div>
+            <div id="pieces" class="pane-body"></div>
+        </section>
+
+        <section id="sets-pane" class="pane">
+            <div class="pane-head">
+                <h2>Sets &amp; bundles</h2>
+                <div class="toolbar">
+                    Add a set's contents to your desired pieces:
+                    <label title="Add the set's quantities to what you already have"><input type="radio" name="mode" value="sum" checked> Sum</label>
+                    <label title="Raise each quantity to at least the set's quantity; useful for 'build A or B, not both at once'"><input type="radio" name="mode" value="max"> Max</label>
+                </div>
+                <div class="toolbar">
+                    <input type="search" id="set-filter" placeholder="Filter sets">
+                    <button id="clear-omit">Clear omits</button>
+                </div>
+            </div>
+            <div id="sets" class="pane-body"></div>
+        </section>
+    </main>
+
+    <section id="results-pane" class="pane">
+        <div class="pane-head toolbar">
+            <button id="optimize" class="primary" disabled>Loading solver…</button>
+            <label title="Accept a solution within this percentage of the optimum. Only needed if a solve is slow.">
+                Tolerance % <input type="number" id="tolerance" value="0" min="0" step="1">
+            </label>
+            <label title="Give up and show the best pledge found so far after this many seconds">
+                Time limit s <input type="number" id="time-limit" value="60" min="1" step="1">
+            </label>
+            <span id="status"></span>
+            <span class="spacer"></span>
+            <nav id="tabs">
+                <button data-tab="summary" class="active">Pledge summary</button>
+                <button data-tab="manifest">Item manifest</button>
+                <button data-tab="desired">Desired list</button>
+            </nav>
+        </div>
+        <div id="results" class="pane-body"></div>
+    </section>
+</body>
+
+</html>

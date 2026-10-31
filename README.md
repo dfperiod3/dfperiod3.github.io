@@ -1,3 +1,5 @@
+**New:** the [Perilous Frontiers pledge optimizer](https://dfperiod3.github.io/perilous_frontiers/) ([docs](perilous_frontiers/README.md)). The rest of this page describes the older Cities Untold optimizer.
+
 # Cities-Untold Pledge Optimizer
 
 ## Intro
