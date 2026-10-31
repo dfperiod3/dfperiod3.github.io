@@ -12,14 +12,12 @@
 
     // data:     parsed data.json
     // desired:  { pieceCode: qty }
-    // options:  { priceKey: 'gf' | 'web', omitted: Set of set codes }
+    // options:  { omitted: Set of set codes }
     // Returns { lp, vars, missing } where vars[k] is the set behind variable xk and
     // missing lists desired pieces that no allowed set provides.
     function buildModel(data, desired, options) {
-        var omitted = options.omitted || new Set();
-        var sets = data.sets.filter(function (s) {
-            return !omitted.has(s.code) && s.price[options.priceKey] != null;
-        });
+        var omitted = (options && options.omitted) || new Set();
+        var sets = data.sets.filter(function (s) { return !omitted.has(s.code); });
 
         var rows = {}; // pieceCode -> [term, ...]
         sets.forEach(function (s, k) {
@@ -34,7 +32,7 @@
             return desired[p] > 0 && !rows[p];
         });
 
-        var objective = sets.map(function (s, k) { return s.price[options.priceKey] + ' x' + k; });
+        var objective = sets.map(function (s, k) { return s.price + ' x' + k; });
         var constraints = Object.keys(rows).map(function (piece, i) {
             return ' c' + i + ': ' + rows[piece].join(' + ') + ' >= ' + desired[piece];
         });

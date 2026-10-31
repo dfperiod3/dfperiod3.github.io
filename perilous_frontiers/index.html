@@ -7,6 +7,11 @@
     <title>Perilous Frontiers Pledge Optimizer</title>
     <link rel="icon" href="data:,">
     <link rel="stylesheet" href="style.css">
+    <script>
+        // Apply the saved theme before first paint (see the theme picker in app.js).
+        try { document.documentElement.dataset.theme = localStorage.getItem('pf-optimizer-theme') || 'desert'; }
+        catch (e) { document.documentElement.dataset.theme = 'desert'; }
+    </script>
     <!-- HiGHS MILP solver compiled to WebAssembly: https://github.com/lovasoa/highs-js -->
     <script src="https://cdn.jsdelivr.net/npm/highs@1.15.3/build/highs.js"></script>
     <script src="optimizer.js"></script>
@@ -15,7 +20,15 @@
 
 <body>
     <header>
-        <h1>Perilous Frontiers Pledge Optimizer</h1>
+        <div class="title-row">
+            <h1>Perilous Frontiers Pledge Optimizer</h1>
+            <label>Theme
+                <select id="theme">
+                    <option value="desert">Desert</option>
+                    <option value="arctic">Arctic</option>
+                </select>
+            </label>
+        </div>
         <p>
             Enter the pieces you want on the left, then click <b>Optimize</b> to find the cheapest
             combination of sets and bundles that contains at least those pieces.
@@ -23,10 +36,7 @@
         </p>
         <p class="meta">
             Set data from the <a id="source" href="#">community spreadsheet</a>, downloaded <span id="generated"></span>.
-            Prices:
-            <label><input type="radio" name="price" value="gf" checked> Gamefound</label>
-            <label><input type="radio" name="price" value="web"> Web store</label>
-            &middot; Shipping and tax not included.
+            Gamefound campaign prices; shipping and tax not included.
         </p>
     </header>
 

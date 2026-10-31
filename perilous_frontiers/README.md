@@ -24,8 +24,10 @@ including "one of every painted piece".
 - **Optimize (bottom).** The **Pledge summary** lists the chosen sets and, for each one,
   which desired pieces you'd lose with one fewer copy. The **Item manifest** shows
   everything in the pledge, and can be filtered to just the extras you didn't ask for.
-- **Prices.** Gamefound prices are used by default; bundles use their discounted bundle
-  price. You can switch to web store prices. Shipping and tax are not included.
+- **Prices.** Gamefound campaign prices; bundles use their discounted bundle price.
+  Shipping and tax are not included.
+- **Theme.** Pick Desert or Arctic colors from the dropdown at the top. Both follow your
+  system's light/dark setting.
 - **Tolerance / time limit.** If a solve is ever slow, a tolerance of e.g. 5 accepts any
   pledge within 5% of the cheapest. When the time limit is reached, you get the best
   pledge found so far.

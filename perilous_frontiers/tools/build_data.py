@@ -7,7 +7,7 @@ Usage:
 
 Tabs used:
     Pieces           - piece codes, names and scheme grouping (section header rows)
-    Sets by Category - set/bundle codes, names, categories and prices (Web, GF, GF Bundle)
+    Sets by Category - set/bundle codes, names, categories and Gamefound prices
     Set Comps        - set -> piece quantities (bundles are listed per constituent set)
     Bundle Builder   - bundle -> set quantities (informational only)
 
@@ -54,7 +54,7 @@ def load_sets(wb):
     sets = collections.OrderedDict()
     category = None
     for r in rows(wb, "Sets by Category")[1:]:
-        tag, code, name, web, gf, gf_bundle = r[:6]
+        tag, code, name, _web, gf, gf_bundle = r[:6]
         if not code:
             if tag and tag.startswith("BELOW THIS LINE"):
                 category = "Added in campaign"
@@ -68,11 +68,8 @@ def load_sets(wb):
             "category": category,
             "bundle": is_bundle,
             "stretchGoal": tag == "SG",
-            "price": {
-                # A bundle's GF price is the sum of its sets; "GF Bundle" is what it actually costs.
-                "gf": num(gf_bundle) if is_bundle and gf_bundle else num(gf),
-                "web": num(web),
-            },
+            # A bundle's "GF" price is the sum of its sets; "GF Bundle" is what it actually costs.
+            "price": num(gf_bundle) if is_bundle and gf_bundle else num(gf),
             "contents": collections.Counter(),
         }
     return sets
@@ -107,7 +104,7 @@ def main():
 
     out_sets = []
     for s in sets.values():
-        if s["price"]["gf"] is None:
+        if s["price"] is None:
             print(f"  skipping {s['code']} {s['name']}: no price")
             continue
         if not s["contents"]:

@@ -1,6 +1,6 @@
 {
  "source": "https://docs.google.com/spreadsheets/d/19gbXlWYlA12Q_4Mj2LTzqhgbcyVtuQR0fl3VCSm91sg",
- "generated": "2026-10-31 20:08 UTC",
+ "generated": "2026-10-31 20:33 UTC",
  "pieces": [
   {
    "code": "AC-727-P",
@@ -2035,10 +2035,7 @@
    "category": "Bundles",
    "bundle": true,
    "stretchGoal": false,
-   "price": {
-    "gf": 298.0,
-    "web": 347.0
-   },
+   "price": 298.0,
    "contents": {
     "FL-706-w-P": 2,
     "FL-703-w-P": 4,
@@ -2069,10 +2066,7 @@
    "category": "Bundles",
    "bundle": true,
    "stretchGoal": false,
-   "price": {
-    "gf": 199.0,
-    "web": 232.0
-   },
+   "price": 199.0,
    "contents": {
     "FL-706-U": 2,
     "FL-703-U": 4,
@@ -2103,10 +2097,7 @@
    "category": "Bundles",
    "bundle": true,
    "stretchGoal": false,
-   "price": {
-    "gf": 298.0,
-    "web": 347.0
-   },
+   "price": 298.0,
    "contents": {
     "FL-706-i-P": 2,
     "FL-703-i-P": 4,
@@ -2137,10 +2128,7 @@
    "category": "Bundles",
    "bundle": true,
    "stretchGoal": false,
-   "price": {
-    "gf": 270.0,
-    "web": 314.0
-   },
+   "price": 270.0,
    "contents": {
     "TE-720-w-P": 1,
     "TE-723-w-P": 1,
@@ -2172,10 +2160,7 @@
    "category": "Bundles",
    "bundle": true,
    "stretchGoal": false,
-   "price": {
-    "gf": 181.0,
-    "web": 210.0
-   },
+   "price": 181.0,
    "contents": {
     "TE-720-U": 1,
     "TE-723-U": 1,
@@ -2207,10 +2192,7 @@
    "category": "Bundles",
    "bundle": true,
    "stretchGoal": false,
-   "price": {
-    "gf": 270.0,
-    "web": 314.0
-   },
+   "price": 270.0,
    "contents": {
     "TE-720-i-P": 1,
     "TE-723-i-P": 1,
@@ -2242,10 +2224,7 @@
    "category": "Bundles",
    "bundle": true,
    "stretchGoal": false,
-   "price": {
-    "gf": 632.0,
-    "web": 734.0
-   },
+   "price": 632.0,
    "contents": {
     "TE-725-w-P": 2,
     "GA-801-Z": 90,
@@ -2282,10 +2261,7 @@
    "category": "Bundles",
    "bundle": true,
    "stretchGoal": false,
-   "price": {
-    "gf": 426.0,
-    "web": 495.0
-   },
+   "price": 426.0,
    "contents": {
     "TE-725-U": 2,
     "GA-801-Z": 90,
@@ -2322,10 +2298,7 @@
    "category": "Bundles",
    "bundle": true,
    "stretchGoal": false,
-   "price": {
-    "gf": 632.0,
-    "web": 734.0
-   },
+   "price": 632.0,
    "contents": {
     "TE-725-i-P": 2,
     "GA-801-Z": 90,
@@ -2362,10 +2335,7 @@
    "category": "Bundles",
    "bundle": true,
    "stretchGoal": false,
-   "price": {
-    "gf": 325.0,
-    "web": 378.0
-   },
+   "price": 325.0,
    "contents": {
     "MS-728-w-P": 1,
     "MS-726-w-P": 2,
@@ -2409,10 +2379,7 @@
    "category": "Bundles",
    "bundle": true,
    "stretchGoal": false,
-   "price": {
-    "gf": 197.0,
-    "web": 231.0
-   },
+   "price": 197.0,
    "contents": {
     "MS-728-U": 1,
     "MS-726-U": 2,
@@ -2456,10 +2423,7 @@
    "category": "Bundles",
    "bundle": true,
    "stretchGoal": false,
-   "price": {
-    "gf": 299.0,
-    "web": 348.0
-   },
+   "price": 299.0,
    "contents": {
     "MS-728-i-P": 2,
     "MS-729-i-P": 2,
@@ -2505,10 +2469,7 @@
    "category": "Bundles",
    "bundle": true,
    "stretchGoal": false,
-   "price": {
-    "gf": 193.0,
-    "web": 227.0
-   },
+   "price": 193.0,
    "contents": {
     "MS-728-U": 2,
     "MS-729-U": 2,
@@ -2554,10 +2515,7 @@
    "category": "Bundles",
    "bundle": true,
    "stretchGoal": false,
-   "price": {
-    "gf": 493.0,
-    "web": 578.0
-   },
+   "price": 493.0,
    "contents": {
     "TT-743-T": 1,
     "GA-734-Z": 1,
@@ -2605,10 +2563,7 @@
    "category": "Bundles",
    "bundle": true,
    "stretchGoal": false,
-   "price": {
-    "gf": 339.0,
-    "web": 398.0
-   },
+   "price": 339.0,
    "contents": {
     "TT-743-T": 1,
     "GA-734-Z": 1,
@@ -2656,10 +2611,7 @@
    "category": "Bundles",
    "bundle": true,
    "stretchGoal": false,
-   "price": {
-    "gf": 510.0,
-    "web": 600.0
-   },
+   "price": 510.0,
    "contents": {
     "TT-742-T": 1,
     "GA-734-Z": 1,
@@ -2724,10 +2676,7 @@
    "category": "Bundles",
    "bundle": true,
    "stretchGoal": false,
-   "price": {
-    "gf": 368.0,
-    "web": 432.0
-   },
+   "price": 368.0,
    "contents": {
     "TT-742-T": 1,
     "GA-734-Z": 1,
@@ -2789,10 +2738,7 @@
    "category": "Bundles",
    "bundle": true,
    "stretchGoal": false,
-   "price": {
-    "gf": 579.0,
-    "web": 692.0
-   },
+   "price": 579.0,
    "contents": {
     "FL-701-w-P": 6,
     "GA-801-Z": 70,
@@ -2859,10 +2805,7 @@
    "category": "Bundles",
    "bundle": true,
    "stretchGoal": false,
-   "price": {
-    "gf": 396.0,
-    "web": 474.0
-   },
+   "price": 396.0,
    "contents": {
     "FL-701-U": 6,
     "GA-801-Z": 70,
@@ -2929,10 +2872,7 @@
    "category": "Bundles",
    "bundle": true,
    "stretchGoal": false,
-   "price": {
-    "gf": 1194.0,
-    "web": 1434.0
-   },
+   "price": 1194.0,
    "contents": {
     "FL-701-w-P": 6,
     "GA-801-Z": 50,
@@ -3029,10 +2969,7 @@
    "category": "Bundles",
    "bundle": true,
    "stretchGoal": false,
-   "price": {
-    "gf": 773.0,
-    "web": 929.0
-   },
+   "price": 773.0,
    "contents": {
     "FL-701-U": 6,
     "GA-801-Z": 50,
@@ -3124,10 +3061,7 @@
    "category": "Bundles",
    "bundle": true,
    "stretchGoal": false,
-   "price": {
-    "gf": 1334.0,
-    "web": 1608.0
-   },
+   "price": 1334.0,
    "contents": {
     "FL-701-w-P": 12,
     "GA-801-Z": 210,
@@ -3203,10 +3137,7 @@
    "category": "Bundles",
    "bundle": true,
    "stretchGoal": false,
-   "price": {
-    "gf": 960.0,
-    "web": 1157.0
-   },
+   "price": 960.0,
    "contents": {
     "FL-701-U": 12,
     "GA-801-Z": 210,
@@ -3282,10 +3213,7 @@
    "category": "Bundles",
    "bundle": true,
    "stretchGoal": false,
-   "price": {
-    "gf": 2425.0,
-    "web": 2958.0
-   },
+   "price": 2425.0,
    "contents": {
     "FL-701-w-P": 12,
     "GA-801-Z": 250,
@@ -3419,10 +3347,7 @@
    "category": "Bundles",
    "bundle": true,
    "stretchGoal": false,
-   "price": {
-    "gf": 1700.0,
-    "web": 2067.0
-   },
+   "price": 1700.0,
    "contents": {
     "FL-701-U": 12,
     "GA-801-Z": 250,
@@ -3555,10 +3480,7 @@
    "category": "Bundles",
    "bundle": true,
    "stretchGoal": false,
-   "price": {
-    "gf": 591.0,
-    "web": 707.0
-   },
+   "price": 591.0,
    "contents": {
     "FL-701-i-P": 6,
     "GA-801-Z": 40,
@@ -3615,10 +3537,7 @@
    "category": "Bundles",
    "bundle": true,
    "stretchGoal": false,
-   "price": {
-    "gf": 393.0,
-    "web": 470.0
-   },
+   "price": 393.0,
    "contents": {
     "FL-701-U": 6,
     "GA-801-Z": 40,
@@ -3675,10 +3594,7 @@
    "category": "Bundles",
    "bundle": true,
    "stretchGoal": false,
-   "price": {
-    "gf": 1351.0,
-    "web": 1625.0
-   },
+   "price": 1351.0,
    "contents": {
     "FL-701-i-P": 9,
     "GA-801-Z": 100,
@@ -3775,10 +3691,7 @@
    "category": "Bundles",
    "bundle": true,
    "stretchGoal": false,
-   "price": {
-    "gf": 922.0,
-    "web": 1104.0
-   },
+   "price": 922.0,
    "contents": {
     "FL-701-U": 9,
     "GA-801-Z": 100,
@@ -3875,10 +3788,7 @@
    "category": "Bundles",
    "bundle": true,
    "stretchGoal": false,
-   "price": {
-    "gf": 1264.0,
-    "web": 1513.0
-   },
+   "price": 1264.0,
    "contents": {
     "FL-701-i-P": 3,
     "GA-801-Z": 130,
@@ -3981,10 +3891,7 @@
    "category": "Bundles",
    "bundle": true,
    "stretchGoal": false,
-   "price": {
-    "gf": 903.0,
-    "web": 1081.0
-   },
+   "price": 903.0,
    "contents": {
     "FL-701-U": 3,
     "GA-801-Z": 130,
@@ -4087,10 +3994,7 @@
    "category": "Bundles",
    "bundle": true,
    "stretchGoal": false,
-   "price": {
-    "gf": 2664.0,
-    "web": 3243.0
-   },
+   "price": 2664.0,
    "contents": {
     "FL-701-i-P": 18,
     "GA-801-Z": 260,
@@ -4225,10 +4129,7 @@
    "category": "Bundles",
    "bundle": true,
    "stretchGoal": false,
-   "price": {
-    "gf": 1882.0,
-    "web": 2283.0
-   },
+   "price": 1882.0,
    "contents": {
     "FL-701-U": 18,
     "GA-801-Z": 260,
@@ -4360,10 +4261,7 @@
    "category": "Bundles",
    "bundle": true,
    "stretchGoal": false,
-   "price": {
-    "gf": 5344.0,
-    "web": 6692.0
-   },
+   "price": 5344.0,
    "contents": {
     "FL-701-w-P": 36,
     "GA-801-Z": 580,
@@ -4567,10 +4465,7 @@
    "category": "Bundles",
    "bundle": true,
    "stretchGoal": false,
-   "price": {
-    "gf": 3698.0,
-    "web": 4627.0
-   },
+   "price": 3698.0,
    "contents": {
     "FL-701-U": 36,
     "GA-801-Z": 580,
@@ -4768,10 +4663,7 @@
    "category": "Bundles",
    "bundle": true,
    "stretchGoal": false,
-   "price": {
-    "gf": 5672.0,
-    "web": 7088.0
-   },
+   "price": 5672.0,
    "contents": {
     "FL-701-i-P": 36,
     "GA-801-Z": 530,
@@ -4986,10 +4878,7 @@
    "category": "Bundles",
    "bundle": true,
    "stretchGoal": false,
-   "price": {
-    "gf": 3963.0,
-    "web": 4938.0
-   },
+   "price": 3963.0,
    "contents": {
     "FL-701-U": 36,
     "GA-801-Z": 530,
@@ -5201,10 +5090,7 @@
    "category": "Floors - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 66.0,
-    "web": 78.0
-   },
+   "price": 66.0,
    "contents": {
     "FL-701-w-P": 3,
     "GA-801-Z": 10
@@ -5216,10 +5102,7 @@
    "category": "Floors - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 45.0,
-    "web": 53.0
-   },
+   "price": 45.0,
    "contents": {
     "FL-701-U": 3,
     "GA-801-Z": 10
@@ -5231,10 +5114,7 @@
    "category": "Floors - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 52.0,
-    "web": 59.0
-   },
+   "price": 52.0,
    "contents": {
     "FL-702-w-P": 1,
     "FL-706-w-P": 1,
@@ -5256,10 +5136,7 @@
    "category": "Floors - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 41.0,
-    "web": 47.0
-   },
+   "price": 41.0,
    "contents": {
     "FL-702-U": 1,
     "FL-706-U": 1,
@@ -5281,10 +5158,7 @@
    "category": "Floors - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 53.0,
-    "web": 60.0
-   },
+   "price": 53.0,
    "contents": {
     "FL-707a-w-P": 1,
     "FL-707b-w-P": 1,
@@ -5306,10 +5180,7 @@
    "category": "Floors - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 42.0,
-    "web": 48.0
-   },
+   "price": 42.0,
    "contents": {
     "FL-707a-U": 1,
     "FL-707b-U": 1,
@@ -5331,10 +5202,7 @@
    "category": "Floors - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 32.0,
-    "web": 37.0
-   },
+   "price": 32.0,
    "contents": {
     "FL-706-w-P": 2,
     "FL-703-w-P": 4,
@@ -5347,10 +5215,7 @@
    "category": "Floors - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 22.0,
-    "web": 25.0
-   },
+   "price": 22.0,
    "contents": {
     "FL-706-U": 2,
     "FL-703-U": 4,
@@ -5363,10 +5228,7 @@
    "category": "Floors - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 41.0,
-    "web": 47.0
-   },
+   "price": 41.0,
    "contents": {
     "FL-703-w-P": 4,
     "FL-704-w-P": 8,
@@ -5380,10 +5242,7 @@
    "category": "Floors - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 27.0,
-    "web": 31.0
-   },
+   "price": 27.0,
    "contents": {
     "FL-703-U": 4,
     "FL-704-U": 8,
@@ -5397,10 +5256,7 @@
    "category": "Floors - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 75.0,
-    "web": 85.0
-   },
+   "price": 75.0,
    "contents": {
     "FL-708-w-P": 1,
     "AC-749-w-P": 2,
@@ -5417,10 +5273,7 @@
    "category": "Floors - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 43.0,
-    "web": 49.0
-   },
+   "price": 43.0,
    "contents": {
     "FL-708-U": 1,
     "AC-749-U": 2,
@@ -5437,10 +5290,7 @@
    "category": "Banks - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 47.0,
-    "web": 54.0
-   },
+   "price": 47.0,
    "contents": {
     "BK-702-w-P": 4,
     "BK-704-w-P": 4,
@@ -5454,10 +5304,7 @@
    "category": "Banks - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 31.0,
-    "web": 36.0
-   },
+   "price": 31.0,
    "contents": {
     "BK-702-U": 4,
     "BK-704-U": 4,
@@ -5471,10 +5318,7 @@
    "category": "Banks - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 43.0,
-    "web": 49.0
-   },
+   "price": 43.0,
    "contents": {
     "BK-701-w-P": 4,
     "BK-702-w-P": 4,
@@ -5487,10 +5331,7 @@
    "category": "Banks - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 29.0,
-    "web": 33.0
-   },
+   "price": 29.0,
    "contents": {
     "BK-701-U": 4,
     "BK-702-U": 4,
@@ -5503,10 +5344,7 @@
    "category": "Banks - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 57.0,
-    "web": 65.0
-   },
+   "price": 57.0,
    "contents": {
     "BK-703-w-P": 2,
     "BK-704-w-P": 6,
@@ -5520,10 +5358,7 @@
    "category": "Banks - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 38.0,
-    "web": 43.0
-   },
+   "price": 38.0,
    "contents": {
     "BK-703-U": 2,
     "BK-704-U": 6,
@@ -5537,10 +5372,7 @@
    "category": "Banks - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 38.0,
-    "web": 43.0
-   },
+   "price": 38.0,
    "contents": {
     "BK-705-w-P": 2,
     "BK-706-w-P": 2,
@@ -5554,10 +5386,7 @@
    "category": "Banks - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 25.0,
-    "web": 29.0
-   },
+   "price": 25.0,
    "contents": {
     "BK-705-U": 2,
     "BK-706-U": 2,
@@ -5571,10 +5400,7 @@
    "category": "Banks - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 39.0,
-    "web": 45.0
-   },
+   "price": 39.0,
    "contents": {
     "BK-707-w-P": 2,
     "BK-708-w-P": 2,
@@ -5587,10 +5413,7 @@
    "category": "Banks - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 26.0,
-    "web": 30.0
-   },
+   "price": 26.0,
    "contents": {
     "BK-707-U": 2,
     "BK-708-U": 2,
@@ -5603,10 +5426,7 @@
    "category": "Dunes - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 68.0,
-    "web": 77.0
-   },
+   "price": 68.0,
    "contents": {
     "TE-725-w-P": 2,
     "GA-801-Z": 10
@@ -5618,10 +5438,7 @@
    "category": "Dunes - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 46.0,
-    "web": 52.0
-   },
+   "price": 46.0,
    "contents": {
     "TE-725-U": 2,
     "GA-801-Z": 10
@@ -5633,10 +5450,7 @@
    "category": "Dunes - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 56.0,
-    "web": 64.0
-   },
+   "price": 56.0,
    "contents": {
     "TE-726-w-P": 4,
     "GA-801-Z": 10
@@ -5648,10 +5462,7 @@
    "category": "Dunes - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 38.0,
-    "web": 43.0
-   },
+   "price": 38.0,
    "contents": {
     "TE-726-U": 4,
     "GA-801-Z": 10
@@ -5663,10 +5474,7 @@
    "category": "Dunes - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 55.0,
-    "web": 63.0
-   },
+   "price": 55.0,
    "contents": {
     "TE-727-w-P": 1,
     "TE-728-w-P": 1,
@@ -5679,10 +5487,7 @@
    "category": "Dunes - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 37.0,
-    "web": 42.0
-   },
+   "price": 37.0,
    "contents": {
     "TE-727-U": 1,
     "TE-728-U": 1,
@@ -5695,10 +5500,7 @@
    "category": "Dunes - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 64.0,
-    "web": 73.0
-   },
+   "price": 64.0,
    "contents": {
     "TE-728-w-P": 1,
     "TE-729-w-P": 1,
@@ -5711,10 +5513,7 @@
    "category": "Dunes - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 43.0,
-    "web": 49.0
-   },
+   "price": 43.0,
    "contents": {
     "TE-728-U": 1,
     "TE-729-U": 1,
@@ -5727,10 +5526,7 @@
    "category": "Dunes - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 81.0,
-    "web": 92.0
-   },
+   "price": 81.0,
    "contents": {
     "TE-732-w-P": 2,
     "TE-733-w-P": 2,
@@ -5744,10 +5540,7 @@
    "category": "Dunes - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 51.0,
-    "web": 58.0
-   },
+   "price": 51.0,
    "contents": {
     "TE-732-U": 2,
     "TE-733-U": 2,
@@ -5761,10 +5554,7 @@
    "category": "Dunes - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 82.0,
-    "web": 93.0
-   },
+   "price": 82.0,
    "contents": {
     "TE-730-w-P": 1,
     "TE-734-w-P": 2,
@@ -5778,10 +5568,7 @@
    "category": "Dunes - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 55.0,
-    "web": 63.0
-   },
+   "price": 55.0,
    "contents": {
     "TE-730-U": 1,
     "TE-734-U": 2,
@@ -5795,10 +5582,7 @@
    "category": "Dunes - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 80.0,
-    "web": 91.0
-   },
+   "price": 80.0,
    "contents": {
     "TE-731-w-P": 1,
     "TE-734-w-P": 2,
@@ -5812,10 +5596,7 @@
    "category": "Dunes - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 54.0,
-    "web": 62.0
-   },
+   "price": 54.0,
    "contents": {
     "TE-731-U": 1,
     "TE-734-U": 2,
@@ -5829,10 +5610,7 @@
    "category": "Dunes - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 63.0,
-    "web": 72.0
-   },
+   "price": 63.0,
    "contents": {
     "TE-720-w-P": 1,
     "TE-723-w-P": 1,
@@ -5848,10 +5626,7 @@
    "category": "Dunes - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 42.0,
-    "web": 48.0
-   },
+   "price": 42.0,
    "contents": {
     "TE-720-U": 1,
     "TE-723-U": 1,
@@ -5867,10 +5642,7 @@
    "category": "Dunes - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 101.0,
-    "web": 115.0
-   },
+   "price": 101.0,
    "contents": {
     "TE-721-w-P": 1,
     "TE-722-w-P": 2,
@@ -5889,10 +5661,7 @@
    "category": "Dunes - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 68.0,
-    "web": 77.0
-   },
+   "price": 68.0,
    "contents": {
     "TE-721-U": 1,
     "TE-722-U": 2,
@@ -5911,10 +5680,7 @@
    "category": "Rock Formations - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 83.0,
-    "web": 94.0
-   },
+   "price": 83.0,
    "contents": {
     "MS-744-w-P": 2,
     "MS-730-w-P": 1,
@@ -5928,10 +5694,7 @@
    "category": "Rock Formations - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 61.0,
-    "web": 69.0
-   },
+   "price": 61.0,
    "contents": {
     "MS-744-U": 2,
     "MS-730-U": 1,
@@ -5945,10 +5708,7 @@
    "category": "Rock Formations - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 48.0,
-    "web": 55.0
-   },
+   "price": 48.0,
    "contents": {
     "MS-728-w-P": 1,
     "MS-726-w-P": 2,
@@ -5963,10 +5723,7 @@
    "category": "Rock Formations - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 31.0,
-    "web": 36.0
-   },
+   "price": 31.0,
    "contents": {
     "MS-728-U": 1,
     "MS-726-U": 2,
@@ -5981,10 +5738,7 @@
    "category": "Rock Formations - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 52.0,
-    "web": 59.0
-   },
+   "price": 52.0,
    "contents": {
     "MS-728-w-P": 2,
     "MS-729-w-P": 1,
@@ -5999,10 +5753,7 @@
    "category": "Rock Formations - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 35.0,
-    "web": 40.0
-   },
+   "price": 35.0,
    "contents": {
     "MS-728-U": 2,
     "MS-729-U": 1,
@@ -6017,10 +5768,7 @@
    "category": "Rock Formations - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 47.0,
-    "web": 54.0
-   },
+   "price": 47.0,
    "contents": {
     "MS-727-w-P": 1,
     "MS-737-w-P": 1,
@@ -6035,10 +5783,7 @@
    "category": "Rock Formations - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 31.0,
-    "web": 36.0
-   },
+   "price": 31.0,
    "contents": {
     "MS-727-U": 1,
     "MS-737-U": 1,
@@ -6053,10 +5798,7 @@
    "category": "Rock Formations - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 99.0,
-    "web": 112.0
-   },
+   "price": 99.0,
    "contents": {
     "MS-735-w-P": 2,
     "MS-734-w-P": 1,
@@ -6085,10 +5827,7 @@
    "category": "Rock Formations - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 72.0,
-    "web": 82.0
-   },
+   "price": 72.0,
    "contents": {
     "MS-735-U": 2,
     "MS-734-U": 1,
@@ -6117,10 +5856,7 @@
    "category": "Rock Formations - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 34.0,
-    "web": 39.0
-   },
+   "price": 34.0,
    "contents": {
     "MS-738-w-P": 1,
     "MS-733-w-P": 1,
@@ -6139,10 +5875,7 @@
    "category": "Rock Formations - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 23.0,
-    "web": 26.0
-   },
+   "price": 23.0,
    "contents": {
     "MS-738-U": 1,
     "MS-733-U": 1,
@@ -6161,10 +5894,7 @@
    "category": "Rock Formations - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 87.0,
-    "web": 99.0
-   },
+   "price": 87.0,
    "contents": {
     "MS-727-w-P": 1,
     "MS-733-w-P": 1,
@@ -6193,10 +5923,7 @@
    "category": "Rock Formations - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 61.0,
-    "web": 69.0
-   },
+   "price": 61.0,
    "contents": {
     "MS-727-U": 1,
     "MS-733-U": 1,
@@ -6225,10 +5952,7 @@
    "category": "Rock Formations - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 135.0,
-    "web": 153.0
-   },
+   "price": 135.0,
    "contents": {
     "MS-736a-w-P": 1,
     "MS-736b-w-P": 1,
@@ -6250,10 +5974,7 @@
    "category": "Rock Formations - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 90.0,
-    "web": 102.0
-   },
+   "price": 90.0,
    "contents": {
     "MS-736a-U": 1,
     "MS-736b-U": 1,
@@ -6275,10 +5996,7 @@
    "category": "Wasteland Scatter - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 29.0,
-    "web": 33.0
-   },
+   "price": 29.0,
    "contents": {
     "WT-724-w-P": 2,
     "WT-725-w-P": 1,
@@ -6291,10 +6009,7 @@
    "category": "Wasteland Scatter - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 20.0,
-    "web": 23.0
-   },
+   "price": 20.0,
    "contents": {
     "WT-724-U": 2,
     "WT-725-U": 1,
@@ -6307,10 +6022,7 @@
    "category": "Wasteland Scatter - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 55.0,
-    "web": 63.0
-   },
+   "price": 55.0,
    "contents": {
     "WT-724-w-P": 1,
     "WT-730-w-P": 2,
@@ -6324,10 +6036,7 @@
    "category": "Wasteland Scatter - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 35.0,
-    "web": 40.0
-   },
+   "price": 35.0,
    "contents": {
     "WT-724-U": 1,
     "WT-730-U": 2,
@@ -6341,10 +6050,7 @@
    "category": "Wasteland Scatter - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 111.0,
-    "web": 126.0
-   },
+   "price": 111.0,
    "contents": {
     "WT-726-P": 2,
     "WT-727-P": 2,
@@ -6359,10 +6065,7 @@
    "category": "Wasteland Scatter - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 59.0,
-    "web": 67.0
-   },
+   "price": 59.0,
    "contents": {
     "WT-726-U": 2,
     "WT-727-U": 2,
@@ -6377,10 +6080,7 @@
    "category": "Wasteland Scatter - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 80.0,
-    "web": 91.0
-   },
+   "price": 80.0,
    "contents": {
     "PA-706-P": 4,
     "PA-701-P": 3,
@@ -6396,10 +6096,7 @@
    "category": "Wasteland Scatter - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 46.0,
-    "web": 52.0
-   },
+   "price": 46.0,
    "contents": {
     "PA-706-U": 4,
     "PA-701-U": 3,
@@ -6415,10 +6112,7 @@
    "category": "Wasteland Scatter - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 67.0,
-    "web": 76.0
-   },
+   "price": 67.0,
    "contents": {
     "WT-731-w-P": 2,
     "WT-721-P": 3,
@@ -6432,10 +6126,7 @@
    "category": "Wasteland Scatter - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 34.0,
-    "web": 39.0
-   },
+   "price": 34.0,
    "contents": {
     "WT-731-U": 2,
     "WT-721-U": 3,
@@ -6449,10 +6140,7 @@
    "category": "Wasteland Scatter - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 66.0,
-    "web": 75.0
-   },
+   "price": 66.0,
    "contents": {
     "PA-701-w-P": 4,
     "MS-725-w-P": 2,
@@ -6469,10 +6157,7 @@
    "category": "Wasteland Scatter - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 42.0,
-    "web": 48.0
-   },
+   "price": 42.0,
    "contents": {
     "PA-701-U": 4,
     "MS-725-U": 2,
@@ -6489,10 +6174,7 @@
    "category": "Wasteland Scatter - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 53.0,
-    "web": 60.0
-   },
+   "price": 53.0,
    "contents": {
     "WT-722-w-P": 2,
     "WT-735-w-P": 1,
@@ -6506,10 +6188,7 @@
    "category": "Wasteland Scatter - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 30.0,
-    "web": 34.0
-   },
+   "price": 30.0,
    "contents": {
     "WT-722-U": 2,
     "WT-735-U": 1,
@@ -6523,10 +6202,7 @@
    "category": "Wasteland Scatter - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 51.0,
-    "web": 58.0
-   },
+   "price": 51.0,
    "contents": {
     "AC-749-w-P": 1,
     "MS-745-w-P": 3,
@@ -6543,10 +6219,7 @@
    "category": "Wasteland Scatter - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 33.0,
-    "web": 38.0
-   },
+   "price": 33.0,
    "contents": {
     "AC-749-U": 1,
     "MS-745-U": 3,
@@ -6563,10 +6236,7 @@
    "category": "Wasteland Scatter - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 57.0,
-    "web": 65.0
-   },
+   "price": 57.0,
    "contents": {
     "AC-744-w-P": 4,
     "AC-741-w-P": 3,
@@ -6580,10 +6250,7 @@
    "category": "Wasteland Scatter - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 38.0,
-    "web": 43.0
-   },
+   "price": 38.0,
    "contents": {
     "AC-744-U": 4,
     "AC-741-U": 3,
@@ -6597,10 +6264,7 @@
    "category": "Wasteland Scatter - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 35.0,
-    "web": 40.0
-   },
+   "price": 35.0,
    "contents": {
     "LE-701-P": 1,
     "WT-723-w-P": 1,
@@ -6614,10 +6278,7 @@
    "category": "Wasteland Scatter - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 21.0,
-    "web": 24.0
-   },
+   "price": 21.0,
    "contents": {
     "LE-701-U": 1,
     "WT-723-U": 1,
@@ -6631,10 +6292,7 @@
    "category": "Wasteland Scatter - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 34.0,
-    "web": 39.0
-   },
+   "price": 34.0,
    "contents": {
     "MS-746-w-P": 1,
     "LE-702-P": 2,
@@ -6647,10 +6305,7 @@
    "category": "Wasteland Scatter - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 21.0,
-    "web": 24.0
-   },
+   "price": 21.0,
    "contents": {
     "MS-746-U": 1,
     "LE-702-U": 2,
@@ -6663,10 +6318,7 @@
    "category": "Wasteland Scatter - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 56.0,
-    "web": 64.0
-   },
+   "price": 56.0,
    "contents": {
     "MS-742a-w-P": 1,
     "MS-740-P": 1,
@@ -6684,10 +6336,7 @@
    "category": "Wasteland Scatter - Desert",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 37.0,
-    "web": 42.0
-   },
+   "price": 37.0,
    "contents": {
     "MS-742a-U": 1,
     "MS-740-U": 2,
@@ -6702,10 +6351,7 @@
    "category": "Wasteland Scatter - Desert",
    "bundle": false,
    "stretchGoal": true,
-   "price": {
-    "gf": 43.0,
-    "web": 49.0
-   },
+   "price": 43.0,
    "contents": {
     "AC-736-w-P": 4,
     "AC-737-w-P": 2,
@@ -6719,10 +6365,7 @@
    "category": "Wasteland Scatter - Desert",
    "bundle": false,
    "stretchGoal": true,
-   "price": {
-    "gf": 29.0,
-    "web": 33.0
-   },
+   "price": 29.0,
    "contents": {
     "AC-736-U": 4,
     "AC-737-U": 2,
@@ -6736,10 +6379,7 @@
    "category": "Wasteland Scatter - Desert",
    "bundle": false,
    "stretchGoal": true,
-   "price": {
-    "gf": 61.0,
-    "web": 69.0
-   },
+   "price": 61.0,
    "contents": {
     "MI-701-w-P": 1,
     "MI-702-w-P": 1,
@@ -6753,10 +6393,7 @@
    "category": "Wasteland Scatter - Desert",
    "bundle": false,
    "stretchGoal": true,
-   "price": {
-    "gf": 41.0,
-    "web": 47.0
-   },
+   "price": 41.0,
    "contents": {
     "MI-701-U": 1,
     "MI-702-U": 1,
@@ -6770,10 +6407,7 @@
    "category": "Wasteland Scatter - Desert",
    "bundle": false,
    "stretchGoal": true,
-   "price": {
-    "gf": 24.0,
-    "web": 28.0
-   },
+   "price": 24.0,
    "contents": {
     "MS-747-w-P": 1,
     "LE-RC-Z": 1
@@ -6785,10 +6419,7 @@
    "category": "Wasteland Scatter - Desert",
    "bundle": false,
    "stretchGoal": true,
-   "price": {
-    "gf": 16.0,
-    "web": 19.0
-   },
+   "price": 16.0,
    "contents": {
     "MS-747-U": 1,
     "LE-RC-Z": 1
@@ -6800,10 +6431,7 @@
    "category": "Floors - Arctic",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 66.0,
-    "web": 78.0
-   },
+   "price": 66.0,
    "contents": {
     "FL-701-i-P": 3,
     "GA-801-Z": 10
@@ -6815,10 +6443,7 @@
    "category": "Floors - Arctic",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 52.0,
-    "web": 59.0
-   },
+   "price": 52.0,
    "contents": {
     "FL-702-i-P": 1,
     "FL-706-i-P": 1,
@@ -6840,10 +6465,7 @@
    "category": "Floors - Arctic",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 53.0,
-    "web": 60.0
-   },
+   "price": 53.0,
    "contents": {
     "FL-707a-i-P": 1,
     "FL-707b-i-P": 1,
@@ -6865,10 +6487,7 @@
    "category": "Floors - Arctic",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 32.0,
-    "web": 37.0
-   },
+   "price": 32.0,
    "contents": {
     "FL-706-i-P": 2,
     "FL-703-i-P": 4,
@@ -6881,10 +6500,7 @@
    "category": "Floors - Arctic",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 41.0,
-    "web": 47.0
-   },
+   "price": 41.0,
    "contents": {
     "FL-703-i-P": 4,
     "FL-704-i-P": 8,
@@ -6898,10 +6514,7 @@
    "category": "Floors - Arctic",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 75.0,
-    "web": 85.0
-   },
+   "price": 75.0,
    "contents": {
     "FL-708-i-P": 1,
     "AC-749-i-P": 2,
@@ -6918,10 +6531,7 @@
    "category": "Banks - Arctic",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 47.0,
-    "web": 54.0
-   },
+   "price": 47.0,
    "contents": {
     "BK-702-i-P": 4,
     "BK-704-i-P": 4,
@@ -6935,10 +6545,7 @@
    "category": "Banks - Arctic",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 43.0,
-    "web": 49.0
-   },
+   "price": 43.0,
    "contents": {
     "BK-701-i-P": 4,
     "BK-702-i-P": 4,
@@ -6951,10 +6558,7 @@
    "category": "Banks - Arctic",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 57.0,
-    "web": 65.0
-   },
+   "price": 57.0,
    "contents": {
     "BK-703-i-P": 2,
     "BK-704-i-P": 6,
@@ -6968,10 +6572,7 @@
    "category": "Banks - Arctic",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 38.0,
-    "web": 43.0
-   },
+   "price": 38.0,
    "contents": {
     "BK-705-i-P": 2,
     "BK-706-i-P": 2,
@@ -6985,10 +6586,7 @@
    "category": "Banks - Arctic",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 39.0,
-    "web": 45.0
-   },
+   "price": 39.0,
    "contents": {
     "BK-707-i-P": 2,
     "BK-708-i-P": 2,
@@ -7001,10 +6599,7 @@
    "category": "Dunes - Arctic",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 68.0,
-    "web": 77.0
-   },
+   "price": 68.0,
    "contents": {
     "TE-725-i-P": 2,
     "GA-801-Z": 10
@@ -7016,10 +6611,7 @@
    "category": "Dunes - Arctic",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 56.0,
-    "web": 64.0
-   },
+   "price": 56.0,
    "contents": {
     "TE-726-i-P": 4,
     "GA-801-Z": 10
@@ -7031,10 +6623,7 @@
    "category": "Dunes - Arctic",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 55.0,
-    "web": 63.0
-   },
+   "price": 55.0,
    "contents": {
     "TE-727-i-P": 1,
     "TE-728-i-P": 1,
@@ -7047,10 +6636,7 @@
    "category": "Dunes - Arctic",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 64.0,
-    "web": 73.0
-   },
+   "price": 64.0,
    "contents": {
     "TE-728-i-P": 1,
     "TE-729-i-P": 1,
@@ -7063,10 +6649,7 @@
    "category": "Dunes - Arctic",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 81.0,
-    "web": 92.0
-   },
+   "price": 81.0,
    "contents": {
     "TE-732-i-P": 2,
     "TE-733-i-P": 2,
@@ -7080,10 +6663,7 @@
    "category": "Dunes - Arctic",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 82.0,
-    "web": 93.0
-   },
+   "price": 82.0,
    "contents": {
     "TE-730-i-P": 1,
     "TE-734-i-P": 2,
@@ -7097,10 +6677,7 @@
    "category": "Dunes - Arctic",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 80.0,
-    "web": 91.0
-   },
+   "price": 80.0,
    "contents": {
     "TE-731-i-P": 1,
     "TE-734-i-P": 2,
@@ -7114,10 +6691,7 @@
    "category": "Dunes - Arctic",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 63.0,
-    "web": 72.0
-   },
+   "price": 63.0,
    "contents": {
     "TE-720-i-P": 1,
     "TE-723-i-P": 1,
@@ -7133,10 +6707,7 @@
    "category": "Dunes - Arctic",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 101.0,
-    "web": 115.0
-   },
+   "price": 101.0,
    "contents": {
     "TE-721-i-P": 1,
     "TE-722-i-P": 2,
@@ -7155,10 +6726,7 @@
    "category": "Rock Formations - Arctic",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 83.0,
-    "web": 94.0
-   },
+   "price": 83.0,
    "contents": {
     "MS-744-i-P": 2,
     "MS-730-i-P": 1,
@@ -7172,10 +6740,7 @@
    "category": "Rock Formations - Arctic",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 48.0,
-    "web": 55.0
-   },
+   "price": 48.0,
    "contents": {
     "MS-728-i-P": 1,
     "MS-726-i-P": 2,
@@ -7190,10 +6755,7 @@
    "category": "Rock Formations - Arctic",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 52.0,
-    "web": 59.0
-   },
+   "price": 52.0,
    "contents": {
     "MS-728-i-P": 2,
     "MS-729-i-P": 1,
@@ -7208,10 +6770,7 @@
    "category": "Rock Formations - Arctic",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 47.0,
-    "web": 54.0
-   },
+   "price": 47.0,
    "contents": {
     "MS-727-i-P": 1,
     "MS-737-i-P": 1,
@@ -7226,10 +6785,7 @@
    "category": "Rock Formations - Arctic",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 99.0,
-    "web": 112.0
-   },
+   "price": 99.0,
    "contents": {
     "MS-735-i-P": 2,
     "MS-734-i-P": 1,
@@ -7258,10 +6814,7 @@
    "category": "Rock Formations - Arctic",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 34.0,
-    "web": 39.0
-   },
+   "price": 34.0,
    "contents": {
     "MS-738-i-P": 1,
     "MS-733-i-P": 1,
@@ -7280,10 +6833,7 @@
    "category": "Rock Formations - Arctic",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 87.0,
-    "web": 99.0
-   },
+   "price": 87.0,
    "contents": {
     "MS-727-i-P": 1,
     "MS-733-i-P": 1,
@@ -7312,10 +6862,7 @@
    "category": "Rock Formations - Arctic",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 135.0,
-    "web": 153.0
-   },
+   "price": 135.0,
    "contents": {
     "MS-736a-i-P": 1,
     "MS-736b-i-P": 1,
@@ -7337,10 +6884,7 @@
    "category": "Wasteland Scatter - Arctic",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 29.0,
-    "web": 33.0
-   },
+   "price": 29.0,
    "contents": {
     "WT-724-i-P": 2,
     "WT-725-i-P": 1,
@@ -7353,10 +6897,7 @@
    "category": "Wasteland Scatter - Arctic",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 55.0,
-    "web": 63.0
-   },
+   "price": 55.0,
    "contents": {
     "WT-724-i-P": 1,
     "WT-730-i-P": 2,
@@ -7370,10 +6911,7 @@
    "category": "Wasteland Scatter - Arctic",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 78.0,
-    "web": 89.0
-   },
+   "price": 78.0,
    "contents": {
     "WT-712-i-P": 2,
     "WT-713-i-P": 1
@@ -7385,10 +6923,7 @@
    "category": "Wasteland Scatter - Arctic",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 45.0,
-    "web": 50.0
-   },
+   "price": 45.0,
    "contents": {
     "WT-712-U": 2,
     "WT-713-U": 1
@@ -7400,10 +6935,7 @@
    "category": "Wasteland Scatter - Arctic",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 63.0,
-    "web": 72.0
-   },
+   "price": 63.0,
    "contents": {
     "SP-718-i-P": 2,
     "SP-719-i-P": 1,
@@ -7416,10 +6948,7 @@
    "category": "Wasteland Scatter - Arctic",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 41.0,
-    "web": 47.0
-   },
+   "price": 41.0,
    "contents": {
     "SP-718-U": 2,
     "SP-719-U": 1,
@@ -7432,10 +6961,7 @@
    "category": "Wasteland Scatter - Arctic",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 76.0,
-    "web": 86.0
-   },
+   "price": 76.0,
    "contents": {
     "SP-710-i-P": 1,
     "WT-704-i-P": 1,
@@ -7449,10 +6975,7 @@
    "category": "Wasteland Scatter - Arctic",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 45.0,
-    "web": 51.0
-   },
+   "price": 45.0,
    "contents": {
     "SP-710-U": 1,
     "WT-704-U": 1,
@@ -7466,10 +6989,7 @@
    "category": "Wasteland Scatter - Arctic",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 66.0,
-    "web": 75.0
-   },
+   "price": 66.0,
    "contents": {
     "PA-701-i-P": 4,
     "MS-725-i-P": 2,
@@ -7486,10 +7006,7 @@
    "category": "Wasteland Scatter - Arctic",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 53.0,
-    "web": 60.0
-   },
+   "price": 53.0,
    "contents": {
     "WT-722-i-P": 2,
     "WT-735-i-P": 1,
@@ -7503,10 +7020,7 @@
    "category": "Wasteland Scatter - Arctic",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 51.0,
-    "web": 58.0
-   },
+   "price": 51.0,
    "contents": {
     "AC-749-i-P": 1,
     "MS-745-i-P": 3,
@@ -7523,10 +7037,7 @@
    "category": "Wasteland Scatter - Arctic",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 57.0,
-    "web": 65.0
-   },
+   "price": 57.0,
    "contents": {
     "AC-744-i-P": 4,
     "AC-741-i-P": 3,
@@ -7540,10 +7051,7 @@
    "category": "Wasteland Scatter - Arctic",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 35.0,
-    "web": 40.0
-   },
+   "price": 35.0,
    "contents": {
     "LE-701-P": 1,
     "WT-723-i-P": 1,
@@ -7557,10 +7065,7 @@
    "category": "Wasteland Scatter - Arctic",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 34.0,
-    "web": 39.0
-   },
+   "price": 34.0,
    "contents": {
     "MS-746-i-P": 1,
     "LE-702-P": 2,
@@ -7573,10 +7078,7 @@
    "category": "Wasteland Scatter - Arctic",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 56.0,
-    "web": 64.0
-   },
+   "price": 56.0,
    "contents": {
     "MS-742a-i-P": 1,
     "MS-740-P": 1,
@@ -7594,10 +7096,7 @@
    "category": "Wasteland Scatter - Arctic",
    "bundle": false,
    "stretchGoal": true,
-   "price": {
-    "gf": 24.0,
-    "web": 28.0
-   },
+   "price": 24.0,
    "contents": {
     "MS-747-i-P": 1,
     "LE-RC-Z": 1
@@ -7609,10 +7108,7 @@
    "category": "Wasteland Scatter - Arctic",
    "bundle": false,
    "stretchGoal": true,
-   "price": {
-    "gf": 43.0,
-    "web": 49.0
-   },
+   "price": 43.0,
    "contents": {
     "AC-736-i-P": 4,
     "AC-737-i-P": 2,
@@ -7626,10 +7122,7 @@
    "category": "Wasteland Scatter - Arctic",
    "bundle": false,
    "stretchGoal": true,
-   "price": {
-    "gf": 61.0,
-    "web": 69.0
-   },
+   "price": 61.0,
    "contents": {
     "MI-701-i-P": 1,
     "MI-702-i-P": 1,
@@ -7643,10 +7136,7 @@
    "category": "Ice Formations",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 42.0,
-    "web": 48.0
-   },
+   "price": 42.0,
    "contents": {
     "AC-734-P": 4,
     "AC-735-P": 4,
@@ -7661,10 +7151,7 @@
    "category": "Ice Formations",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 25.0,
-    "web": 29.0
-   },
+   "price": 25.0,
    "contents": {
     "AC-734-U": 4,
     "AC-735-U": 4,
@@ -7679,10 +7166,7 @@
    "category": "Ice Formations",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 61.0,
-    "web": 69.0
-   },
+   "price": 61.0,
    "contents": {
     "CE-601-P": 6,
     "CE-602-P": 4
@@ -7694,10 +7178,7 @@
    "category": "Ice Formations",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 45.0,
-    "web": 51.0
-   },
+   "price": 45.0,
    "contents": {
     "CE-601-U": 6,
     "CE-602-U": 4
@@ -7709,10 +7190,7 @@
    "category": "Ice Formations",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 47.0,
-    "web": 54.0
-   },
+   "price": 47.0,
    "contents": {
     "CE-701-P": 3,
     "CE-702-P": 2,
@@ -7725,10 +7203,7 @@
    "category": "Ice Formations",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 31.0,
-    "web": 36.0
-   },
+   "price": 31.0,
    "contents": {
     "CE-701-U": 3,
     "CE-702-U": 2,
@@ -7741,10 +7216,7 @@
    "category": "Ice Formations",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 61.0,
-    "web": 69.0
-   },
+   "price": 61.0,
    "contents": {
     "CE-704-P": 2,
     "CE-705-P": 2,
@@ -7757,10 +7229,7 @@
    "category": "Ice Formations",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 41.0,
-    "web": 47.0
-   },
+   "price": 41.0,
    "contents": {
     "CE-704-U": 2,
     "CE-705-U": 2,
@@ -7773,10 +7242,7 @@
    "category": "Universal Dressing",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 53.0,
-    "web": 60.0
-   },
+   "price": 53.0,
    "contents": {
     "AC-739-P": 2,
     "AC-727-P": 1,
@@ -7790,10 +7256,7 @@
    "category": "Universal Dressing",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 32.0,
-    "web": 37.0
-   },
+   "price": 32.0,
    "contents": {
     "AC-739-U": 2,
     "AC-727-U": 1,
@@ -7807,10 +7270,7 @@
    "category": "Universal Dressing",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 32.0,
-    "web": 37.0
-   },
+   "price": 32.0,
    "contents": {
     "AC-732-P": 1,
     "AC-731-P": 2,
@@ -7823,10 +7283,7 @@
    "category": "Universal Dressing",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 21.0,
-    "web": 24.0
-   },
+   "price": 21.0,
    "contents": {
     "AC-732-U": 1,
     "AC-731-U": 2,
@@ -7839,10 +7296,7 @@
    "category": "Transition Drifts",
    "bundle": false,
    "stretchGoal": true,
-   "price": {
-    "gf": 45.0,
-    "web": 51.0
-   },
+   "price": 45.0,
    "contents": {
     "TL-716-w-P": 2,
     "TL-718-w-P": 2
@@ -7854,10 +7308,7 @@
    "category": "Transition Drifts",
    "bundle": false,
    "stretchGoal": true,
-   "price": {
-    "gf": 28.0,
-    "web": 32.0
-   },
+   "price": 28.0,
    "contents": {
     "TL-716-U": 2,
     "TL-718-U": 2
@@ -7869,10 +7320,7 @@
    "category": "Transition Drifts",
    "bundle": false,
    "stretchGoal": true,
-   "price": {
-    "gf": 41.0,
-    "web": 47.0
-   },
+   "price": 41.0,
    "contents": {
     "TL-715-w-P": 2
    }
@@ -7883,10 +7331,7 @@
    "category": "Transition Drifts",
    "bundle": false,
    "stretchGoal": true,
-   "price": {
-    "gf": 26.0,
-    "web": 30.0
-   },
+   "price": 26.0,
    "contents": {
     "TL-715-U": 2
    }
@@ -7897,10 +7342,7 @@
    "category": "Transition Drifts",
    "bundle": false,
    "stretchGoal": true,
-   "price": {
-    "gf": 52.0,
-    "web": 59.0
-   },
+   "price": 52.0,
    "contents": {
     "TL-719-w-P": 2
    }
@@ -7911,10 +7353,7 @@
    "category": "Transition Drifts",
    "bundle": false,
    "stretchGoal": true,
-   "price": {
-    "gf": 32.0,
-    "web": 37.0
-   },
+   "price": 32.0,
    "contents": {
     "TL-719-U": 2
    }
@@ -7925,10 +7364,7 @@
    "category": "Transition Drifts",
    "bundle": false,
    "stretchGoal": true,
-   "price": {
-    "gf": 62.0,
-    "web": 71.0
-   },
+   "price": 62.0,
    "contents": {
     "TL-717-w-P": 2
    }
@@ -7939,10 +7375,7 @@
    "category": "Transition Drifts",
    "bundle": false,
    "stretchGoal": true,
-   "price": {
-    "gf": 39.0,
-    "web": 45.0
-   },
+   "price": 39.0,
    "contents": {
     "TL-717-U": 2
    }
@@ -7953,10 +7386,7 @@
    "category": "Transition Drifts",
    "bundle": false,
    "stretchGoal": true,
-   "price": {
-    "gf": 45.0,
-    "web": 51.0
-   },
+   "price": 45.0,
    "contents": {
     "TL-716-i-P": 2,
     "TL-718-i-P": 2
@@ -7968,10 +7398,7 @@
    "category": "Transition Drifts",
    "bundle": false,
    "stretchGoal": true,
-   "price": {
-    "gf": 41.0,
-    "web": 47.0
-   },
+   "price": 41.0,
    "contents": {
     "TL-715-i-P": 2
    }
@@ -7982,10 +7409,7 @@
    "category": "Transition Drifts",
    "bundle": false,
    "stretchGoal": true,
-   "price": {
-    "gf": 52.0,
-    "web": 59.0
-   },
+   "price": 52.0,
    "contents": {
     "TL-719-i-P": 2
    }
@@ -7996,10 +7420,7 @@
    "category": "Transition Drifts",
    "bundle": false,
    "stretchGoal": true,
-   "price": {
-    "gf": 62.0,
-    "web": 71.0
-   },
+   "price": 62.0,
    "contents": {
     "TL-717-i-P": 2
    }
@@ -8010,10 +7431,7 @@
    "category": "Game Accessories",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 44.0,
-    "web": 44.0
-   },
+   "price": 44.0,
    "contents": {
     "GA-707-Z": 1
    }
@@ -8024,10 +7442,7 @@
    "category": "Game Accessories",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 112.0,
-    "web": 112.0
-   },
+   "price": 112.0,
    "contents": {
     "GA-708-Z": 1
    }
@@ -8038,10 +7453,7 @@
    "category": "Game Accessories",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 44.0,
-    "web": 50.0
-   },
+   "price": 44.0,
    "contents": {
     "GA-722-Z": 1,
     "LY-707-Z": 1,
@@ -8056,10 +7468,7 @@
    "category": "Game Accessories",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 23.0,
-    "web": 26.0
-   },
+   "price": 23.0,
    "contents": {
     "GA-723-Z": 4,
     "GA-724-Z": 4,
@@ -8074,10 +7483,7 @@
    "category": "Game Accessories",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 26.0,
-    "web": 26.0
-   },
+   "price": 26.0,
    "contents": {
     "EV-523-Z": 10
    }
@@ -8088,10 +7494,7 @@
    "category": "Game Accessories",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 23.0,
-    "web": 23.0
-   },
+   "price": 23.0,
    "contents": {
     "MS-716-Z": 8
    }
@@ -8102,10 +7505,7 @@
    "category": "Surface Layer & Printed Materials",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 14.0,
-    "web": 16.0
-   },
+   "price": 14.0,
    "contents": {
     "GA-709-T": 1
    }
@@ -8116,10 +7516,7 @@
    "category": "Surface Layer & Printed Materials",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 14.0,
-    "web": 16.0
-   },
+   "price": 14.0,
    "contents": {
     "GA-710-T": 1
    }
@@ -8130,10 +7527,7 @@
    "category": "Surface Layer & Printed Materials",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 23.0,
-    "web": 24.0
-   },
+   "price": 23.0,
    "contents": {
     "TT-730-T": 1,
     "TT-726-T": 1
@@ -8145,10 +7539,7 @@
    "category": "Surface Layer & Printed Materials",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 23.0,
-    "web": 24.0
-   },
+   "price": 23.0,
    "contents": {
     "TT-731-T": 1,
     "TT-726-T": 1
@@ -8160,10 +7551,7 @@
    "category": "Surface Layer & Printed Materials",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 23.0,
-    "web": 24.0
-   },
+   "price": 23.0,
    "contents": {
     "TT-733-T": 1,
     "TT-726-T": 1
@@ -8175,10 +7563,7 @@
    "category": "Surface Layer & Printed Materials",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 22.0,
-    "web": 23.0
-   },
+   "price": 22.0,
    "contents": {
     "TT-732-T": 1
    }
@@ -8189,10 +7574,7 @@
    "category": "Surface Layer & Printed Materials",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 27.0,
-    "web": 28.0
-   },
+   "price": 27.0,
    "contents": {
     "TT-734-T": 2,
     "TT-729-T": 2
@@ -8204,10 +7586,7 @@
    "category": "Surface Layer & Printed Materials",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 27.0,
-    "web": 28.0
-   },
+   "price": 27.0,
    "contents": {
     "TT-735-T": 2,
     "TT-729-T": 2
@@ -8219,10 +7598,7 @@
    "category": "Surface Layer & Printed Materials",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 30.0,
-    "web": 31.0
-   },
+   "price": 30.0,
    "contents": {
     "TT-736-T": 1
    }
@@ -8233,10 +7609,7 @@
    "category": "Surface Layer & Printed Materials",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 30.0,
-    "web": 31.0
-   },
+   "price": 30.0,
    "contents": {
     "TT-737-T": 1
    }
@@ -8247,10 +7620,7 @@
    "category": "Surface Layer & Printed Materials",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 30.0,
-    "web": 31.0
-   },
+   "price": 30.0,
    "contents": {
     "TT-738-T": 1
    }
@@ -8261,10 +7631,7 @@
    "category": "Surface Layer & Printed Materials",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 30.0,
-    "web": 31.0
-   },
+   "price": 30.0,
    "contents": {
     "TT-739-T": 1
    }
@@ -8275,10 +7642,7 @@
    "category": "Surface Layer & Printed Materials",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 30.0,
-    "web": 31.0
-   },
+   "price": 30.0,
    "contents": {
     "TT-740-T": 1
    }
@@ -8289,10 +7653,7 @@
    "category": "Surface Layer & Printed Materials",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 30.0,
-    "web": 31.0
-   },
+   "price": 30.0,
    "contents": {
     "TT-741-T": 1
    }
@@ -8303,10 +7664,7 @@
    "category": "Surface Layer & Printed Materials",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 47.0,
-    "web": 54.0
-   },
+   "price": 47.0,
    "contents": {
     "TT-742-T": 1,
     "GA-734-Z": 1
@@ -8318,10 +7676,7 @@
    "category": "Surface Layer & Printed Materials",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 47.0,
-    "web": 54.0
-   },
+   "price": 47.0,
    "contents": {
     "TT-743-T": 1,
     "GA-734-Z": 1
@@ -8333,10 +7688,7 @@
    "category": "Individual Pieces",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 9.0,
-    "web": 10.0
-   },
+   "price": 9.0,
    "contents": {
     "MI-703-P": 1
    }
@@ -8347,10 +7699,7 @@
    "category": "Individual Pieces",
    "bundle": false,
    "stretchGoal": false,
-   "price": {
-    "gf": 6.0,
-    "web": 7.0
-   },
+   "price": 6.0,
    "contents": {
     "MI-703-U": 1
    }

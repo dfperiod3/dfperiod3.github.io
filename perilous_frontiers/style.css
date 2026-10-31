@@ -11,6 +11,19 @@
     --bad: #b3261e;
 }
 
+:root[data-theme=arctic] {
+    --bg: #f2f7fa;
+    --panel: #ffffff;
+    --text: #1a2a33;
+    --muted: #5d7381;
+    --border: #cddde7;
+    --accent: #1d6a94;
+    --accent-text: #fff;
+    --row-alt: #e8f2f8;
+    --good: #2a7a5f;
+    --bad: #b3261e;
+}
+
 @media (prefers-color-scheme: dark) {
     :root {
         --bg: #1b1a18;
@@ -22,6 +35,19 @@
         --accent-text: #1b1a18;
         --row-alt: #2b2925;
         --good: #7fc58a;
+        --bad: #f08a80;
+    }
+
+    :root[data-theme=arctic] {
+        --bg: #11191f;
+        --panel: #17222a;
+        --text: #e1edf3;
+        --muted: #91a8b5;
+        --border: #2b3d49;
+        --accent: #7cc5e8;
+        --accent-text: #0f171c;
+        --row-alt: #1c2a33;
+        --good: #7fcfb0;
         --bad: #f08a80;
     }
 }
@@ -40,9 +66,11 @@ body {
 }
 
 a { color: var(--accent); }
+input[type=checkbox], input[type=radio] { accent-color: var(--accent); }
 h1 { font-size: 1.4em; margin: 12px 0 4px; }
 h2 { font-size: 1.1em; margin: 0; }
 header p { margin: 4px 0; }
+.title-row { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 12px; }
 .meta { color: var(--muted); }
 .count { color: var(--muted); font-weight: normal; }
 
@@ -99,7 +127,7 @@ button.primary {
 button:disabled { opacity: .6; cursor: default; }
 
 input[type=search] { flex: 1; min-width: 140px; }
-input[type=search], input[type=number] {
+input[type=search], input[type=number], select {
     font: inherit;
     padding: 3px 6px;
     border: 1px solid var(--border);

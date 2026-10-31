@@ -3,6 +3,7 @@
 
 var HIGHS_URL = 'https://cdn.jsdelivr.net/npm/highs@1.15.3/build/';
 var STORAGE_KEY = 'pf-optimizer-v1';
+var THEME_KEY = 'pf-optimizer-theme';
 
 var data;                 // data.json
 var pieceByCode = {};
@@ -16,10 +17,6 @@ var activeTab = 'summary';
 var onlyExtras = false;
 
 var $ = function (id) { return document.getElementById(id); };
-
-function priceKey() {
-    return document.querySelector('input[name=price]:checked').value;
-}
 
 function money(n) {
     return '$' + n.toLocaleString(undefined, { maximumFractionDigits: 2 });
@@ -51,7 +48,7 @@ function groupBy(list, key) {
 function persist() {
     try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify({
-            desired: desired, omitted: Array.from(omitted), price: priceKey()
+            desired: desired, omitted: Array.from(omitted)
         }));
     } catch (e) { /* storage unavailable; nothing to do */ }
 }
@@ -62,8 +59,6 @@ function restore() {
         if (!saved) return;
         for (var code in saved.desired) if (pieceByCode[code]) desired[code] = saved.desired[code];
         (saved.omitted || []).forEach(function (c) { if (setByCode[c]) omitted.add(c); });
-        var radio = document.querySelector('input[name=price][value="' + saved.price + '"]');
-        if (radio) radio.checked = true;
     } catch (e) { /* ignore corrupt or unavailable storage */ }
 }
 
@@ -205,7 +200,7 @@ function renderSets() {
                     s.stretchGoal ? el('span', { class: 'tag', text: 'SG' }) : null
                 ]),
                 el('td', { class: 'num', text: pieceCount(s) + ' pcs' }),
-                el('td', { class: 'num price' })
+                el('td', { class: 'num', text: money(s.price) })
             ]);
             omit.addEventListener('change', function () {
                 if (omit.checked) omitted.add(s.code); else omitted.delete(s.code);
@@ -221,15 +216,6 @@ function renderSets() {
             el('summary', { text: category + ' (' + sets.length + ')' }),
             el('table', {}, [tbody])
         ]));
-    });
-    renderPrices();
-}
-
-function renderPrices() {
-    var key = priceKey();
-    document.querySelectorAll('#sets tr').forEach(function (row) {
-        var price = setByCode[row.dataset.code].price[key];
-        row.querySelector('.price').textContent = price == null ? 'n/a' : money(price);
     });
 }
 
@@ -274,7 +260,7 @@ function optimize() {
     }
     var tolerance = parseFloat($('tolerance').value) || 0;
     var timeLimit = parseFloat($('time-limit').value) || 60;
-    var model = PledgeOptimizer.buildModel(data, desired, { priceKey: priceKey(), omitted: omitted });
+    var model = PledgeOptimizer.buildModel(data, desired, { omitted: omitted });
     if (model.missing.length) {
         setStatus('No allowed set contains: ' + model.missing.map(function (c) { return pieceByCode[c].name; }).join(', '), 'error');
         return;
@@ -300,7 +286,6 @@ function optimize() {
         $('optimize').disabled = false;
         var seconds = ((Date.now() - started) / 1000).toFixed(2);
         var sol = PledgeOptimizer.readSolution(model, result);
-        sol.priceKey = priceKey();
         sol.desired = Object.assign({}, desired);
 
         if (sol.status === 'Optimal') {
@@ -339,8 +324,7 @@ function renderResults() {
         out.appendChild(el('p', { class: 'meta', text: 'Click Optimize to see the cheapest pledge here.' }));
         return;
     }
-    out.appendChild(el('div', { class: 'total', text: 'Total: ' + money(solution.cost) +
-        (solution.priceKey === 'web' ? ' (web store prices)' : ' (Gamefound prices)') }));
+    out.appendChild(el('div', { class: 'total', text: 'Total: ' + money(solution.cost) }));
     if (activeTab === 'summary') renderSummary(out); else renderManifest(out);
 }
 
@@ -360,7 +344,7 @@ function renderSummary(out) {
             var short = (solution.desired[code] || 0) - (counts[code] - p.set.contents[code]);
             if (short > 0) lost.push(short + ' × ' + pieceByCode[code].name);
         }
-        var price = p.set.price[solution.priceKey];
+        var price = p.set.price;
         tbody.appendChild(el('tr', {}, [
             el('td', {}, [el('a', { href: '#', text: p.set.name, onclick: function (e) { e.preventDefault(); showSetContents(p.set); } })]),
             el('td', { class: 'num', text: p.qty }),
@@ -470,8 +454,10 @@ function init(json) {
         if (e.target.files[0]) loadDesired(e.target.files[0]);
         e.target.value = '';
     });
-    document.querySelectorAll('input[name=price]').forEach(function (r) {
-        r.addEventListener('change', function () { renderPrices(); persist(); });
+    $('theme').value = document.documentElement.dataset.theme || 'desert';
+    $('theme').addEventListener('change', function () {
+        document.documentElement.dataset.theme = this.value;
+        try { localStorage.setItem(THEME_KEY, this.value); } catch (e) { /* not remembered */ }
     });
     document.querySelectorAll('#tabs button').forEach(function (b) {
         b.addEventListener('click', function () { showTab(b.dataset.tab); });
