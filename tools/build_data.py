@@ -11,12 +11,16 @@ Tabs used:
     Set Comps        - set -> piece quantities (bundles are listed per constituent set)
     Bundle Builder   - bundle -> set quantities (informational only)
 
+Set pictures and Gamefound links come from tools/gamefound_products.json, which you
+download with tools/gamefound_snippet.js. Sets are matched to Gamefound products by name.
+
 Requires openpyxl (pip install openpyxl).
 """
 import collections
 import datetime
 import json
 import os
+import re
 import sys
 import tempfile
 import urllib.request
@@ -25,7 +29,9 @@ import openpyxl
 
 SHEET_ID = "19gbXlWYlA12Q_4Mj2LTzqhgbcyVtuQR0fl3VCSm91sg"
 EXPORT_URL = f"https://docs.google.com/spreadsheets/d/{SHEET_ID}/export?format=xlsx"
-OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "data.json")
+HERE = os.path.dirname(os.path.abspath(__file__))
+OUT = os.path.join(HERE, "..", "data.json")
+GAMEFOUND = os.path.join(HERE, "gamefound_products.json")
 
 
 def rows(wb, name):
@@ -75,6 +81,25 @@ def load_sets(wb):
     return sets
 
 
+def add_gamefound(sets):
+    """Attach Gamefound pictures and links, and warn about price disagreements."""
+    if not os.path.exists(GAMEFOUND):
+        print(f"  {os.path.basename(GAMEFOUND)} not found; sets will have no pictures")
+        return
+    norm = lambda s: re.sub(r"[^a-z0-9]", "", s.lower())
+    with open(GAMEFOUND) as f:
+        products = {norm(p["name"]): p for p in json.load(f)}
+    for s in sets:
+        p = products.get(norm(s["name"]))
+        if not p:
+            print(f"  no Gamefound product for {s['code']} {s['name']}")
+            continue
+        s["image"] = p["image"]
+        s["gamefound"] = p["url"]
+        if p["price"] != s["price"]:
+            print(f"  price mismatch for {s['name']}: sheet ${s['price']:g}, Gamefound ${p['price']:g}")
+
+
 def main():
     if len(sys.argv) > 1:
         path = sys.argv[1]
@@ -112,6 +137,8 @@ def main():
             continue
         s["contents"] = dict(s["contents"])
         out_sets.append(s)
+
+    add_gamefound(out_sets)
 
     used = {p for s in out_sets for p in s["contents"]}
     out_pieces = [p for p in pieces.values() if p["code"] in used]

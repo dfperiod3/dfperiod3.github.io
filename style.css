@@ -200,6 +200,50 @@ label + .help { margin-left: -4px; margin-right: 8px; }
 }
 #tooltip[hidden] { display: none; }
 
+.set-view {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 340px);
+    gap: 16px;
+    align-items: start;
+}
+.set-picture { margin: 8px 0 0; position: sticky; top: 8px; }
+.set-picture img {
+    display: block;
+    max-width: 100%;
+    max-height: min(340px, 28vh);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    cursor: zoom-in;
+}
+.set-picture figcaption { margin-top: 4px; font-size: .85em; color: var(--muted); }
+.set-picture.none {
+    padding: 24px 12px;
+    border: 1px dashed var(--border);
+    border-radius: 6px;
+    color: var(--muted);
+    text-align: center;
+}
+
+dialog#lightbox {
+    max-width: calc(100vw - 32px);
+    max-height: calc(100vh - 32px);
+    padding: 8px;
+    border: none;
+    border-radius: 8px;
+    background: var(--panel);
+    color: var(--text);
+    cursor: zoom-out;
+}
+dialog#lightbox::backdrop { background: rgba(0, 0, 0, .8); }
+dialog#lightbox img {
+    display: block;
+    max-width: calc(100vw - 48px);
+    max-height: calc(100vh - 90px);
+    margin: 0 auto;
+}
+dialog#lightbox .caption { text-align: center; padding: 6px 0 0; font-weight: 600; }
+dialog#lightbox .close { position: absolute; top: 12px; right: 12px; }
+
 dialog#help {
     width: min(760px, calc(100vw - 32px));
     max-height: calc(100vh - 48px);
@@ -235,5 +279,7 @@ dialog#help::backdrop { background: rgba(0, 0, 0, .45); }
     main { grid-template-columns: 1fr; }
     main, #results-pane { flex: none; }
     .pane-body { max-height: 60vh; }
+    .set-view { grid-template-columns: minmax(0, 1fr); }
+    .set-view .set-picture { order: -1; position: static; }
 }
 .title-row .toolbar { margin-top: 0; }

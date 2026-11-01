@@ -428,9 +428,11 @@ function showSetContents(set, fromHistory) {
     out.innerHTML = '';
     var tabNames = { summary: 'pledge summary', manifest: 'item manifest', desired: 'desired list' };
     out.appendChild(el('button', { class: 'back', text: '← Back to ' + tabNames[lastTab], onclick: function () { history.back(); } }));
-    out.appendChild(el('div', { class: 'total', text: set.name + ' — ' + set.code }));
+    var info = el('div');
+    out.appendChild(el('div', { class: 'set-view' }, [info, setPicture(set)]));
+    info.appendChild(el('div', { class: 'total', text: set.name + ' — ' + set.code + ' — ' + money(set.price) }));
     if (set.sets) {
-        out.appendChild(el('p', { text: 'Bundle of: ' + Object.keys(set.sets).map(function (c) {
+        info.appendChild(el('p', { text: 'Bundle of: ' + Object.keys(set.sets).map(function (c) {
             return set.sets[c] + ' × ' + (setByCode[c] ? setByCode[c].name : c);
         }).join(', ') }));
     }
@@ -444,7 +446,34 @@ function showSetContents(set, fromHistory) {
             ]));
         }
     });
-    out.appendChild(el('table', {}, [headRow([['Piece'], ['Code'], ['Qty', 'num']]), tbody]));
+    info.appendChild(el('table', {}, [headRow([['Piece'], ['Code'], ['Qty', 'num']]), tbody]));
+}
+
+// The set's Gamefound picture (click to enlarge) and product link, if known.
+function setPicture(set) {
+    if (!set.image) {
+        return el('figure', { class: 'set-picture none', text: set.stretchGoal
+            ? "No picture yet: Gamefound hasn't revealed this stretch goal."
+            : 'No picture available.' });
+    }
+    var img = el('img', { src: set.image, alt: set.name, loading: 'lazy', 'data-tip': 'Click to see full size' });
+    img.addEventListener('click', function () { openLightbox(set); });
+    return el('figure', { class: 'set-picture' }, [
+        img,
+        el('figcaption', {}, [
+            document.createTextNode('Click the picture to enlarge · '),
+            el('a', { href: set.gamefound, target: '_blank', rel: 'noopener', text: 'View on Gamefound ↗' })
+        ])
+    ]);
+}
+
+function openLightbox(set) {
+    hideTip();
+    var box = $('lightbox');
+    box.querySelector('img').src = set.image;
+    box.querySelector('img').alt = set.name;
+    box.querySelector('.caption').textContent = set.name;
+    box.showModal();
 }
 
 // ---- tooltips ----------------------------------------------------------------------
@@ -516,6 +545,8 @@ function initHelp() {
     $('help-open').addEventListener('click', open);
     $('help-link').addEventListener('click', open);
     $('help-close').addEventListener('click', function () { dialog.close(); });
+    // The full-size picture closes on any click.
+    $('lightbox').addEventListener('click', function () { $('lightbox').close(); });
     // A click on the backdrop lands on the <dialog> itself rather than its contents.
     dialog.addEventListener('click', function (e) { if (e.target === dialog) dialog.close(); });
 }
